@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 import pygame
+import math
 
 
 
@@ -59,6 +60,10 @@ class LeatherWindow(tk.Frame):
 		self.r_layer_flag = True
 
 		self.leather_center = None
+
+		self.leather_c_layer_line = []
+		self.leather_c_layer_line_len = []
+		self.zoom_tick = 0.99
 
 		self.leather_draging = False
 
@@ -149,9 +154,150 @@ class LeatherWindow(tk.Frame):
 		self.update()
 		self.after(1, self.pygame_loop)
 
+	def zoom_in(self):
+		center_point = [self.winfo_screenwidth()/2 , self.winfo_screenheight()/2]
+		new_layer = []
+		for point in self.c_layer_items:
+			wspol_a = (point[1]-center_point[1])/(point[0]-center_point[0])
+			wspol_b = point[1]-(((point[1]-center_point[1])/(point[0]-center_point[0])*point[0]))
+			nowe_x = center_point[0]+(point[0]-center_point[0]) / self.zoom_tick
+			nowe_y = wspol_a * nowe_x + wspol_b
+			new_layer.append([nowe_x, nowe_y])
+		self.c_layer_items = new_layer
+		new_layer = []
+		for item in self.h_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) / self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.h_layer_items = new_layer
+		new_layer = []
+		for item in self.b_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) / self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.b_layer_items = new_layer
+		new_layer = []
+		for item in self.g_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) / self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.g_layer_items = new_layer
+		new_layer = []
+		for item in self.y_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) / self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.y_layer_items = new_layer
+		new_layer = []
+		for item in self.r_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) / self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.r_layer_items = new_layer
+
+		self.drawing_shapes = False
+
+	def zoom_out(self):
+		center_point = [self.winfo_screenwidth() / 2, self.winfo_screenheight() / 2]
+		new_layer = []
+		for point in self.c_layer_items:
+			wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+			wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+			nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+			nowe_y = wspol_a * nowe_x + wspol_b
+			new_layer.append([nowe_x, nowe_y])
+		self.c_layer_items = new_layer
+		new_layer = []
+		for item in self.h_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.h_layer_items = new_layer
+		new_layer = []
+		for item in self.b_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.b_layer_items = new_layer
+		new_layer = []
+		for item in self.g_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.g_layer_items = new_layer
+		new_layer = []
+		for item in self.y_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.y_layer_items = new_layer
+		new_layer = []
+		for item in self.r_layer_items:
+			item_list = []
+			for point in item:
+				wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+				wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+				nowe_x = center_point[0] + (point[0] - center_point[0]) * self.zoom_tick
+				nowe_y = wspol_a * nowe_x + wspol_b
+				item_list.append([nowe_x, nowe_y])
+			new_layer.append(item_list)
+		self.r_layer_items = new_layer
+
+		self.drawing_shapes = False
+
 	def event_checker (self):
 		for event in pygame.event.get():
-			if event.type == pygame.MOUSEBUTTONDOWN:
+			if event.type == pygame.MOUSEWHEEL:
+				if event.y == 1:
+					self.zoom_in()
+				elif event.y != 1:
+					self.zoom_out()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1 and self.leather != None:
 					self.leather_draging = True
 					mouse_x, mouse_y = event.pos
