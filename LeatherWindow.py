@@ -481,6 +481,7 @@ class LeatherWindow(tk.Frame):
 					pygame.draw.polygon(self.main_surface, self.g_layer_color, item)
 		if self.b_layer_items != None and self.b_layer_flag == True:
 			for item in self.b_layer_items:
+				print(item)
 				if self.b_layer_linetype == "lines":
 					pygame.draw.lines(self.main_surface, self.b_layer_color, True, item)
 				elif self.b_layer_linetype == "polygon":
@@ -497,5 +498,8 @@ class LeatherWindow(tk.Frame):
 					pygame.draw.lines(self.main_surface, self.r_layer_color, True, item)
 				elif self.r_layer_linetype == "polygon":
 					pygame.draw.polygon(self.main_surface, self.r_layer_color, item)
+
+
+
 
 
