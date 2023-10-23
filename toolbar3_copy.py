@@ -24,7 +24,7 @@ class Toolbar(tk.Frame):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
 		self.parent = parent
 
-		self.configure(height=int(self.winfo_screenheight() * 0.1), width=self.winfo_screenwidth(), bg='#303030')
+		self.configure(height=self.winfo_screenheight(), width=self.winfo_screenwidth(), bg='#303030')
 		self.pack_propagate(0)
 		self.grid_propagate(0)
 
@@ -35,16 +35,16 @@ class Toolbar(tk.Frame):
 		toolbar_container.columnconfigure((1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
 		toolbar_container.rowconfigure(1, weight=1)
 
-		anthr_window = tk.Toplevel(self)
-		sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
-		anthr_window.geometry('%dx%d%+d+%d'%(sw,sh,0,-sh))
-		anthr_window.overrideredirect(True)
+		#anthr_window = tk.Toplevel(self)
+		#sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
+		#anthr_window.geometry('%dx%d%+d+%d'%(sw,sh,0,-sh))
+		#anthr_window.overrideredirect(True)
 
-		self.content_container = LeatherWindow(anthr_window, self, height=int(self.winfo_screenheight() * 0.9),
+		self.content_container = LeatherWindow(self, self, height=int(self.winfo_screenheight() * 0.9),
 											   width=int(self.winfo_screenwidth()))
 
 		toolbar_container.pack(side='top', fill="both", expand=True)
-		self.content_container.pack(side='top', fill="both", expand=True)
+		self.content_container.pack(side='bottom', fill="both", expand=True)
 
 		self.load_file_icon = icon_to_image("folder-open", fill='#c7c6c5', scale_to_width=60)
 		self.change_colors_icon_active = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
@@ -121,6 +121,15 @@ class Toolbar(tk.Frame):
 		self.red_layer_btn.grid(column=9, row=1, sticky='nsew')
 
 		Thread(target=self.clockLoop()).start()
+
+		# with open('config.txt', 'r') as config:
+		#	com_port = config.readlines()
+		# print("com port:", *com_port)
+		# try:
+		#	self.barcode_scanner = serial.Serial(str(*com_port), 19200, timeout=1)
+		#	Thread(target=self.read_barcode()).start()
+		# except:
+		#	pass
 
 		for widget in toolbar_container.winfo_children():
 			widget.grid(padx=2, pady=2)

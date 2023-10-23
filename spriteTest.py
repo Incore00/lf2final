@@ -91,6 +91,7 @@ while run:
             run = False
 
     all_sprites.update()
+    window.fill((255, 0, 0))
 
     if pygame.sprite.collide_mask(moving_object, line_object):
         if max_flag != True:
@@ -105,7 +106,7 @@ while run:
     else:
         red = 0
 
-    line_object.change_color((255, 255, red))
+    line_object.change_color((255-red, red, red))
     all_sprites.draw(window)
     pygame.display.flip()
 
