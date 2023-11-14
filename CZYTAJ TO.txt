@@ -1,5 +1,0 @@
-Kompilacja:
-
-pyinstaller --noconfirm --onedir --windowed --add-data "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\venv\Lib\site-packages/customtkinter;customtkinter/" --add-data "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\venv\Lib\site-packages\pyopengltk;pyopengltk" --add-data "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\venv\Lib\site-packages\OpenGL;OpenGL" --add-data "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\venv\Lib\site-packages\pyautogui;pyautogui" --add-data "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\venv\Lib\site-packages\ezdxf;ezdxf"  "C:\Users\s.szlachtowicz\Desktop\LeatherFlaws2\main.py"
-
-+ przekopiować każdy moduł do dist/main jak krzyczy że go nie ma

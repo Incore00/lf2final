@@ -7,6 +7,7 @@ import pygame
 from PIL import ImageTk
 from datetime import datetime
 from threading import Thread
+from LeatherWindow import LeatherWindow
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 fontfile = "VeraMono.ttf"
@@ -46,11 +47,27 @@ class Toolbar(tk.Frame):
                  font=('OpenSans.ttf', 19)).grid(column=4, row=1, sticky='nsew', ipadx=5)
         Thread(target=self.clockLoop()).start()
 
-        self.load_file_icon = icon_to_image("folder-open", fill='#c7c6c5', scale_to_width=60)
+        self.load_file_icon = icon_to_image("folder-open", fill='#c7c6c5', scale_to_width=65)
         self.load_file_btn = ctk.CTkButton(self, image=self.load_file_icon, fg_color='#505050',
-                                           hover_color='#404040', compound='top', corner_radius=10, text='Załaduj plik',
+                                           hover_color='#404040', compound='top', corner_radius=10, text='Wybierz plik',
                                            text_font=('OpenSans.ttf', 18))
         self.load_file_btn.grid(column=5, row=1, sticky='nsew')
+
+        self.save_file_icon = icon_to_image("save", fill='#c7c6c5', scale_to_width=60)
+        self.save_file_btn = ctk.CTkButton(self, image=self.save_file_icon, fg_color='#505050',
+                                           hover_color='#404040', compound='top', corner_radius=10, text='Zapisz plik',
+                                           text_font=('OpenSans.ttf', 18))
+        self.save_file_btn.grid(column=6, row=1, sticky='nsew')
+
+        self.exit_icon = icon_to_image("times", fill='#c7c6c5', scale_to_width=50)
+        self.exit_btn = ctk.CTkButton(self, image=self.exit_icon, fg_color='#505050',
+                                           hover_color='#404040', compound='top', corner_radius=10, text='Zamknij program',
+                                           text_font=('OpenSans.ttf', 18))
+        self.exit_btn.grid(column=7, row=1, sticky='nsew')
+
+        for widget in self.winfo_children():
+            widget.grid(padx=2, pady=2)
+
 
     def clockLoop (self):
         clock = datetime.now().strftime('%Y-%m-%d\n%H:%M:%S') + '\nTydzień ' + str(
@@ -76,6 +93,8 @@ class Infobar(tk.Frame):
         self.leather_info.insert(tk.END, "LEATHER123123")
         self.leather_info.grid(column=1, row=1, sticky='nsew')
 
+        print("id2", self.winfo_id())
+
         #self.load_file_icon = icon_to_image("folder-open", fill='#c7c6c5', scale_to_width=60)
         #self.load_btn = ctk.CTkButton(self, image=self.load_file_icon, fg_color='#505050',
         #                              hover_color='#404040', command=lambda: self.load_leather()
@@ -91,27 +110,12 @@ class Leatherpreview(tk.Frame):
         self.parent = parent
         self.pack_propagate(0)
         self.grid_propagate(0)
-        self.screen_width, self.screen_height = int(parent.winfo_reqwidth()/1.6) , int(parent.winfo_reqheight()/1.6)
-        print(self.screen_width, self.screen_height)
+        sw, sh = int(parent.winfo_reqwidth()/1.6) , int(parent.winfo_reqheight()/1.6)
+        print(sw, sh)
+        self.configure(height=sh, width=sw)
 
-        self.configure(background='brown', width=self.screen_width, height=self.screen_height)
+        Thread(target=LeatherWindow(self, self, height=sh, width=sw).pack(side="top", fill="both", expand=True)).start()
 
-        os.environ['SDL_WINDOWID'] = str(self.winfo_id())
-        os.environ['SDL_VIDEODRIVER'] = 'windib'
-        pygame.display.init()
-        window_size = (int(parent.winfo_reqwidth()/1.618), int(parent.winfo_reqheight()/1.618))
-        self.screen = pygame.display.set_mode(window_size)
-        self.main_surface = pygame.Surface(window_size)
-
-
-
-        self.pygame_loop()
-
-    def pygame_loop (self):
-        pygame.display.flip()
-
-        self.update()
-        self.after(1, self.pygame_loop)
 
 class Layerinfo(tk.Frame):
     def __init__ (self, parent, *args, **kwargs):

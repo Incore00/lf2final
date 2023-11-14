@@ -10,10 +10,14 @@ class LeatherWindow(tk.Frame):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
 		self.parent = parent
 
+		print("id1", self.winfo_id())
+
 		os.environ['SDL_WINDOWID'] = str(self.winfo_id())
-		os.environ['SDL_VIDEODRIVER'] = 'windib'
+		os.environ['SDL_VIDEODRIVER'] = 'windows'
 		pygame.display.init()
-		window_size = (self.winfo_screenwidth(), self.winfo_screenheight())
+
+		window_size = (self.winfo_reqwidth(), self.winfo_reqheight())
+		print('Window size', window_size)
 		self.screen = pygame.display.set_mode(window_size)
 
 		self.main_surface = pygame.Surface(window_size)
