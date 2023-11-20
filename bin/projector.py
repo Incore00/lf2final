@@ -27,7 +27,7 @@ class LeatherWindow_main(tk.Frame):
 		pygame.display.init()
 
 		window_size = (self.winfo_reqwidth(), self.winfo_reqheight())
-		print('Window size', window_size)
+		print('Main window size', window_size)
 		self.screen = pygame.display.set_mode(window_size)
 		self.main_surface = pygame.Surface(window_size)
 
@@ -175,7 +175,7 @@ class LeatherWindow_main(tk.Frame):
 		self.calculate_position()
 		self.calculate_zoom()
 		self.drawing_shapes = True
-		print('preview data loaded')
+		print('main data loaded')
 
 	def event_checker (self):
 		for event in pygame.event.get():

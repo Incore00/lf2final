@@ -2,7 +2,7 @@
 preview_redraw = False
 main_redraw = False
 
-bg_layer_color = (0, 100, 100)
+bg_layer_color = (0, 0, 0)
 c_layer_color = (255, 255, 255)
 h_layer_color = (127, 127, 127)
 b_layer_color = (0, 0, 255)
