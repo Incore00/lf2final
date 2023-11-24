@@ -13,7 +13,7 @@ class Layerinfo(tk.Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
         self.columnconfigure((1, 2, 3, 4), weight=1)
-        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
 
         self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.235), height=int(parent.winfo_reqheight()*0.865))
 
@@ -44,69 +44,80 @@ class Layerinfo(tk.Frame):
                                            text_font=('OpenSans.ttf', 15))
         self.red_layer_btn.grid(column=4, row=2, sticky='nsew')
 
+        ctk.CTkLabel(self, text="     Warstwa:", text_font=('OpenSans.ttf', 16)).grid(column=1, columnspan=2, row=3, sticky='nsew')
+        ctk.CTkLabel(self, text="Liczba skaz:", text_font=('OpenSans.ttf', 16)).grid(column=3, columnspan=2, row=3, sticky='w')
+
         self.layer_frame = VerticalScrolledFrame(self)
         self.layer_frame.columnconfigure((1, 2, 3, 4, 5), weight=1)
         self.layer_frame.rowconfigure(1, weight=1)
-        self.layer_frame.grid(column=1, columnspan=4, row=3, sticky='nsew')
+        self.layer_frame.grid(column=1, columnspan=4, row=4, sticky='nsew')
 
         self.rarrow = icon_to_image("caret-right", fill="#adaba5", scale_to_width=10)
         self.darrow = icon_to_image("caret-down", fill="#adaba5", scale_to_width=15)
+
         self.hole_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                         corner_radius=10, border_width=3, border_color='#000000')
         self.show_hole_flaws_btn = ctk.CTkButton(self.hole_flaws, image=self.rarrow, text='', compound='right', width=30, fg_color='#303030',
-                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 15))
+                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 16))
         self.show_hole_flaws_btn.grid(column=1, row=1, sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.hole_flaws, text="Dziury", text_font=('OpenSans.ttf', 15)).grid(column=2, row=1,sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.hole_flaws, text="20", text_font=('OpenSans.ttf', 15)).grid(column=3, row=1,sticky='nsew', padx=10, pady=10)
+        ctk.CTkLabel(self.hole_flaws, text="Dziury", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1,sticky='nsew', padx=10, pady=10)
+        self.hole_layer_items_amount = ctk.CTkLabel(self.hole_flaws, text="0", text_font=('OpenSans.ttf', 16))
+        self.hole_layer_items_amount.grid(column=3, row=1,sticky='nsew', padx=10, pady=10)
         self.hole_flaws.grid(column=1, row=1, sticky='nsew')
+
+        ### TEST ###
+
+        self.hole_flaw = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
+                                       corner_radius=5, border_width=1, border_color='#000000')
+        self.hole_flaw.grid(column=1, row=2, sticky='nsew')
+
+        ### TEST ###
 
         self.blue_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                         corner_radius=10, border_width=3, border_color='#000000')
         self.show_blue_flaws_btn = ctk.CTkButton(self.blue_flaws, image=self.rarrow, text='', compound='right', width=30, fg_color='#303030',
-                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 15))
+                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 16))
         self.show_blue_flaws_btn.grid(column=1, row=1, sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.blue_flaws, text="Niebieska", text_font=('OpenSans.ttf', 15)).grid(column=2, row=1,
+        ctk.CTkLabel(self.blue_flaws, text="Niebieska", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1,
                                                                                            sticky='nsew', padx=10,
                                                                                            pady=10)
-        ctk.CTkLabel(self.blue_flaws, text="20", text_font=('OpenSans.ttf', 15)).grid(column=3, row=1, sticky='nsew',
-                                                                                       padx=10, pady=10)
-        self.blue_flaws.grid(column=1, row=2, sticky='nsew')
+        self.blue_layer_items_amount = ctk.CTkLabel(self.blue_flaws, text="0", text_font=('OpenSans.ttf', 16))
+        self.blue_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
+        self.blue_flaws.grid(column=1, row=3, sticky='nsew')
 
         self.green_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                        corner_radius=10, border_width=3, border_color='#000000')
         self.show_green_flaws_btn = ctk.CTkButton(self.green_flaws, image=self.rarrow, text='', compound='right', width=30, fg_color='#303030',
-                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 15))
+                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 16))
         self.show_green_flaws_btn.grid(column=1, row=1, sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.green_flaws, text="Zielona", text_font=('OpenSans.ttf', 15)).grid(column=2, row=1,
+        ctk.CTkLabel(self.green_flaws, text="Zielona", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1,
                                                                                              sticky='nsew', padx=10,
                                                                                              pady=10)
-        ctk.CTkLabel(self.green_flaws, text="20", text_font=('OpenSans.ttf', 15)).grid(column=3, row=1, sticky='nsew',
-                                                                                      padx=10, pady=10)
-        self.green_flaws.grid(column=1, row=3, sticky='nsew')
+        self.green_layer_items_amount = ctk.CTkLabel(self.green_flaws, text="0", text_font=('OpenSans.ttf', 16))
+        self.green_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
+        self.green_flaws.grid(column=1, row=4, sticky='nsew')
 
         self.yellow_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                         corner_radius=10, border_width=3, border_color='#000000')
         self.show_yellow_flaws_btn = ctk.CTkButton(self.yellow_flaws, image=self.rarrow, text='', compound='right', width=30, fg_color='#303030',
-                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 15))
+                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 16))
         self.show_yellow_flaws_btn.grid(column=1, row=1, sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.yellow_flaws, text="Żółta", text_font=('OpenSans.ttf', 15)).grid(column=2, row=1,
-                                                                                              sticky='nsew', padx=10,
-                                                                                              pady=10)
-        ctk.CTkLabel(self.yellow_flaws, text="20", text_font=('OpenSans.ttf', 15)).grid(column=3, row=1, sticky='nsew',
-                                                                                       padx=10, pady=10)
-        self.yellow_flaws.grid(column=1, row=4, sticky='nsew')
+        ctk.CTkLabel(self.yellow_flaws, text="Żółta", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1, sticky='nsew', padx=10, pady=10)
+        self.yellow_layer_items_amount = ctk.CTkLabel(self.yellow_flaws, text="0", text_font=('OpenSans.ttf', 16))
+        self.yellow_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
+        self.yellow_flaws.grid(column=1, row=5, sticky='nsew')
 
         self.red_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                          corner_radius=10, border_width=3, border_color='#000000')
         self.show_red_flaws_btn = ctk.CTkButton(self.red_flaws, image=self.rarrow, text='', compound='right', width=30, fg_color='#303030',
-                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 15))
+                      corner_radius=10, hover_color='#303030', text_font=('OpenSans.ttf', 16))
         self.show_red_flaws_btn.grid(column=1, row=1, sticky='nsew', padx=10, pady=10)
-        ctk.CTkLabel(self.red_flaws, text="Czerwona", text_font=('OpenSans.ttf', 15)).grid(column=2, row=1,
+        ctk.CTkLabel(self.red_flaws, text="Czerwona", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1,
                                                                                                sticky='nsew', padx=10,
                                                                                                pady=10)
-        ctk.CTkLabel(self.red_flaws, text="20", text_font=('OpenSans.ttf', 15)).grid(column=3, row=1, sticky='nsew',
-                                                                                        padx=10, pady=10)
-        self.red_flaws.grid(column=1, row=5, sticky='nsew')
+        self.red_layer_items_amount = ctk.CTkLabel(self.red_flaws, text="0", text_font=('OpenSans.ttf', 16))
+        self.red_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
+        self.red_flaws.grid(column=1, row=6, sticky='nsew')
 
         for widget in self.winfo_children():
             widget.grid(padx=2, pady=2)
@@ -114,8 +125,17 @@ class Layerinfo(tk.Frame):
         for widget in self.layer_frame.interior.winfo_children():
             widget.grid(padx=2, pady=2)
 
+    def load_data(self, hole_amount, blue_amount, green_amount, yellow_amount, red_amount):
+        self.hole_layer_items_amount.configure(text=hole_amount)
+        self.blue_layer_items_amount.configure(text=blue_amount)
+        self.green_layer_items_amount.configure(text=green_amount)
+        self.yellow_layer_items_amount.configure(text=yellow_amount)
+        self.red_layer_items_amount.configure(text=red_amount)
 
-
+        blue_flaws_list = []
+        for i in range(blue_amount):
+            current_frame = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
+                                       corner_radius=5, border_width=1, border_color='#000000')
 
 
 

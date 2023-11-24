@@ -171,6 +171,8 @@ class Toolbar(tk.Frame):
         self.queue.put(['main_load_data', leather_data])
         self.parent.infobar.update_info(file.name)
 
+        self.parent.layer_info.load_data(len(h_layer_items),len(b_layer_items),len(g_layer_items),len(y_layer_items),len(r_layer_items))
+
 
 
 

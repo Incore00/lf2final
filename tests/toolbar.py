@@ -348,6 +348,8 @@ class Toolbar(tk.Frame):
 				  bg_layer_color, c_layer_color, h_layer_color, b_layer_color, b_layer_linetype, g_layer_color,
 				  g_layer_linetype,y_layer_color, y_layer_linetype, r_layer_color, r_layer_linetype)
 
+		self.parent.layer_info.
+
 
 class LeatherWindow(OpenGLFrame):
 	wheel_pos = 0
