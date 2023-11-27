@@ -67,9 +67,9 @@ class Layerinfo(tk.Frame):
 
         ### TEST ###
 
-        self.hole_flaw = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
-                                       corner_radius=5, border_width=1, border_color='#000000')
-        self.hole_flaw.grid(column=1, row=2, sticky='nsew')
+        #self.hole_flaw = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
+        #                               corner_radius=5, border_width=1, border_color='#000000')
+        #self.hole_flaw.grid(column=1, row=2, sticky='nsew')
 
         ### TEST ###
 
@@ -95,7 +95,7 @@ class Layerinfo(tk.Frame):
                                                                                              pady=10)
         self.green_layer_items_amount = ctk.CTkLabel(self.green_flaws, text="0", text_font=('OpenSans.ttf', 16))
         self.green_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
-        self.green_flaws.grid(column=1, row=4, sticky='nsew')
+        self.green_flaws.grid(column=1, row=5, sticky='nsew')
 
         self.yellow_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                         corner_radius=10, border_width=3, border_color='#000000')
@@ -105,7 +105,7 @@ class Layerinfo(tk.Frame):
         ctk.CTkLabel(self.yellow_flaws, text="Żółta", text_font=('OpenSans.ttf', 16)).grid(column=2, row=1, sticky='nsew', padx=10, pady=10)
         self.yellow_layer_items_amount = ctk.CTkLabel(self.yellow_flaws, text="0", text_font=('OpenSans.ttf', 16))
         self.yellow_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
-        self.yellow_flaws.grid(column=1, row=5, sticky='nsew')
+        self.yellow_flaws.grid(column=1, row=7, sticky='nsew')
 
         self.red_flaws = ctk.CTkFrame(self.layer_frame.interior, bg_color='#303030', fg_color='#303030',
                                          corner_radius=10, border_width=3, border_color='#000000')
@@ -117,7 +117,7 @@ class Layerinfo(tk.Frame):
                                                                                                pady=10)
         self.red_layer_items_amount = ctk.CTkLabel(self.red_flaws, text="0", text_font=('OpenSans.ttf', 16))
         self.red_layer_items_amount.grid(column=3, row=1, sticky='nsew', padx=10, pady=10)
-        self.red_flaws.grid(column=1, row=6, sticky='nsew')
+        self.red_flaws.grid(column=1, row=9, sticky='nsew')
 
         for widget in self.winfo_children():
             widget.grid(padx=2, pady=2)
