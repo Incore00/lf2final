@@ -47,49 +47,13 @@ class Line(pygame.sprite.Sprite):
     def change_color(self, color):
         self.color = color
 
-class Flaw(pygame.sprite.Sprite):
-    def __init__(self, item, color):
-        super().__init__()
-
-        self.item = item
-        self.lowest_x = item[0][0]
-        self.highest_x = item[0][0]
-        self.lowest_y = item[0][1]
-        self.highest_y = item[0][1]
-        for point in item:
-            if point[0] > self.highest_x:
-                self.highest_x = point[0]
-            if point[0] < self.lowest_x:
-                self.lowest_x = point[0]
-            if point[1] < self.lowest_y:
-                self.lowest_y = point[1]
-            if point[1] > self.highest_y:
-                self.highest_y = point[1]
-
-        self.flaw_center = ((self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
-                                self.lowest_y + ((self.highest_y - self.lowest_y) / 2)))
-
-
-        self.color = color
-
-        self.image = pygame.Surface((self.highest_x-self.lowest_x, self.highest_y-self.lowest_y))
-        self.image.set_colorkey((0, 0, 0))
-        self.rect = self.image.get_rect(center=self.flaw_center)
-    def update(self):
-        self.image.fill(0)
-        pygame.draw.polygon(self.image, self.color, self.item)
-        self.mask = pygame.mask.from_surface(self.image)
-    def change_color(self, color):
-        self.color = color
-
-
 
 
 
 pygame.init()
 window = pygame.display.set_mode((300, 300))
 #pygame.mouse.set_visible(False)
-window.fill((255, 0, 0))
+window.fill((0, 0, 0))
 clock = pygame.time.Clock()
 
 item = [[1024.5, 780.4], [1020.5, 780.0], [1016.5, 779.6], [1009.5, 777.6], [1006.5, 776.4], [1001.5, 773.8000000000001],
@@ -110,11 +74,10 @@ item = [[1024.5, 780.4], [1020.5, 780.0], [1016.5, 779.6], [1009.5, 777.6], [100
         [1066.5, 766.6], [1066.5, 766.6], [1066.5, 766.8000000000001], [1059.5, 772.0], [1059.5, 772.0], [1056.5, 773.8000000000001],
         [1056.5, 773.8000000000001], [1050.5, 776.2], [1047.5, 777.6], [1039.5, 779.8000000000001], [1031.5, 780.4], [1024.5, 780.4]]
 
-position = (100,100)
+position = (200,200)
 sprite_image = pygame.image.load('cursor.png').convert_alpha()
 moving_object = SpriteObject(0, 0, sprite_image)
-#line_object = Line(item, (255, 255, 0), position)
-line_object = Flaw(item, (255, 255, 0))
+line_object = Line(item, (255, 255, 0), position)
 all_sprites = pygame.sprite.Group([moving_object, line_object])
 red = 0
 max_flag = False
@@ -128,7 +91,21 @@ while run:
             run = False
 
     all_sprites.update()
-    window.fill((50, 50, 50))
+    window.fill((0, 0, 0))
+
+    if pygame.sprite.collide_mask(moving_object, line_object):
+        if max_flag != True:
+            red = min(255, red + 10)
+        else:
+            red = max(0, red - 10)
+        if red == 255:
+            max_flag = True
+        elif red == 0:
+            max_flag = False
+
+    else:
+        red = 0
+
     line_object.change_color((255-red, red, red))
     all_sprites.draw(window)
     pygame.display.flip()

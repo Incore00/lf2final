@@ -52,13 +52,6 @@ class LeatherWindow_main(tk.Frame):
 		self.displayed_y_layer_items = None
 		self.displayed_r_layer_items = None
 
-		self.c_layer_items_calc_history = []
-		self.h_layer_items_calc_history = []
-		self.b_layer_items_calc_history = []
-		self.g_layer_items_calc_history = []
-		self.y_layer_items_calc_history = []
-		self.r_layer_items_calc_history = []
-
 		self.c_layer_items_offset = []
 		self.h_layer_items_offset = []
 		self.b_layer_items_offset = []
@@ -123,10 +116,6 @@ class LeatherWindow_main(tk.Frame):
 		self.update()
 		self.after(1, self.pygame_loop)
 
-	def save_old_points(self):
-		self.old_points_list = [self.displayed_c_layer_items, self.displayed_h_layer_items, self.displayed_b_layer_items,
-						   self.displayed_g_layer_items, self.displayed_y_layer_items, self.displayed_r_layer_items]
-
 	def load_data (self, leather):
 		self.c_layer_items = leather[0]
 		self.h_layer_items = leather[1]
@@ -134,41 +123,6 @@ class LeatherWindow_main(tk.Frame):
 		self.g_layer_items = leather[3]
 		self.y_layer_items = leather[4]
 		self.r_layer_items = leather[5]
-
-		self.c_layer_items_calc_history = []
-		self.h_layer_items_calc_history = []
-		self.b_layer_items_calc_history = []
-		self.g_layer_items_calc_history = []
-		self.y_layer_items_calc_history = []
-		self.r_layer_items_calc_history = []
-
-		for point in self.c_layer_items:
-			self.c_layer_items_calc_history.append([[], []])
-		for item in self.h_layer_items:
-			item_history = []
-			for point in item:
-				item_history.append([[], []])
-			self.h_layer_items_calc_history.append(item_history)
-		for item in self.b_layer_items:
-			item_history = []
-			for point in item:
-				item_history.append([[], []])
-			self.b_layer_items_calc_history.append(item_history)
-		for item in self.g_layer_items:
-			item_history = []
-			for point in item:
-				item_history.append([[], []])
-			self.g_layer_items_calc_history.append(item_history)
-		for item in self.y_layer_items:
-			item_history = []
-			for point in item:
-				item_history.append([[], []])
-			self.y_layer_items_calc_history.append(item_history)
-		for item in self.r_layer_items:
-			item_history = []
-			for point in item:
-				item_history.append([[], []])
-			self.r_layer_items_calc_history.append(item_history)
 
 		self.calculate_rotation()
 		self.calculate_center()
@@ -188,12 +142,6 @@ class LeatherWindow_main(tk.Frame):
 				if event.button == 1:
 					self.leather_draging = True
 					mouse_x, mouse_y = event.pos
-					self.temp_c_layer_items = self.displayed_c_layer_items
-					self.temp_h_layer_items = self.displayed_h_layer_items
-					self.temp_b_layer_items = self.displayed_b_layer_items
-					self.temp_g_layer_items = self.displayed_g_layer_items
-					self.temp_y_layer_items = self.displayed_y_layer_items
-					self.temp_r_layer_items = self.displayed_r_layer_items
 					for point in self.displayed_c_layer_items:
 						self.c_layer_items_offset.append([(point[0] - mouse_x), point[1] - mouse_y])
 					for item in self.displayed_h_layer_items:
@@ -231,35 +179,7 @@ class LeatherWindow_main(tk.Frame):
 					self.g_layer_items_offset = []
 					self.y_layer_items_offset = []
 					self.r_layer_items_offset = []
-					for old_point, new_point, history in zip(self.temp_c_layer_items, self.displayed_c_layer_items,
-															 self.c_layer_items_calc_history):
-						history[0].append(old_point[0] - new_point[0])
-						history[1].append(old_point[1] - new_point[1])
-					for old_item, new_item, history in zip(self.temp_h_layer_items, self.displayed_h_layer_items,
-														   self.h_layer_items_calc_history):
-						for old_point, new_point, point_history in zip(old_item, new_item, history):
-							point_history[0].append(old_point[0] - new_point[0])
-							point_history[1].append(old_point[1] - new_point[1])
-					for old_item, new_item, history in zip(self.temp_b_layer_items, self.displayed_b_layer_items,
-														   self.b_layer_items_calc_history):
-						for old_point, new_point, point_history in zip(old_item, new_item, history):
-							point_history[0].append(old_point[0] - new_point[0])
-							point_history[1].append(old_point[1] - new_point[1])
-					for old_item, new_item, history in zip(self.temp_g_layer_items, self.displayed_g_layer_items,
-														   self.g_layer_items_calc_history):
-						for old_point, new_point, point_history in zip(old_item, new_item, history):
-							point_history[0].append(old_point[0] - new_point[0])
-							point_history[1].append(old_point[1] - new_point[1])
-					for old_item, new_item, history in zip(self.temp_y_layer_items, self.displayed_y_layer_items,
-														   self.y_layer_items_calc_history):
-						for old_point, new_point, point_history in zip(old_item, new_item, history):
-							point_history[0].append(old_point[0] - new_point[0])
-							point_history[1].append(old_point[1] - new_point[1])
-					for old_item, new_item, history in zip(self.temp_r_layer_items, self.displayed_r_layer_items,
-														   self.r_layer_items_calc_history):
-						for old_point, new_point, point_history in zip(old_item, new_item, history):
-							point_history[0].append(old_point[0] - new_point[0])
-							point_history[1].append(old_point[1] - new_point[1])
+
 			elif event.type == pygame.MOUSEMOTION:
 				if self.leather_draging:
 					mouse_x, mouse_y = event.pos
@@ -341,9 +261,6 @@ class LeatherWindow_main(tk.Frame):
 		self.temp_drag_diff_y_layer_items = dragging_changes[4]
 		self.temp_drag_diff_r_layer_items = dragging_changes[5]
 
-		old_points_list = [self.displayed_c_layer_items, self.displayed_h_layer_items, self.displayed_b_layer_items,
-						   self.displayed_g_layer_items, self.displayed_y_layer_items, self.displayed_r_layer_items]
-
 		self.new_c_layer_items = []
 		self.new_h_layer_items = []
 		self.new_b_layer_items = []
@@ -384,44 +301,7 @@ class LeatherWindow_main(tk.Frame):
 			self.new_r_layer_items.append(item_list)
 		self.displayed_r_layer_items = self.new_r_layer_items
 
-		new_points_list = [self.displayed_c_layer_items, self.displayed_h_layer_items, self.displayed_b_layer_items,
-						   self.displayed_g_layer_items, self.displayed_y_layer_items, self.displayed_r_layer_items]
-
-		self.save_history(old_points_list, new_points_list)
-
 		self.drawing_shapes = True
-
-	def save_history(self, old_points_list, new_points_list):
-		for old_point, new_point, history in zip(old_points_list[0], new_points_list[0],
-												 self.c_layer_items_calc_history):
-			history[0].append(old_point[0] - new_point[0])
-			history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(old_points_list[1], new_points_list[1],
-											   self.h_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(old_points_list[2], new_points_list[2],
-											   self.b_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(old_points_list[3], new_points_list[3],
-											   self.g_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(old_points_list[4], new_points_list[4],
-											   self.y_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(old_points_list[5], new_points_list[5],
-											   self.r_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-
 
 	def calculate_rotation (self):
 		new_c_layer_points = []
@@ -430,49 +310,37 @@ class LeatherWindow_main(tk.Frame):
 		new_g_layer_items = []
 		new_y_layer_items = []
 		new_r_layer_items = []
-		for point, history in zip(self.c_layer_items, self.c_layer_items_calc_history):
+		for point in self.c_layer_items:
 			new_c_layer_points.append([point[1], point[0]])
-			history[0].append('y')
-			history[1].append('x')
 		self.displayed_c_layer_items = new_c_layer_points
-		for item, history in zip(self.h_layer_items, self.h_layer_items_calc_history):
+		for item in self.h_layer_items:
 			point_list = []
-			for point, point_history in zip(item, history):
+			for point in item:
 				point_list.append([point[1], point[0]])
-				point_history[0].append('y')
-				point_history[1].append('x')
 			new_h_layer_items.append(point_list)
 		self.displayed_h_layer_items = new_h_layer_items
-		for item, history in zip(self.b_layer_items, self.b_layer_items_calc_history):
+		for item in self.b_layer_items:
 			point_list = []
-			for point, point_history in zip(item, history):
+			for point in item:
 				point_list.append([point[1], point[0]])
-				point_history[0].append('y')
-				point_history[1].append('x')
 			new_b_layer_items.append(point_list)
 		self.displayed_b_layer_items = new_b_layer_items
-		for item, history in zip(self.g_layer_items, self.g_layer_items_calc_history):
+		for item in self.g_layer_items:
 			point_list = []
-			for point, point_history in zip(item, history):
+			for point in item:
 				point_list.append([point[1], point[0]])
-				point_history[0].append('y')
-				point_history[1].append('x')
 			new_g_layer_items.append(point_list)
 		self.displayed_g_layer_items = new_g_layer_items
-		for item, history in zip(self.y_layer_items, self.y_layer_items_calc_history):
+		for item in self.y_layer_items:
 			point_list = []
-			for point, point_history in zip(item, history):
+			for point in item:
 				point_list.append([point[1], point[0]])
-				point_history[0].append('y')
-				point_history[1].append('x')
 			new_y_layer_items.append(point_list)
 		self.displayed_y_layer_items = new_y_layer_items
-		for item, history in zip(self.r_layer_items, self.r_layer_items_calc_history):
+		for item in self.r_layer_items:
 			point_list = []
-			for point, point_history in zip(item, history):
+			for point in item:
 				point_list.append([point[1], point[0]])
-				point_history[0].append('y')
-				point_history[1].append('x')
 			new_r_layer_items.append(point_list)
 		self.displayed_r_layer_items = new_r_layer_items
 
@@ -527,13 +395,6 @@ class LeatherWindow_main(tk.Frame):
 		self.y_layer_items_pos_offset = []
 		self.r_layer_items_pos_offset = []
 
-		self.temp_c_layer_items = self.displayed_c_layer_items
-		self.temp_h_layer_items = self.displayed_h_layer_items
-		self.temp_b_layer_items = self.displayed_b_layer_items
-		self.temp_g_layer_items = self.displayed_g_layer_items
-		self.temp_y_layer_items = self.displayed_y_layer_items
-		self.temp_r_layer_items = self.displayed_r_layer_items
-
 		for point in self.displayed_c_layer_items:
 			self.c_layer_items_pos_offset.append(
 				[(point[0] - self.leather_center[0]), point[1] - self.leather_center[1]])
@@ -573,56 +434,38 @@ class LeatherWindow_main(tk.Frame):
 		sw, sh = self.winfo_reqwidth(), self.winfo_reqheight()
 		screen_center = [sw / 2, sh / 2]
 
-		for offset, history, old_point in zip(self.c_layer_items_pos_offset, self.c_layer_items_calc_history,
-											  self.temp_c_layer_items):
+		for offset in self.c_layer_items_pos_offset:
 			new_c_layer_items.append(
 				[round((offset[0] + screen_center[0]), 1), round((offset[1] + screen_center[1]), 1)])
-			history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-			history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 		self.displayed_c_layer_items = new_c_layer_items
-		for item, item_offset, history, old_item in zip(self.displayed_h_layer_items, self.h_layer_items_pos_offset,
-														self.h_layer_items_calc_history, self.temp_h_layer_items):
+		for item, item_offset in zip(self.displayed_h_layer_items, self.h_layer_items_pos_offset):
 			item_list = []
-			for point, offset, point_history, old_point in zip(item, item_offset, history, old_item):
+			for point, offset in zip(item, item_offset):
 				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
-				point_history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-				point_history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 			new_h_layer_items.append(item_list)
 		self.displayed_h_layer_items = new_h_layer_items
-		for item, item_offset, history, old_item in zip(self.displayed_b_layer_items, self.b_layer_items_pos_offset,
-														self.b_layer_items_calc_history, self.temp_b_layer_items):
+		for item, item_offset in zip(self.displayed_b_layer_items, self.b_layer_items_pos_offset):
 			item_list = []
-			for point, offset, point_history, old_point in zip(item, item_offset, history, old_item):
+			for point, offset in zip(item, item_offset):
 				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
-				point_history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-				point_history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 			new_b_layer_items.append(item_list)
 		self.displayed_b_layer_items = new_b_layer_items
-		for item, item_offset, history, old_item in zip(self.displayed_g_layer_items, self.g_layer_items_pos_offset,
-														self.g_layer_items_calc_history, self.temp_g_layer_items):
+		for item, item_offset in zip(self.displayed_g_layer_items, self.g_layer_items_pos_offset):
 			item_list = []
-			for point, offset, point_history, old_point in zip(item, item_offset, history, old_item):
+			for point, offset in zip(item, item_offset):
 				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
-				point_history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-				point_history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 			new_g_layer_items.append(item_list)
 		self.displayed_g_layer_items = new_g_layer_items
-		for item, item_offset, history, old_item in zip(self.displayed_y_layer_items, self.y_layer_items_pos_offset,
-														self.y_layer_items_calc_history, self.temp_y_layer_items):
+		for item, item_offset in zip(self.displayed_y_layer_items, self.y_layer_items_pos_offset):
 			item_list = []
-			for point, offset, point_history, old_point in zip(item, item_offset, history, old_item):
+			for point, offset in zip(item, item_offset):
 				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
-				point_history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-				point_history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 			new_y_layer_items.append(item_list)
 		self.displayed_y_layer_items = new_y_layer_items
-		for item, item_offset, history, old_item in zip(self.displayed_r_layer_items, self.r_layer_items_pos_offset,
-														self.r_layer_items_calc_history, self.temp_r_layer_items):
+		for item, item_offset in zip(self.displayed_r_layer_items, self.r_layer_items_pos_offset):
 			item_list = []
-			for point, offset, point_history, old_point in zip(item, item_offset, history, old_item):
+			for point, offset in zip(item, item_offset):
 				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
-				point_history[0].append(round((old_point[0] - (offset[0] + screen_center[0])), 1))
-				point_history[1].append(round((old_point[1] - (offset[1] + screen_center[1])), 1))
 			new_r_layer_items.append(item_list)
 		self.displayed_r_layer_items = new_r_layer_items
 		self.drawing_shapes = True
@@ -630,12 +473,7 @@ class LeatherWindow_main(tk.Frame):
 	def zoom_in (self, flag):
 		if flag == False:
 			self.queue.put(['preview_zoom_in', True])
-		self.temp_c_layer_items = self.displayed_c_layer_items
-		self.temp_h_layer_items = self.displayed_h_layer_items
-		self.temp_b_layer_items = self.displayed_b_layer_items
-		self.temp_g_layer_items = self.displayed_g_layer_items
-		self.temp_y_layer_items = self.displayed_y_layer_items
-		self.temp_r_layer_items = self.displayed_r_layer_items
+
 		center_point = [self.winfo_reqwidth() / 2, self.winfo_reqheight() / 2]
 		new_layer = []
 		for point in self.displayed_c_layer_items:
@@ -724,47 +562,11 @@ class LeatherWindow_main(tk.Frame):
 					center_point[0] -= 0.01
 			new_layer.append(item_list)
 		self.displayed_r_layer_items = new_layer
-		for old_point, new_point, history in zip(self.temp_c_layer_items, self.displayed_c_layer_items,
-												 self.c_layer_items_calc_history):
-			history[0].append(old_point[0] - new_point[0])
-			history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_h_layer_items, self.displayed_h_layer_items,
-											   self.h_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_b_layer_items, self.displayed_b_layer_items,
-											   self.b_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_g_layer_items, self.displayed_g_layer_items,
-											   self.g_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_y_layer_items, self.displayed_y_layer_items,
-											   self.y_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_r_layer_items, self.displayed_r_layer_items,
-											   self.r_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-
 		self.drawing_shapes = True
 
 	def zoom_out (self, queue_flag, drawing_flag):
 		if queue_flag == False:
 			self.queue.put(['preview_zoom_out', True])
-		self.temp_c_layer_items = self.displayed_c_layer_items
-		self.temp_h_layer_items = self.displayed_h_layer_items
-		self.temp_b_layer_items = self.displayed_b_layer_items
-		self.temp_g_layer_items = self.displayed_g_layer_items
-		self.temp_y_layer_items = self.displayed_y_layer_items
-		self.temp_r_layer_items = self.displayed_r_layer_items
 		center_point = [self.winfo_reqwidth() / 2, self.winfo_reqheight() / 2]
 		new_layer = []
 		for point in self.displayed_c_layer_items:
@@ -854,36 +656,6 @@ class LeatherWindow_main(tk.Frame):
 			new_layer.append(item_list)
 		self.displayed_r_layer_items = new_layer
 
-		for old_point, new_point, history in zip(self.temp_c_layer_items, self.displayed_c_layer_items,
-												 self.c_layer_items_calc_history):
-			history[0].append(old_point[0] - new_point[0])
-			history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_h_layer_items, self.displayed_h_layer_items,
-											   self.h_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_b_layer_items, self.displayed_b_layer_items,
-											   self.b_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_g_layer_items, self.displayed_g_layer_items,
-											   self.g_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_y_layer_items, self.displayed_y_layer_items,
-											   self.y_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-		for old_item, new_item, history in zip(self.temp_r_layer_items, self.displayed_r_layer_items,
-											   self.r_layer_items_calc_history):
-			for old_point, new_point, point_history in zip(old_item, new_item, history):
-				point_history[0].append(old_point[0] - new_point[0])
-				point_history[1].append(old_point[1] - new_point[1])
-
 		if drawing_flag == True:
 			self.drawing_shapes = True
 
@@ -920,27 +692,3 @@ class LeatherWindow_main(tk.Frame):
 					pygame.draw.lines(self.main_surface, configFile.r_layer_color, True, item)
 				elif configFile.r_layer_linetype == "polygon":
 					pygame.draw.polygon(self.main_surface, configFile.r_layer_color, item)
-
-		#self.calculation_history()
-
-	def calculation_history (self):
-		if type(self.b_layer_items_calc_history[0][0]) != 'None':
-			x_point_story = self.b_layer_items_calc_history[0][0][0]
-			y_point_story = self.b_layer_items_calc_history[0][0][1]
-			x_pierwotne = self.b_layer_items[0][0][0]
-			y_pierwotne = self.b_layer_items[0][0][1]
-			x_wyswietlone = self.displayed_b_layer_items[0][0][0]
-			y_wyswietlone = self.displayed_b_layer_items[0][0][1]
-			x_obliczone = x_wyswietlone
-			y_obliczone = y_wyswietlone
-			for calc_x, calc_y in zip(reversed(x_point_story), reversed(y_point_story)):
-				if calc_x != 'y' and calc_y != 'x':
-					x_obliczone += calc_x
-					y_obliczone += calc_y
-				else:
-					temp_y = y_obliczone
-					y_obliczone = x_obliczone
-					x_obliczone = temp_y
-			#print('calc_history: ', self.b_layer_items_calc_history[0][0])
-			print('porownanie main x old-calc-displayed', x_pierwotne, x_obliczone, x_wyswietlone)
-			print('porownanie main y old-calc-displayed', y_pierwotne, y_obliczone, y_wyswietlone)

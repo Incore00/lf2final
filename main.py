@@ -4,7 +4,7 @@ import subprocess
 from multiprocessing import Process, Queue
 from bin.toolbar import Toolbar
 from bin.infobar import Infobar
-from bin.preview3_ogarniete import Leatherpreview
+from bin.preview_4_wo_history import Leatherpreview
 from bin.layerInfo import Layerinfo
 from bin.projector import Leathermain
 from bin.leather_toolbar import leather_tools
@@ -17,6 +17,9 @@ class MainApplication(tk.Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
 
+        self.leather_tools = leather_tools(self, queue)
+        self.leather_tools.grid(column=1, row=4, sticky='nsew')
+
         self.toolbar = Toolbar(self, queue)
         self.toolbar.grid(column=1, row=1, columnspan=2, sticky='nsew')
 
@@ -28,9 +31,6 @@ class MainApplication(tk.Frame):
 
         self.layer_info = Layerinfo(self)
         self.layer_info.grid(column=2, row=3, rowspan=2, sticky='nsew')
-
-        self.leather_tools = leather_tools(self, queue)
-        self.leather_tools.grid(column=1, row=4, sticky='nsew')
 
         style = ttk.Style()
         # style.layout("TNotebook", [])
