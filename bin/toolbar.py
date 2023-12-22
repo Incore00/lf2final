@@ -93,6 +93,7 @@ class Toolbar(tk.Frame):
         r_layer_items = []
         h_layer = []
         h_layer_items = []
+        text_layer_items = []
 
         if file != 'NotNone':
             try:
@@ -103,6 +104,15 @@ class Toolbar(tk.Frame):
                 self.active_file = file
             msp = leather.modelspace()
             for item in msp:
+                #print(item)
+                if 'TEXT' in str(item):
+                    # text -> layer 72
+                    #print(item)
+                    #print(item.dxf.get('layer'))
+                    #print(item.get_placement())
+                    #print(item.plain_text())
+                    text_layer_items.append([item.get_placement()[1][0],item.get_placement()[1][1]])
+                    #print(text_layer_items)
                 if 'POLYLINE' in str(item):
                     if str(item.dxf.get('layer')) == '51':
                         b_layer.append(item)
@@ -165,7 +175,7 @@ class Toolbar(tk.Frame):
         except:
             raise Exception("Błąd podczas odczytu punktów warstwy dziur")
 
-        leather_data = c_layer_points, h_layer_items, b_layer_items, g_layer_items, y_layer_items, r_layer_items
+        leather_data = c_layer_points, h_layer_items, b_layer_items, g_layer_items, y_layer_items, r_layer_items, text_layer_items
 
         self.queue.put(['preview_load_data', leather_data])
         self.queue.put(['main_load_data', leather_data])

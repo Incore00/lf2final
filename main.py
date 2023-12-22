@@ -4,7 +4,8 @@ import subprocess
 from multiprocessing import Process, Queue
 from bin.toolbar import Toolbar
 from bin.infobar import Infobar
-from bin.preview_4_wo_history import Leatherpreview
+from bin.preview_5_sprites import Leatherpreview
+#from bin.preview_4_wo_history import Leatherpreview
 from bin.layerInfo import Layerinfo
 from bin.projector import Leathermain
 from bin.leather_toolbar import leather_tools

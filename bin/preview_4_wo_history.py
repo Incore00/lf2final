@@ -74,60 +74,22 @@ class LeatherWindow_preview_sprites(tk.Frame):
         window_size = (self.winfo_reqwidth(), self.winfo_reqheight())
         print('Window size', window_size)
         self.screen = pygame.display.set_mode(window_size)
-        #self.main_surface = pygame.Surface(window_size)
 
-        self.drawing_sprites_flag = False
-        self.max_flag = False
-
-        self.red = 255
-
-        item1 = [[100,100], [200,100], [200, 200], [100, 200]]
-        item2 = [[300,300], [400,300], [400, 400], [300, 400]]
-        cursor_image = pygame.image.load('cursor.png').convert_alpha()
-
-        self.sprite1 = FlawSprite(item1, (0, 0, 255), (150,150))
-        self.sprite2 = FlawSprite(item2, (0, 255, 0), (350, 350))
-        self.sprite3 = CursorSprite(0, 0, cursor_image)
-
-        self.all_sprites = pygame.sprite.Group([self.sprite1, self.sprite2, self.sprite3])
 
         self.pygame_loop()
 
     def pygame_loop(self):
-        self.draw_sprites()
+        #self.draw_sprites()
 
-        self.event_checker()
+
 
         self.after(1, self.pygame_loop)
 
-    def event_checker(self):
-        if pygame.sprite.collide_mask(self.sprite3, self.sprite1):
-            print('collision!')
-            if self.max_flag != True:
-                self.red = min(255, self.red + 10)
-            else:
-                self.red = max(0, self.red - 10)
-            if self.red == 255:
-                self.max_flag = True
-            elif self.red == 0:
-                self.max_flag = False
 
-        self.sprite1.change_color((0, 0, self.red))
-        if pygame.sprite.collide_mask(self.sprite3, self.sprite2):
-            if self.max_flag != True:
-                self.red = min(255, self.red + 10)
-            else:
-                self.red = max(0, self.red - 10)
-            if self.red == 255:
-                self.max_flag = True
-            elif self.red == 0:
-                self.max_flag = False
-
-        self.sprite2.change_color((0, self.red, 0))
     def draw_sprites(self):
-        self.all_sprites.update()
+        #self.all_sprites.update()
         self.screen.fill((0, 0, 0))
-        self.all_sprites.draw(self.screen)
+        #self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
 
