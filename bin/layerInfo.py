@@ -3,12 +3,14 @@ import tkinter.ttk as ttk
 import pyglet
 import customtkinter as ctk
 from tkfontawesome import icon_to_image
+from bin import configFile
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
 class Layerinfo(tk.Frame):
-    def __init__ (self, parent, *args, **kwargs):
+    def __init__ (self, parent, queue, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
+        self.queue = queue
         self.parent = parent
         self.pack_propagate(0)
         self.grid_propagate(0)
@@ -22,26 +24,26 @@ class Layerinfo(tk.Frame):
         self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=40)
         self.blue_layer_btn = ctk.CTkButton(self, image=self.blue_layer_icon_active, fg_color='#505050',
                                             hover_color='#404040', compound='top', corner_radius=10, text='Niebieska',
-                                            text_font=('OpenSans.ttf', 15))
+                                            text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('blue'))
         self.blue_layer_btn.grid(column=1, row=2, sticky='nsew')
 
         self.green_layer_icon_active = icon_to_image("layer-group", fill='#00FF00', scale_to_width=40)
         self.green_layer_btn = ctk.CTkButton(self, image=self.green_layer_icon_active, fg_color='#505050',
                                              hover_color='#404040', compound='top', corner_radius=10, text='Zielona',
-                                             text_font=('OpenSans.ttf', 15))
+                                             text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('green'))
         self.green_layer_btn.grid(column=2, row=2, sticky='nsew')
 
         self.yellow_layer_icon_active = icon_to_image("layer-group", fill='#FFFF00', scale_to_width=40)
         self.yellow_layer_btn = ctk.CTkButton(self, image=self.yellow_layer_icon_active,
                                               fg_color='#505050',
                                               hover_color='#404040', compound='top', corner_radius=10, text='Zółta',
-                                              text_font=('OpenSans.ttf', 15))
+                                              text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('yellow'))
         self.yellow_layer_btn.grid(column=3, row=2, sticky='nsew')
 
         self.red_layer_icon_active = icon_to_image("layer-group", fill='#FF0000', scale_to_width=40)
         self.red_layer_btn = ctk.CTkButton(self, image=self.red_layer_icon_active, fg_color='#505050',
                                            hover_color='#404040', compound='top', corner_radius=10, text='Czerwona',
-                                           text_font=('OpenSans.ttf', 15))
+                                           text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('red'))
         self.red_layer_btn.grid(column=4, row=2, sticky='nsew')
 
         ctk.CTkLabel(self, text="     Warstwa:", text_font=('OpenSans.ttf', 16)).grid(column=1, columnspan=2, row=3, sticky='nsew')
@@ -125,6 +127,27 @@ class Layerinfo(tk.Frame):
         for widget in self.layer_frame.interior.winfo_children():
             widget.grid(padx=2, pady=2)
 
+    def change_layer_visibility(self, layer):
+        if layer == 'blue':
+            if configFile.b_layer_flag == True:
+                configFile.b_layer_flag = False
+            else:
+                configFile.b_layer_flag = True
+        elif layer == 'green':
+            if configFile.g_layer_flag == True:
+                configFile.g_layer_flag = False
+            else:
+                configFile.g_layer_flag = True
+        elif layer == 'yellow':
+            if configFile.y_layer_flag == True:
+                configFile.y_layer_flag = False
+            else:
+                configFile.y_layer_flag = True
+        elif layer == 'red':
+            if configFile.r_layer_flag == True:
+                configFile.r_layer_flag = False
+            else:
+                configFile.r_layer_flag = True
     def load_data(self, hole_amount, blue_amount, green_amount, yellow_amount, red_amount):
         self.hole_layer_items_amount.configure(text=hole_amount)
         self.blue_layer_items_amount.configure(text=blue_amount)

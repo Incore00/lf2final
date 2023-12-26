@@ -8,6 +8,7 @@ from PIL import ImageTk
 from datetime import datetime
 from threading import Thread
 import ezdxf
+from bin import configFile
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -24,6 +25,8 @@ class Toolbar(tk.Frame):
         self.columnconfigure((1, 2, 3, 4, 5, 6, 7), weight=1)
         self.rowconfigure(1, weight=1)
 
+        self.change_colors_flag = False
+
         logo = ImageTk.PhotoImage(file='images/logo.png')
         logo_label = tk.Label(self, image=logo, bg='#404040')
         logo_label.photo = logo
@@ -37,7 +40,7 @@ class Toolbar(tk.Frame):
 
         self.change_colors_icon = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
         self.change_colors_btn = ctk.CTkButton(self, image=self.change_colors_icon,
-                                               fg_color='#505050',
+                                               fg_color='#505050', command=lambda: self.change_colors_func(),
                                                hover_color='#404040', compound='top', corner_radius=10,
                                                text='Zmień kolory', text_font=('OpenSans.ttf', 18))
         self.change_colors_btn.grid(column=3, row=1, sticky='nsew')
@@ -75,6 +78,26 @@ class Toolbar(tk.Frame):
             datetime.isocalendar(datetime.now())[1])
         self.clock.set(clock)
         self.after(1000, self.clockLoop)
+
+    def change_colors_func(self):
+        if self.change_colors_flag == False:
+            configFile.c_layer_color = (0, 0, 0)
+            configFile.bg_layer_color = (255, 255, 255)
+            configFile.b_layer_linetype = "polygon"
+            configFile.g_layer_linetype = "polygon"
+            configFile.y_layer_linetype = "polygon"
+            configFile.r_layer_linetype = "polygon"
+            self.change_colors_flag = True
+        elif self.change_colors_flag == True:
+            configFile.c_layer_color = (255, 255, 255)
+            configFile.bg_layer_color = (0, 0, 0)
+            configFile.b_layer_linetype = "lines"
+            configFile.g_layer_linetype = "lines"
+            configFile.y_layer_linetype = "lines"
+            configFile.r_layer_linetype = "lines"
+            self.change_colors_flag = False
+        self.queue.put(['preview_reload'])
+
 
     def load_leather_data (self, file=None):
         if file == None:

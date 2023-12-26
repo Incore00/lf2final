@@ -30,7 +30,7 @@ class MainApplication(tk.Frame):
         self.leather_preview = Leatherpreview(self, queue)
         self.leather_preview.grid(column=1, row=3, sticky='nsew')
 
-        self.layer_info = Layerinfo(self)
+        self.layer_info = Layerinfo(self, queue)
         self.layer_info.grid(column=2, row=3, rowspan=2, sticky='nsew')
 
         style = ttk.Style()
