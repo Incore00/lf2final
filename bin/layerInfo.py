@@ -22,18 +22,21 @@ class Layerinfo(tk.Frame):
         tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
 
         self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=40)
+        self.blue_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.blue_layer_btn = ctk.CTkButton(self, image=self.blue_layer_icon_active, fg_color='#505050',
                                             hover_color='#404040', compound='top', corner_radius=10, text='Niebieska',
                                             text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('blue'))
         self.blue_layer_btn.grid(column=1, row=2, sticky='nsew')
 
         self.green_layer_icon_active = icon_to_image("layer-group", fill='#00FF00', scale_to_width=40)
+        self.green_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.green_layer_btn = ctk.CTkButton(self, image=self.green_layer_icon_active, fg_color='#505050',
                                              hover_color='#404040', compound='top', corner_radius=10, text='Zielona',
                                              text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('green'))
         self.green_layer_btn.grid(column=2, row=2, sticky='nsew')
 
         self.yellow_layer_icon_active = icon_to_image("layer-group", fill='#FFFF00', scale_to_width=40)
+        self.yellow_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.yellow_layer_btn = ctk.CTkButton(self, image=self.yellow_layer_icon_active,
                                               fg_color='#505050',
                                               hover_color='#404040', compound='top', corner_radius=10, text='Zółta',
@@ -41,6 +44,7 @@ class Layerinfo(tk.Frame):
         self.yellow_layer_btn.grid(column=3, row=2, sticky='nsew')
 
         self.red_layer_icon_active = icon_to_image("layer-group", fill='#FF0000', scale_to_width=40)
+        self.red_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.red_layer_btn = ctk.CTkButton(self, image=self.red_layer_icon_active, fg_color='#505050',
                                            hover_color='#404040', compound='top', corner_radius=10, text='Czerwona',
                                            text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('red'))
@@ -131,23 +135,31 @@ class Layerinfo(tk.Frame):
         if layer == 'blue':
             if configFile.b_layer_flag == True:
                 configFile.b_layer_flag = False
+                self.blue_layer_btn.configure(image=self.blue_layer_icon_inactive)
             else:
                 configFile.b_layer_flag = True
+                self.blue_layer_btn.configure(image=self.blue_layer_icon_active)
         elif layer == 'green':
             if configFile.g_layer_flag == True:
                 configFile.g_layer_flag = False
+                self.green_layer_btn.configure(image=self.green_layer_icon_inactive)
             else:
                 configFile.g_layer_flag = True
+                self.green_layer_btn.configure(image=self.green_layer_icon_active)
         elif layer == 'yellow':
             if configFile.y_layer_flag == True:
                 configFile.y_layer_flag = False
+                self.yellow_layer_btn.configure(image=self.yellow_layer_icon_inactive)
             else:
                 configFile.y_layer_flag = True
+                self.yellow_layer_btn.configure(image=self.yellow_layer_icon_active)
         elif layer == 'red':
             if configFile.r_layer_flag == True:
                 configFile.r_layer_flag = False
+                self.red_layer_btn.configure(image=self.red_layer_icon_inactive)
             else:
                 configFile.r_layer_flag = True
+                self.red_layer_btn.configure(image=self.red_layer_icon_inactive)
     def load_data(self, hole_amount, blue_amount, green_amount, yellow_amount, red_amount):
         self.hole_layer_items_amount.configure(text=hole_amount)
         self.blue_layer_items_amount.configure(text=blue_amount)

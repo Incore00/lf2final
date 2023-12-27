@@ -20,12 +20,51 @@ class Leatherpreview(tk.Frame):
 
 		LeatherWindow_preview(self, self.queue, height=self.sh, width=self.sw).pack(side="top", fill="both",
 																					expand=True)
+#Na skórze (pozaz skazą):
+#-cofnij
+#-dodaj skaze
+#
+#Na skazie:
+#-cofnij
+#-warstwa(z kolejnym menu)
+#-usuń
+#-zmień rozmiar
+#-przesuń
+class FlawDropdownMenu(pygame.sprite.Sprite):
+	def __init__(self, flaw = None):
+		super().__init__()
+		self.flaw = flaw
+		self.image = pygame.Surface((configFile.flaw_dropdown_menu_size, configFile.flaw_dropdown_menu_size))
+		self.image.set_colorkey((0, 0, 0))
+		self.rect = self.image.get_rect(center=(configFile.flaw_dropdown_menu_size/2, configFile.flaw_dropdown_menu_size/2))
+		self.mask = pygame.mask.from_surface(self.image)
+		self.mouse_pos = pygame.mouse.get_pos()
+
+	def update(self):
+		pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_color, self.rect, border_radius=5)
+		self.mask = pygame.mask.from_surface(self.image)
+		self.rect.topleft = self.mouse_pos
+
+class DropdownMenu(pygame.sprite.Sprite):
+	def __init__(self):
+		super().__init__()
+		self.image = pygame.Surface((configFile.dropdown_menu_size, configFile.dropdown_menu_size))
+		self.image.set_colorkey((0, 0, 0))
+		self.rect = self.image.get_rect(center=(configFile.dropdown_menu_size/2, configFile.dropdown_menu_size/2))
+		self.mask = pygame.mask.from_surface(self.image)
+		self.mouse_pos = pygame.mouse.get_pos()
+
+	def update(self):
+		pygame.draw.rect(self.image, configFile.dropdown_menu_color, self.rect, border_radius=5)
+		self.mask = pygame.mask.from_surface(self.image)
+		self.rect.topleft = self.mouse_pos
+
+
 
 
 class CursorSprite(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-
 		self.image = pygame.Surface((configFile.cursor_radius*2,configFile.cursor_radius*2))
 		self.image.set_colorkey((0, 0, 0))
 		self.rect = self.image.get_rect(center=(configFile.cursor_radius, configFile.cursor_radius))
@@ -180,6 +219,10 @@ class LeatherWindow_preview(tk.Frame):
 		self.color = 0
 		self.max_color_flag = False
 
+		self.dropdown_menu_sprite = None
+		self.dropdown_sprite = None
+
+		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
 		self.flaw_sprites = None
 		self.leather_center = None
@@ -190,7 +233,14 @@ class LeatherWindow_preview(tk.Frame):
 	def pygame_loop (self):
 		self.all_sprites.update()
 		self.all_sprites.draw(self.screen)
+		if self.dropdown_sprite != None:
+			self.dropdown_sprite.update()
+			self.dropdown_sprite.draw(self.screen)
 		pygame.display.flip()
+
+		if self.clicked_flaws != None:
+			self.change_flaw_color(self.clicked_flaws)
+
 		try:
 			item = self.queue.get(0)
 			if item[0] == 'preview_reload':
@@ -261,15 +311,20 @@ class LeatherWindow_preview(tk.Frame):
 				self.max_color_flag = False
 			self.reset_flaws_colors(collide_list.keys())
 			flaw.change_color((self.color, 255 - self.color, 255 - self.color))
-		if str(collide_list) == '{}':
+		if str(collide_list) == '{}' and self.clicked_flaws == None or str(self.clicked_flaws) == '{}' and str(collide_list) != '{}':
 			self.reset_flaws_colors()
 			self.color = 0
 
 	def event_checker (self):
 		if self.flaw_grouped_sprites != None:
 			collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
-			print(collide_list)
-			self.change_flaw_color(collide_list)
+			if self.clicked_flaws != None:
+				# tu dodawac co ma sie dziac po kliknieciu
+				some_flaws = collide_list
+				some_flaws.update(self.clicked_flaws)
+				self.change_flaw_color(some_flaws)
+			else:
+				self.change_flaw_color(collide_list)
 		for event in pygame.event.get():
 			if event.type == pygame.MOUSEWHEEL:
 				if event.y == 1:
@@ -277,9 +332,16 @@ class LeatherWindow_preview(tk.Frame):
 				elif event.y != 1:
 					self.zoom_out(False, True)
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if event.button == 1:
+				if event.button == 1 and self.displayed_c_layer_items != None:
+					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
+					if str(collide_list) != '{}':
+						self.clicked_flaws = collide_list
+					else:
+						self.clicked_flaws = None
 					self.leather_draging = True
 					mouse_x, mouse_y = event.pos
+					if self.dropdown_sprite != None:
+						self.dropdown_sprite = None
 					if self.displayed_c_layer_items != None:
 						for point in self.displayed_c_layer_items:
 							self.c_layer_items_offset.append([(point[0] - mouse_x), point[1] - mouse_y])
@@ -313,6 +375,24 @@ class LeatherWindow_preview(tk.Frame):
 							for point in item:
 								offset_list.append([(point[0] - mouse_x), point[1] - mouse_y])
 							self.r_layer_items_offset.append(offset_list)
+				elif event.button == 3 and self.displayed_c_layer_items != None:
+					self.leather_draging = False
+					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
+															  False, collided=pygame.sprite.collide_mask)
+					if len(collide_list) == 1:
+						self.clicked_flaws = collide_list
+						self.dropdown_menu_sprite = FlawDropdownMenu()
+						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
+						self.updating_shapes = True
+					if self.clicked_flaws != None and  len(self.clicked_flaws) == 1:
+						self.dropdown_menu_sprite = FlawDropdownMenu()
+						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
+						self.updating_shapes = True
+					if len(collide_list) == 0 or self.clicked_flaws == None or self.clicked_flaws == 0:
+						self.dropdown_menu_sprite = DropdownMenu()
+						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
+						self.updating_shapes = True
+
 			elif event.type == pygame.MOUSEMOTION:
 				if self.leather_draging:
 					mouse_x, mouse_y = event.pos
@@ -1065,5 +1145,6 @@ class LeatherWindow_preview(tk.Frame):
 		if self.all_sprites != None:
 			self.all_sprites.update()
 			self.all_sprites.draw(self.screen)
+
 
 		pygame.display.flip()

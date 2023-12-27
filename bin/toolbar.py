@@ -38,8 +38,9 @@ class Toolbar(tk.Frame):
                                           text_font=('OpenSans.ttf', 18))
         self.settings_btn.grid(column=2, row=1, sticky='nsew')
 
-        self.change_colors_icon = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
-        self.change_colors_btn = ctk.CTkButton(self, image=self.change_colors_icon,
+        self.change_colors_icon_inactive = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
+        self.change_colors_icon_active = icon_to_image("sync-alt", fill='#000000', scale_to_width=60)
+        self.change_colors_btn = ctk.CTkButton(self, image=self.change_colors_icon_inactive,
                                                fg_color='#505050', command=lambda: self.change_colors_func(),
                                                hover_color='#404040', compound='top', corner_radius=10,
                                                text='Zmień kolory', text_font=('OpenSans.ttf', 18))
@@ -88,6 +89,7 @@ class Toolbar(tk.Frame):
             configFile.y_layer_linetype = "polygon"
             configFile.r_layer_linetype = "polygon"
             self.change_colors_flag = True
+            self.change_colors_btn.configure(image=self.change_colors_icon_active)
         elif self.change_colors_flag == True:
             configFile.c_layer_color = (255, 255, 255)
             configFile.bg_layer_color = (0, 0, 0)
@@ -96,6 +98,7 @@ class Toolbar(tk.Frame):
             configFile.y_layer_linetype = "lines"
             configFile.r_layer_linetype = "lines"
             self.change_colors_flag = False
+            self.change_colors_btn.configure(image=self.change_colors_icon_inactive)
         self.queue.put(['preview_reload'])
 
 
