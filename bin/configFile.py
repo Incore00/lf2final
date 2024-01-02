@@ -7,9 +7,14 @@ cursor_color = (255,255,0)
 
 flaw_dropdown_menu_size = 100
 flaw_dropdown_menu_color = (245, 65, 230)
+flaw_dropdown_menu_option_color = (185, 0, 174)
+flaw_dropdown_menu_font_color = (65, 245, 80)
+flaw_dropdown_menu_options_amount = 5
 
 dropdown_menu_size = 60
-dropdown_menu_color = (130, 245, 200)
+dropdown_menu_color = (152, 12, 243)
+dropdown_menu_option_color = (90, 0, 185)
+dropdown_menu_font_color = (103, 243, 12)
 
 bg_layer_color = (0, 0, 0)
 c_layer_color = (255, 255, 255)
