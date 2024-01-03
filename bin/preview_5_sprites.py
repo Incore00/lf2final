@@ -42,20 +42,23 @@ class FlawDropdownMenu(pygame.sprite.Sprite):
 		self.mouse_pos = pygame.mouse.get_pos()
 
 	def update(self):
-		pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_color, self.rect, border_radius=5)
+		pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_color, self.rect, border_radius=0)
 		self.option_rect = (
 			self.option_border,
 			self.option_border,
 			configFile.flaw_dropdown_menu_size - 2 * self.option_border,
 			int((configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount) - self.option_border))
-		for loop in range(0, configFile.flaw_dropdown_menu_options_amount):
-			pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.option_rect, border_radius = 5)
-			print('inside loopo', self.option_rect)
-			self.option_rect = (self.option_rect[0],
-								self.option_rect[1] + (configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount),
-								self.option_rect[2],
-								self.option_rect[3] + (configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount))
-		print(self.option_rect)
+		for index in range(0, 2):
+			print('draw option rect', self.option_rect)
+			pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.option_rect, border_radius = 0)
+			if index == 1:
+				break
+			else:
+				self.option_rect = (self.option_rect[0],
+									self.option_rect[1] + (configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount),
+									self.option_rect[2],
+									self.option_rect[3] + (configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount))
+		print('rect after loop', self.option_rect)
 		self.mask = pygame.mask.from_surface(self.image)
 		self.rect.topleft = self.mouse_pos
 
@@ -96,6 +99,7 @@ class FlawSprite(pygame.sprite.Sprite):
 		super().__init__()
 		self.color = color
 		self.flaw_type = flaw_type
+		self.linetype = None
 		self.visable = True
 		self.position = position
 		self.new_item = []
