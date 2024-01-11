@@ -9,7 +9,7 @@ flaw_dropdown_menu_size = 100
 flaw_dropdown_menu_color = (245, 65, 230)
 flaw_dropdown_menu_option_color = (185, 0, 174)
 flaw_dropdown_menu_font_color = (65, 245, 80)
-flaw_dropdown_menu_options_amount = 5
+flaw_dropdown_menu_options_amount = 4
 
 dropdown_menu_size = 60
 dropdown_menu_color = (152, 12, 243)

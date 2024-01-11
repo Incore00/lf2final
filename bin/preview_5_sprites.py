@@ -46,10 +46,10 @@ class FlawDropdownMenuOption(pygame.sprite.Sprite):
 		print('options_flaw_created', self.position, x_size, y_size)
 
 
-	def update(self):
-		pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_color, self.rect, border_radius=0)
-		self.rect = self.image.get_rect(center=self.position)
-		self.mask = pygame.mask.from_surface(self.image)
+	#def update(self):
+	#	#pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.rect, border_radius=0)
+	#	self.rect = self.image.get_rect(center=self.position)
+	#	self.mask = pygame.mask.from_surface(self.image)
 
 #-cofnij
 #-warstwa(z kolejnym menu)
@@ -59,7 +59,7 @@ class FlawDropdownMenuOption(pygame.sprite.Sprite):
 class FlawDropdownMenu(pygame.sprite.Sprite):
 	def __init__(self, flaw = None):
 		super().__init__()
-		self.option_names = ['Cofnij', 'Warstwa', 'Usuń', 'Zmień rozmiar', 'przesuń']
+		self.option_names = ['Cofnij', 'Warstwa', 'Usuń', 'Przesuń']
 		self.flaw = flaw
 		self.image = pygame.Surface((configFile.flaw_dropdown_menu_size, configFile.flaw_dropdown_menu_size))
 		self.image.set_colorkey((0, 0, 0))
@@ -77,7 +77,7 @@ class FlawDropdownMenu(pygame.sprite.Sprite):
 	def create_options_flaws(self):
 		self.options_positions = []
 		for option in range(0, configFile.flaw_dropdown_menu_options_amount):
-			self.options_positions.append((configFile.flaw_dropdown_menu_size/2,(int((configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount) * option))+10))
+			self.options_positions.append((configFile.flaw_dropdown_menu_size/2,(int((configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount) * option)+configFile.flaw_dropdown_menu_size /  (2*configFile.flaw_dropdown_menu_options_amount))))
 		self.options_sprites = []
 		for option_name, position in zip(self.option_names, self.options_positions):
 			self.options_sprites.append(FlawDropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name))
@@ -86,6 +86,7 @@ class FlawDropdownMenu(pygame.sprite.Sprite):
 		pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_color, self.rect, border_radius=0)
 		self.mask = pygame.mask.from_surface(self.image)
 		self.rect.topleft = self.mouse_pos
+
 
 class DropdownMenu(pygame.sprite.Sprite):
 	def __init__(self):
@@ -214,12 +215,13 @@ class LeatherWindow_preview(tk.Frame):
 		window_size = (self.winfo_reqwidth(), self.winfo_reqheight())
 		print('Window size', window_size)
 		self.screen = pygame.display.set_mode(window_size)
+		#pygame.mouse.set_visible(False)
 
-		#cursor_image = pygame.image.load('cursor.png').convert_alpha()
 		self.cursor_sprite = CursorSprite()
 		self.cursor_sprite = pygame.sprite.GroupSingle(self.cursor_sprite)
 
 		self.all_sprites = pygame.sprite.Group([self.cursor_sprite])
+
 
 		self.c_layer_items = None
 		self.h_layer_items = None
@@ -284,7 +286,7 @@ class LeatherWindow_preview(tk.Frame):
 
 		if self.dropdown_options_sprite != None:
 			self.dropdown_options_sprite.update()
-			self.dropdown_options_sprite.draw(self.screen)
+			self.dropdown_options_sprite.draw(self.dropdown_menu_sprite.image)
 		pygame.display.flip()
 
 		if self.clicked_flaws != None:
@@ -435,12 +437,16 @@ class LeatherWindow_preview(tk.Frame):
 						self.clicked_flaws = collide_list
 						self.dropdown_menu_sprite = FlawDropdownMenu()
 						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
+						if self.dropdown_menu_sprite.options_grouped_sprites != None:
+							self.dropdown_options_sprite = self.dropdown_menu_sprite.options_grouped_sprites
 						#self.dropdown_options_sprites = pygame.sprite.GroupSingle
 						self.updating_shapes = True
 					if self.clicked_flaws != None and len(self.clicked_flaws) >= 1:
 						print('button 2')
 						self.dropdown_menu_sprite = FlawDropdownMenu()
 						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
+						if self.dropdown_menu_sprite.options_grouped_sprites != None:
+							self.dropdown_options_sprite = self.dropdown_menu_sprite.options_grouped_sprites
 						self.updating_shapes = True
 					if len(collide_list) == 0 and self.clicked_flaws == None or self.clicked_flaws == 0 and len(collide_list) == 0:
 						print('button 3')
