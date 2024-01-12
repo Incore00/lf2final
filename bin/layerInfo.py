@@ -159,7 +159,7 @@ class Layerinfo(tk.Frame):
                 self.red_layer_btn.configure(image=self.red_layer_icon_inactive)
             else:
                 configFile.r_layer_flag = True
-                self.red_layer_btn.configure(image=self.red_layer_icon_inactive)
+                self.red_layer_btn.configure(image=self.red_layer_icon_active)
     def load_data(self, hole_amount, blue_amount, green_amount, yellow_amount, red_amount):
         self.hole_layer_items_amount.configure(text=hole_amount)
         self.blue_layer_items_amount.configure(text=blue_amount)

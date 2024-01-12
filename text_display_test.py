@@ -12,7 +12,6 @@ Y = 400
 
 display_surface = pygame.display.set_mode((X, Y))
 
-pygame.display.set_caption('Show Text')
 
 font = pygame.font.Font('freesansbold.ttf', 32)
 

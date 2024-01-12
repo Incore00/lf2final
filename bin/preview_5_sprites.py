@@ -43,7 +43,6 @@ class FlawDropdownMenuOption(pygame.sprite.Sprite):
 		self.textRect.center = (x_size/2, y_size/2)
 		self.image.blit(self.rendered_text, self.textRect)
 		self.mask = pygame.mask.from_surface(self.image)
-		print('options_flaw_created', self.position, x_size, y_size)
 
 
 	#def update(self):
@@ -269,6 +268,8 @@ class LeatherWindow_preview(tk.Frame):
 		self.dropdown_sprite = None
 		self.dropdown_options_sprite = None
 
+		self.dropdown_options_collide_list = None
+
 		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
 		self.flaw_sprites = None
@@ -280,13 +281,18 @@ class LeatherWindow_preview(tk.Frame):
 	def pygame_loop (self):
 		self.all_sprites.update()
 		self.all_sprites.draw(self.screen)
+
 		if self.dropdown_sprite != None:
 			self.dropdown_sprite.update()
 			self.dropdown_sprite.draw(self.screen)
 
 		if self.dropdown_options_sprite != None:
 			self.dropdown_options_sprite.update()
-			self.dropdown_options_sprite.draw(self.dropdown_menu_sprite.image)
+			self.dropdown_options_sprite.draw(self.screen)
+
+		self.cursor_sprite.update()
+		self.cursor_sprite.draw(self.screen)
+
 		pygame.display.flip()
 
 		if self.clicked_flaws != None:
@@ -430,6 +436,7 @@ class LeatherWindow_preview(tk.Frame):
 							self.r_layer_items_offset.append(offset_list)
 				elif event.button == 3 and self.displayed_c_layer_items != None:
 					self.leather_draging = False
+
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
 															  False, collided=pygame.sprite.collide_mask)
 					if len(collide_list) >= 1:
@@ -439,17 +446,20 @@ class LeatherWindow_preview(tk.Frame):
 						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
 						if self.dropdown_menu_sprite.options_grouped_sprites != None:
 							self.dropdown_options_sprite = self.dropdown_menu_sprite.options_grouped_sprites
+
+
 						#self.dropdown_options_sprites = pygame.sprite.GroupSingle
 						self.updating_shapes = True
+						break
 					if self.clicked_flaws != None and len(self.clicked_flaws) >= 1:
-						print('button 2')
 						self.dropdown_menu_sprite = FlawDropdownMenu()
 						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
 						if self.dropdown_menu_sprite.options_grouped_sprites != None:
 							self.dropdown_options_sprite = self.dropdown_menu_sprite.options_grouped_sprites
 						self.updating_shapes = True
-					if len(collide_list) == 0 and self.clicked_flaws == None or self.clicked_flaws == 0 and len(collide_list) == 0:
-						print('button 3')
+						break
+					if str(collide_list) == '{}' and self.clicked_flaws == None or self.clicked_flaws == 0 and str(collide_list) == '{}':
+						self.clicked_flaws = None
 						self.dropdown_menu_sprite = DropdownMenu()
 						self.dropdown_sprite = pygame.sprite.GroupSingle(self.dropdown_menu_sprite)
 						self.updating_shapes = True
@@ -1172,7 +1182,7 @@ class LeatherWindow_preview(tk.Frame):
 			self.flaw_sprites.append(self.displayed_r_layer_flaws)
 
 		if str(self.flaw_sprites) != '[]':
-			self.all_sprites = pygame.sprite.Group([self.cursor_sprite, *self.flaw_sprites])
+			self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
 			self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
 
 		if self.all_sprites != None:
