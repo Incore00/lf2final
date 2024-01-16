@@ -30,19 +30,34 @@ class Leatherpreview(tk.Frame):
 #-usuń
 #-zmień rozmiar
 #-przesuń
-class FlawDropdownMenuOption(pygame.sprite.Sprite):
-	def __init__(self, x_size, y_size, position, text):
+class DropdownMenuOption(pygame.sprite.Sprite):
+	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None):
 		super().__init__()
 		self.position = position
+		self.x_size = x_size
+		self.y_size = y_size
+		self.text = text
+		self.font_color = font_color
+		self.bg_color = bg_color
 		self.image = pygame.Surface((x_size, y_size))
 		self.image.set_colorkey((0, 0, 0))
 		self.rect = self.image.get_rect(center=self.position)
-		self.image.fill(configFile.flaw_dropdown_menu_option_color)
-		self.font = pygame.font.Font('fonts/OpenSans/OpenSans.ttf', y_size)
-		self.rendered_text = self.font.render(text, True, configFile.flaw_dropdown_menu_font_color, configFile.flaw_dropdown_menu_option_color)
+		self.image.fill(bg_color)
+		if font == None:
+			self.font = pygame.font.Font('fonts/OpenSans/OpenSans.ttf', y_size)
+		else:
+			self.font = font
+		self.rendered_text = self.font.render(text, True, font_color, bg_color)
 		self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=(x_size/2, y_size/2)))
 		self.mask = pygame.mask.from_surface(self.image)
 
+	def on_hoover(self):
+		self.font.bold = True
+		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font)
+
+	def on_leave(self):
+		self.font.bold = False
+		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color)
 
 	#def update(self):
 	#	#pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.rect, border_radius=0)
@@ -55,20 +70,6 @@ class FlawDropdownMenuOption(pygame.sprite.Sprite):
 #-zmień rozmiar
 #-przesuń
 
-
-class DropdownMenu(pygame.sprite.Sprite):
-	def __init__(self):
-		super().__init__()
-		self.image = pygame.Surface((configFile.dropdown_menu_size, configFile.dropdown_menu_size))
-		self.image.set_colorkey((0, 0, 0))
-		self.rect = self.image.get_rect(center=(configFile.dropdown_menu_size/2, configFile.dropdown_menu_size/2))
-		self.mask = pygame.mask.from_surface(self.image)
-		self.mouse_pos = pygame.mouse.get_pos()
-
-	def update(self):
-		pygame.draw.rect(self.image, configFile.dropdown_menu_color, self.rect, border_radius=5)
-		self.mask = pygame.mask.from_surface(self.image)
-		self.rect.topleft = self.mouse_pos
 
 
 
@@ -238,7 +239,7 @@ class LeatherWindow_preview(tk.Frame):
 		self.dropdown_options_grouped_sprites = None
 		self.options_grouped_sprites = None
 
-		self.dropdown_options_collide_list = None
+		self.dropdown_option_on_hoover = None
 
 		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
@@ -252,8 +253,12 @@ class LeatherWindow_preview(tk.Frame):
 		self.all_sprites.update()
 		self.all_sprites.draw(self.screen)
 
-		if self.options_grouped_sprites != None:
+		if self.options_grouped_sprites != None and len(self.dropdown_options_sprites) != 2:
 			pygame.draw.rect(self.screen, configFile.flaw_dropdown_menu_color, pygame.Rect(self.dropdown_menu_bg))
+			self.options_grouped_sprites.update()
+			self.options_grouped_sprites.draw(self.screen)
+		elif self.options_grouped_sprites != None and len(self.dropdown_options_sprites) == 2:
+			pygame.draw.rect(self.screen, configFile.dropdown_menu_color, pygame.Rect(self.dropdown_menu_bg))
 			self.options_grouped_sprites.update()
 			self.options_grouped_sprites.draw(self.screen)
 
@@ -325,21 +330,47 @@ class LeatherWindow_preview(tk.Frame):
 
 	def change_flaw_color(self, collide_list):
 		for flaw in collide_list.keys():
-			if self.max_color_flag != True:
-				self.color = min(255, self.color + 3)
+			if flaw.flaw_type == 'hole':
+				pass
 			else:
-				self.color = max(0, self.color - 3)
-			if self.color >= 255:
-				self.max_color_flag = True
-			elif self.color <= 0:
-				self.max_color_flag = False
-			self.reset_flaws_colors(collide_list.keys())
-			flaw.change_color((self.color, 255 - self.color, 255 - self.color))
+				if self.max_color_flag != True:
+					self.color = min(255, self.color + (3/len(collide_list.keys())))
+				else:
+					self.color = max(0, self.color - (3/len(collide_list.keys())))
+				if self.color >= 255:
+					self.max_color_flag = True
+				elif self.color <= 0:
+					self.max_color_flag = False
+				self.reset_flaws_colors(collide_list.keys())
+				if flaw.flaw_type == 'blue':
+					flaw.change_color((self.color, self.color, 255))
+				elif flaw.flaw_type == 'green':
+					flaw.change_color((self.color, 255, self.color))
+				elif flaw.flaw_type == 'yellow':
+					flaw.change_color((255, 255, self.color))
+				elif flaw.flaw_type == 'red':
+					flaw.change_color((255, self.color, self.color))
+
 		if str(collide_list) == '{}' and self.clicked_flaws == None or str(self.clicked_flaws) == '{}' and str(collide_list) != '{}':
 			self.reset_flaws_colors()
 			self.color = 0
 
 	def event_checker (self):
+		if self.options_grouped_sprites != None:
+			dropdown_collide_list = pygame.sprite.groupcollide(self.options_grouped_sprites, self.cursor_sprite, False, False, collided=pygame.sprite.collide_mask)
+			print('menu collide', dropdown_collide_list.keys())
+			if self.dropdown_option_on_hoover != None:
+				for option in self.dropdown_option_on_hoover:
+					if option in dropdown_collide_list:
+						continue
+					else:
+						option.on_leave()
+			self.dropdown_option_on_hoover = dropdown_collide_list
+			for option in dropdown_collide_list.keys():
+				if pygame.mouse.get_pos()[0] >= option.position[0]-option.x_size/2 and pygame.mouse.get_pos()[0] <= option.position[0]+option.x_size/2 and pygame.mouse.get_pos()[1] <= option.position[1]+option.y_size/2 and pygame.mouse.get_pos()[1] >= option.position[1]-option.y_size/2:
+					option.on_hoover()
+				else:
+					option.on_leave()
 		if self.flaw_grouped_sprites != None:
 			collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 			if self.clicked_flaws != None:
@@ -415,6 +446,7 @@ class LeatherWindow_preview(tk.Frame):
 						self.updating_shapes = True
 						break
 					if str(collide_list) == '{}' and self.clicked_flaws == None or self.clicked_flaws == 0 and str(collide_list) == '{}':
+						self.dropdown_menu()
 						self.clicked_flaws = None
 						self.updating_shapes = True
 
@@ -514,16 +546,33 @@ class LeatherWindow_preview(tk.Frame):
 
 	def flaw_dropdown_menu(self):
 		self.mouse_pos = pygame.mouse.get_pos()
-		self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.flaw_dropdown_menu_size, configFile.flaw_dropdown_menu_size]
+		self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.flaw_dropdown_menu_x_size, configFile.flaw_dropdown_menu_y_size]
 		self.dropdown_options_sprites = []
-		self.option_border = int((configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
-		self.option_x_size = int(configFile.flaw_dropdown_menu_size - 2 * self.option_border)
-		self.option_y_size = int((configFile.flaw_dropdown_menu_size / 5))
+		self.option_border = int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
+		self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
+		self.option_y_size = int((configFile.flaw_dropdown_menu_y_size - (self.option_border * (configFile.flaw_dropdown_menu_options_amount +1)))/configFile.flaw_dropdown_menu_options_amount)
 		self.options_positions = []
 		for option in range(0, configFile.flaw_dropdown_menu_options_amount):
-			self.options_positions.append((self.mouse_pos[0] + configFile.flaw_dropdown_menu_size / 2, self.mouse_pos[1] + (int((configFile.flaw_dropdown_menu_size / configFile.flaw_dropdown_menu_options_amount) * option) + configFile.flaw_dropdown_menu_size / (2 * configFile.flaw_dropdown_menu_options_amount))))
+			self.options_positions.append((self.mouse_pos[0] + configFile.flaw_dropdown_menu_x_size / 2, self.mouse_pos[1] + (int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * option) + configFile.flaw_dropdown_menu_y_size / (2 * configFile.flaw_dropdown_menu_options_amount))))
 		for option_name, position in zip(configFile.flaw_dropdown_menu_options, self.options_positions):
-			self.dropdown_options_sprites.append(FlawDropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name))
+			self.dropdown_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.flaw_dropdown_menu_font_color, configFile.flaw_dropdown_menu_option_color))
+		self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
+
+	def dropdown_menu(self):
+		self.mouse_pos = pygame.mouse.get_pos()
+		self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.dropdown_menu_x_size, configFile.dropdown_menu_y_size]
+		self.dropdown_options_sprites = []
+		self.option_border = int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * 0.1)
+		self.option_x_size = int(configFile.dropdown_menu_x_size - 2 * self.option_border)
+		self.option_y_size = int((configFile.dropdown_menu_y_size - (self.option_border * (configFile.dropdown_menu_options_amount +1)))/configFile.dropdown_menu_options_amount)
+		self.options_positions = []
+		for option in range(0, configFile.dropdown_menu_options_amount):
+			self.options_positions.append((self.mouse_pos[0] + configFile.dropdown_menu_x_size / 2,
+										   self.mouse_pos[1] + (int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * option) + configFile.dropdown_menu_y_size / (
+																			2 * configFile.dropdown_menu_options_amount))))
+		for option_name, position in zip(configFile.dropdown_menu_options, self.options_positions):
+			self.dropdown_options_sprites.append(
+				DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.dropdown_menu_font_color, configFile.dropdown_menu_option_color))
 		self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 
 
