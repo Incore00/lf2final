@@ -5,15 +5,16 @@ main_redraw = False
 cursor_radius = 10
 cursor_color = (255,255,0)
 
-flaw_dropdown_menu_x_size = 100
+flaw_dropdown_menu_x_size = 120
 flaw_dropdown_menu_y_size = 100
 flaw_dropdown_menu_color = (245, 65, 230)
 flaw_dropdown_menu_option_color = (185, 0, 174)
 flaw_dropdown_menu_font_color = (65, 245, 80)
 flaw_dropdown_menu_options = ['Cofnij', 'Warstwa', 'Usuń', 'Przesuń']
+flaw_dropdown_layer_menu_options = ['Niebieska', 'Zielona', 'Żółta', 'Czerwona']
 flaw_dropdown_menu_options_amount = len(flaw_dropdown_menu_options)
 
-dropdown_menu_x_size = 120
+dropdown_menu_x_size = 130
 dropdown_menu_y_size = 50
 dropdown_menu_color = (152, 12, 243)
 dropdown_menu_option_color = (90, 0, 185)

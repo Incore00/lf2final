@@ -3,6 +3,7 @@ import os
 import pygame
 import pyglet
 from bin import configFile
+from tkfontawesome import icon_to_image
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -31,7 +32,7 @@ class Leatherpreview(tk.Frame):
 #-zmień rozmiar
 #-przesuń
 class DropdownMenuOption(pygame.sprite.Sprite):
-	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None):
+	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None, flaw_type = None):
 		super().__init__()
 		self.position = position
 		self.x_size = x_size
@@ -48,16 +49,62 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 		else:
 			self.font = font
 		self.rendered_text = self.font.render(text, True, font_color, bg_color)
-		self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=(x_size/2, y_size/2)))
+		if self.text == 'Warstwa':
+			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
+			pygame.draw.polygon(self.image, font_color, ((x_size, y_size/2), (x_size-x_size*0.1, 0+y_size*0.1), (x_size-x_size*0.1, y_size-y_size*0.1)))
+		elif self.text == 'Niebieska' and flaw_type == 'blue':
+			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
+			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
+			(x_size - x_size*0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
+			(x_size - x_size * 0.01,  y_size * 0.01)), int(y_size * 0.15))
+		elif self.text == 'Zielona' and flaw_type == 'green':
+			self.image.blit(self.rendered_text,
+							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
+			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
+				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
+				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
+		elif self.text == 'Czerwona' and flaw_type == 'red':
+			self.image.blit(self.rendered_text,
+							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
+			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
+				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
+				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
+		elif self.text == 'Żółta' and flaw_type == 'yellow':
+			self.image.blit(self.rendered_text,
+							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
+			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
+				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
+				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
+		else:
+			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=(x_size / 2, y_size / 2)))
 		self.mask = pygame.mask.from_surface(self.image)
 
 	def on_hoover(self):
 		self.font.bold = True
 		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font)
+		if self.text == 'Warstwa':
+			return 'Warstwa'
 
 	def on_leave(self):
 		self.font.bold = False
 		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color)
+		if self.text == 'Warstwa':
+			return 'Warstwa'
+
+	def on_click(self, flaw_list):
+		for flaw in flaw_list.keys():
+			if self.text == 'Cofnij':
+				print('Cofnij')
+			elif self.text == 'Warstwa':
+				print('Warstwa')
+
+			elif self.text == 'Usuń':
+				print('Usuń')
+				flaw.kill()
+			elif self.text == 'Przesuń':
+				print('Przesuń')
+			elif self.text == 'Rysuj skaze':
+				print('Rysuj skaze')
 
 	#def update(self):
 	#	#pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.rect, border_radius=0)
@@ -117,9 +164,6 @@ class FlawSprite(pygame.sprite.Sprite):
 		self.image = pygame.Surface((self.highest_x - self.lowest_x + 1, self.highest_y - self.lowest_y + 1))
 		self.image.set_colorkey((0, 0, 0))
 		self.rect = self.image.get_rect(center=self.position)
-
-
-	#def handleCollision(self, ):
 	def update_flaw(self, item, position):
 		self.position = position
 		self.new_item = []
@@ -239,7 +283,14 @@ class LeatherWindow_preview(tk.Frame):
 		self.dropdown_options_grouped_sprites = None
 		self.options_grouped_sprites = None
 
+		self.dropdown_layer_options_grouped_sprites = None
+		self.dropdown_layer_options_sprites = None
+		self.dropdown_layer_menu_bg = None
+
 		self.dropdown_option_on_hoover = None
+		self.choosed_menu_option = None
+
+		self.edit_mode = False
 
 		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
@@ -261,6 +312,10 @@ class LeatherWindow_preview(tk.Frame):
 			pygame.draw.rect(self.screen, configFile.dropdown_menu_color, pygame.Rect(self.dropdown_menu_bg))
 			self.options_grouped_sprites.update()
 			self.options_grouped_sprites.draw(self.screen)
+		if self.dropdown_layer_options_grouped_sprites != None:
+			pygame.draw.rect(self.screen, configFile.dropdown_menu_color, pygame.Rect(self.dropdown_layer_menu_bg))
+			self.dropdown_layer_options_grouped_sprites.update()
+			self.dropdown_layer_options_grouped_sprites.draw(self.screen)
 
 		self.cursor_sprite.update()
 		self.cursor_sprite.draw(self.screen)
@@ -355,22 +410,59 @@ class LeatherWindow_preview(tk.Frame):
 			self.reset_flaws_colors()
 			self.color = 0
 
+	def layer_choose_menu(self, flaw_list, position):
+		if len(flaw_list) == 1 and self.dropdown_layer_options_grouped_sprites == None:
+			self.dropdown_layer_options_sprites = []
+			self.dropdown_layer_menu_bg = [position[0], position[1], configFile.flaw_dropdown_menu_x_size,
+									 configFile.flaw_dropdown_menu_y_size]
+			self.option_border = int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
+			self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
+			self.option_y_size = int((configFile.flaw_dropdown_menu_y_size - (self.option_border * (configFile.flaw_dropdown_menu_options_amount + 1))) / configFile.flaw_dropdown_menu_options_amount)
+			self.layer_options_positions = []
+			for option in range(0, 4):
+				self.layer_options_positions.append((position[0] + configFile.flaw_dropdown_menu_x_size / 2, position[1] + (int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * option) + configFile.flaw_dropdown_menu_y_size / (2 * configFile.flaw_dropdown_menu_options_amount))))
+			for flaw in flaw_list.keys():
+				self.flaw_layer = flaw.flaw_type
+			for option_name, option_position in zip(configFile.flaw_dropdown_layer_menu_options, self.layer_options_positions):
+				if option_name == 'Niebieska':
+					self.dropdown_layer_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, option_position, option_name,
+																				  configFile.b_layer_color, configFile.flaw_dropdown_menu_option_color, None, self.flaw_layer))
+				elif option_name == 'Zielona':
+					self.dropdown_layer_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, option_position, option_name,
+																				  configFile.g_layer_color, configFile.flaw_dropdown_menu_option_color, None, self.flaw_layer))
+				elif option_name == 'Żółta':
+					self.dropdown_layer_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, option_position, option_name,
+																				  configFile.y_layer_color, configFile.flaw_dropdown_menu_option_color, None, self.flaw_layer))
+				elif option_name == 'Czerwona':
+					self.dropdown_layer_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, option_position, option_name,
+																				  configFile.r_layer_color, configFile.flaw_dropdown_menu_option_color, None, self.flaw_layer))
+			self.dropdown_layer_options_grouped_sprites = pygame.sprite.Group([*self.dropdown_layer_options_sprites])
+
+
+
 	def event_checker (self):
 		if self.options_grouped_sprites != None:
 			dropdown_collide_list = pygame.sprite.groupcollide(self.options_grouped_sprites, self.cursor_sprite, False, False, collided=pygame.sprite.collide_mask)
-			print('menu collide', dropdown_collide_list.keys())
 			if self.dropdown_option_on_hoover != None:
 				for option in self.dropdown_option_on_hoover:
 					if option in dropdown_collide_list:
 						continue
 					else:
-						option.on_leave()
+						if option.on_leave() != None:
+							self.dropdown_layer_options_grouped_sprites = None
+						else:
+							option.on_leave()
 			self.dropdown_option_on_hoover = dropdown_collide_list
 			for option in dropdown_collide_list.keys():
 				if pygame.mouse.get_pos()[0] >= option.position[0]-option.x_size/2 and pygame.mouse.get_pos()[0] <= option.position[0]+option.x_size/2 and pygame.mouse.get_pos()[1] <= option.position[1]+option.y_size/2 and pygame.mouse.get_pos()[1] >= option.position[1]-option.y_size/2:
-					option.on_hoover()
+					if option.on_hoover() == 'Warstwa':
+						self.layer_choose_menu(self.clicked_flaws, (option.position[0]+option.x_size/2, option.position[1]-option.y_size/2))
+					self.choosed_menu_option = option
 				else:
-					option.on_leave()
+					if option.on_leave() != None:
+						self.dropdown_layer_options_grouped_sprites = None
+					else:
+						option.on_leave()
 		if self.flaw_grouped_sprites != None:
 			collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 			if self.clicked_flaws != None:
@@ -382,12 +474,16 @@ class LeatherWindow_preview(tk.Frame):
 				self.change_flaw_color(collide_list)
 		for event in pygame.event.get():
 			if event.type == pygame.MOUSEWHEEL:
-				if event.y == 1:
+				if event.y == 1 and self.edit_mode == False:
 					self.zoom_in(False)
-				elif event.y != 1:
+				elif event.y != 1 and self.edit_mode == False:
 					self.zoom_out(False, True)
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1 and self.displayed_c_layer_items != None:
+					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys():
+						self.choosed_menu_option.on_click(self.clicked_flaws)
+						print('clicked flaws', self.clicked_flaws)
+						self.choosed_menu_option = None
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 					if str(collide_list) != '{}':
 						self.clicked_flaws = collide_list
@@ -397,6 +493,8 @@ class LeatherWindow_preview(tk.Frame):
 					mouse_x, mouse_y = event.pos
 					if self.options_grouped_sprites != None:
 						self.options_grouped_sprites = None
+					if self.dropdown_layer_options_grouped_sprites != None:
+						self.dropdown_layer_options_grouped_sprites = None
 					if self.displayed_c_layer_items != None:
 						for point in self.displayed_c_layer_items:
 							self.c_layer_items_offset.append([(point[0] - mouse_x), point[1] - mouse_y])
@@ -432,11 +530,9 @@ class LeatherWindow_preview(tk.Frame):
 							self.r_layer_items_offset.append(offset_list)
 				elif event.button == 3 and self.displayed_c_layer_items != None:
 					self.leather_draging = False
-
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
 															  False, collided=pygame.sprite.collide_mask)
 					if len(collide_list) >= 1:
-						print('button 1')
 						self.clicked_flaws = collide_list
 						self.flaw_dropdown_menu()
 						self.updating_shapes = True
@@ -451,7 +547,7 @@ class LeatherWindow_preview(tk.Frame):
 						self.updating_shapes = True
 
 			elif event.type == pygame.MOUSEMOTION:
-				if self.leather_draging:
+				if self.leather_draging and self.edit_mode == False:
 					mouse_x, mouse_y = event.pos
 					sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
 					new_c_layer_items = []
