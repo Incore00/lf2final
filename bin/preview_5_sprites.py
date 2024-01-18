@@ -39,6 +39,7 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 		self.y_size = y_size
 		self.text = text
 		self.font_color = font_color
+		self.flaw_type = flaw_type
 		self.bg_color = bg_color
 		self.image = pygame.Surface((x_size, y_size))
 		self.image.set_colorkey((0, 0, 0))
@@ -52,24 +53,24 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 		if self.text == 'Warstwa':
 			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
 			pygame.draw.polygon(self.image, font_color, ((x_size, y_size/2), (x_size-x_size*0.1, 0+y_size*0.1), (x_size-x_size*0.1, y_size-y_size*0.1)))
-		elif self.text == 'Niebieska' and flaw_type == 'blue':
+		elif self.text == 'Niebieska' and self.flaw_type == 'blue':
 			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
 			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
 			(x_size - x_size*0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
 			(x_size - x_size * 0.01,  y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Zielona' and flaw_type == 'green':
+		elif self.text == 'Zielona' and self.flaw_type == 'green':
 			self.image.blit(self.rendered_text,
 							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
 			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
 				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
 				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Czerwona' and flaw_type == 'red':
+		elif self.text == 'Czerwona' and self.flaw_type == 'red':
 			self.image.blit(self.rendered_text,
 							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
 			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
 				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
 				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Żółta' and flaw_type == 'yellow':
+		elif self.text == 'Żółta' and self.flaw_type == 'yellow':
 			self.image.blit(self.rendered_text,
 							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
 			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
@@ -81,13 +82,13 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 
 	def on_hoover(self):
 		self.font.bold = True
-		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font)
+		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font, self.flaw_type)
 		if self.text == 'Warstwa':
 			return 'Warstwa'
 
 	def on_leave(self):
 		self.font.bold = False
-		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color)
+		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font, self.flaw_type)
 		if self.text == 'Warstwa':
 			return 'Warstwa'
 
@@ -97,7 +98,6 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 				print('Cofnij')
 			elif self.text == 'Warstwa':
 				print('Warstwa')
-
 			elif self.text == 'Usuń':
 				print('Usuń')
 				flaw.kill()
@@ -105,6 +105,14 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 				print('Przesuń')
 			elif self.text == 'Rysuj skaze':
 				print('Rysuj skaze')
+			elif self.text == 'Niebieska':
+				flaw.change_flaw_type('blue')
+			elif self.text == 'Zielona':
+				flaw.change_flaw_type('green')
+			elif self.text == 'Żółta':
+				flaw.change_flaw_type('yellow')
+			elif self.text == 'Czerwona':
+				flaw.change_flaw_type('red')
 
 	#def update(self):
 	#	#pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.rect, border_radius=0)
@@ -211,6 +219,16 @@ class FlawSprite(pygame.sprite.Sprite):
 	def change_color (self, color):
 		self.color = color
 
+	def change_flaw_type(self, type):
+		self.flaw_type = type
+		if type == 'blue':
+			self.color = configFile.b_layer_color
+		elif type == 'green':
+			self.color = configFile.g_layer_color
+		elif type == 'yellow':
+			self.color = configFile.y_layer_color
+		elif type == 'red':
+			self.color = configFile.r_layer_color
 
 class LeatherWindow_preview(tk.Frame):
 	def __init__ (self, parent, queue, *args, **kwargs):
@@ -288,7 +306,10 @@ class LeatherWindow_preview(tk.Frame):
 		self.dropdown_layer_menu_bg = None
 
 		self.dropdown_option_on_hoover = None
+		self.dropdown_layer_option_on_hoover = None
 		self.choosed_menu_option = None
+		self.choosed_layer_menu_option = None
+		self.dropdown_menu_flag = False
 
 		self.edit_mode = False
 
@@ -441,6 +462,21 @@ class LeatherWindow_preview(tk.Frame):
 
 
 	def event_checker (self):
+		if self.dropdown_layer_options_grouped_sprites != None:
+			dropdown_layer_options_collide_list = pygame.sprite.groupcollide(self.dropdown_layer_options_grouped_sprites, self.cursor_sprite, False, False, collided=pygame.sprite.collide_mask)
+			if self.dropdown_layer_option_on_hoover != None:
+				for option in self.dropdown_layer_option_on_hoover:
+					if option in dropdown_layer_options_collide_list:
+						continue
+					else:
+						option.on_leave()
+			self.dropdown_layer_option_on_hoover = dropdown_layer_options_collide_list
+			for option in dropdown_layer_options_collide_list.keys():
+				if pygame.mouse.get_pos()[0] >= option.position[0]-option.x_size/2 and pygame.mouse.get_pos()[0] <= option.position[0]+option.x_size/2 and pygame.mouse.get_pos()[1] <= option.position[1]+option.y_size/2 and pygame.mouse.get_pos()[1] >= option.position[1]-option.y_size/2:
+					option.on_hoover()
+					self.choosed_layer_menu_option = option
+				else:
+					option.on_leave()
 		if self.options_grouped_sprites != None:
 			dropdown_collide_list = pygame.sprite.groupcollide(self.options_grouped_sprites, self.cursor_sprite, False, False, collided=pygame.sprite.collide_mask)
 			if self.dropdown_option_on_hoover != None:
@@ -448,8 +484,11 @@ class LeatherWindow_preview(tk.Frame):
 					if option in dropdown_collide_list:
 						continue
 					else:
-						if option.on_leave() != None:
-							self.dropdown_layer_options_grouped_sprites = None
+						if option.on_leave() == 'Warstwa' and self.dropdown_layer_menu_bg != None:
+							if pygame.mouse.get_pos()[0] >= self.dropdown_layer_menu_bg[0] and pygame.mouse.get_pos()[1] >= self.dropdown_layer_menu_bg[1] and pygame.mouse.get_pos()[0] <= self.dropdown_layer_menu_bg[0] + self.dropdown_layer_menu_bg[2] and pygame.mouse.get_pos()[1] <= self.dropdown_layer_menu_bg[1] + self.dropdown_layer_menu_bg[3]:
+								pass
+							else:
+								self.dropdown_layer_options_grouped_sprites = None
 						else:
 							option.on_leave()
 			self.dropdown_option_on_hoover = dropdown_collide_list
@@ -459,11 +498,15 @@ class LeatherWindow_preview(tk.Frame):
 						self.layer_choose_menu(self.clicked_flaws, (option.position[0]+option.x_size/2, option.position[1]-option.y_size/2))
 					self.choosed_menu_option = option
 				else:
-					if option.on_leave() != None:
-						self.dropdown_layer_options_grouped_sprites = None
+					if option.on_leave() == 'Warstwa' and self.dropdown_layer_menu_bg != None:
+						print('dropdown_layer menu', self.dropdown_layer_menu_bg)
+						if pygame.mouse.get_pos()[0] >= self.dropdown_layer_menu_bg[0] and pygame.mouse.get_pos()[1] >= self.dropdown_layer_menu_bg[1] and pygame.mouse.get_pos()[0] <= self.dropdown_layer_menu_bg[0] + self.dropdown_layer_menu_bg[2] and pygame.mouse.get_pos()[1] <= self.dropdown_layer_menu_bg[1] + self.dropdown_layer_menu_bg[3]:
+							pass
+						else:
+							self.dropdown_layer_options_grouped_sprites = None
 					else:
 						option.on_leave()
-		if self.flaw_grouped_sprites != None:
+		if self.flaw_grouped_sprites != None and self.dropdown_menu_flag == False:
 			collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 			if self.clicked_flaws != None:
 				# tu dodawac co ma sie dziac po kliknieciu
@@ -480,10 +523,16 @@ class LeatherWindow_preview(tk.Frame):
 					self.zoom_out(False, True)
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1 and self.displayed_c_layer_items != None:
+					if self.dropdown_menu_flag == True:
+						self.dropdown_menu_flag = False
 					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys():
 						self.choosed_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws', self.clicked_flaws)
 						self.choosed_menu_option = None
+					if self.choosed_layer_menu_option != None and self.dropdown_layer_option_on_hoover != None and self.choosed_layer_menu_option in self.dropdown_layer_option_on_hoover.keys():
+						self.choosed_layer_menu_option.on_click(self.clicked_flaws)
+						print('clicked flaws', self.clicked_flaws)
+						self.choosed_layer_menu_option = None
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 					if str(collide_list) != '{}':
 						self.clicked_flaws = collide_list
@@ -641,69 +690,57 @@ class LeatherWindow_preview(tk.Frame):
 					self.r_layer_items_offset = []
 
 	def flaw_dropdown_menu(self):
-		self.mouse_pos = pygame.mouse.get_pos()
-		self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.flaw_dropdown_menu_x_size, configFile.flaw_dropdown_menu_y_size]
-		self.dropdown_options_sprites = []
-		self.option_border = int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
-		self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
-		self.option_y_size = int((configFile.flaw_dropdown_menu_y_size - (self.option_border * (configFile.flaw_dropdown_menu_options_amount +1)))/configFile.flaw_dropdown_menu_options_amount)
-		self.options_positions = []
-		for option in range(0, configFile.flaw_dropdown_menu_options_amount):
-			self.options_positions.append((self.mouse_pos[0] + configFile.flaw_dropdown_menu_x_size / 2, self.mouse_pos[1] + (int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * option) + configFile.flaw_dropdown_menu_y_size / (2 * configFile.flaw_dropdown_menu_options_amount))))
-		for option_name, position in zip(configFile.flaw_dropdown_menu_options, self.options_positions):
-			self.dropdown_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.flaw_dropdown_menu_font_color, configFile.flaw_dropdown_menu_option_color))
-		self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
+		if self.dropdown_menu_flag == False:
+			self.mouse_pos = pygame.mouse.get_pos()
+			self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.flaw_dropdown_menu_x_size, configFile.flaw_dropdown_menu_y_size]
+			self.dropdown_options_sprites = []
+			self.option_border = int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
+			self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
+			self.option_y_size = int((configFile.flaw_dropdown_menu_y_size - (self.option_border * (configFile.flaw_dropdown_menu_options_amount +1)))/configFile.flaw_dropdown_menu_options_amount)
+			self.options_positions = []
+			for option in range(0, configFile.flaw_dropdown_menu_options_amount):
+				self.options_positions.append((self.mouse_pos[0] + configFile.flaw_dropdown_menu_x_size / 2, self.mouse_pos[1] + (int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * option) + configFile.flaw_dropdown_menu_y_size / (2 * configFile.flaw_dropdown_menu_options_amount))))
+			for option_name, position in zip(configFile.flaw_dropdown_menu_options, self.options_positions):
+				self.dropdown_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.flaw_dropdown_menu_font_color, configFile.flaw_dropdown_menu_option_color))
+			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
+			self.dropdown_menu_flag = True
 
 	def dropdown_menu(self):
-		self.mouse_pos = pygame.mouse.get_pos()
-		self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.dropdown_menu_x_size, configFile.dropdown_menu_y_size]
-		self.dropdown_options_sprites = []
-		self.option_border = int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * 0.1)
-		self.option_x_size = int(configFile.dropdown_menu_x_size - 2 * self.option_border)
-		self.option_y_size = int((configFile.dropdown_menu_y_size - (self.option_border * (configFile.dropdown_menu_options_amount +1)))/configFile.dropdown_menu_options_amount)
-		self.options_positions = []
-		for option in range(0, configFile.dropdown_menu_options_amount):
-			self.options_positions.append((self.mouse_pos[0] + configFile.dropdown_menu_x_size / 2,
-										   self.mouse_pos[1] + (int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * option) + configFile.dropdown_menu_y_size / (
-																			2 * configFile.dropdown_menu_options_amount))))
-		for option_name, position in zip(configFile.dropdown_menu_options, self.options_positions):
-			self.dropdown_options_sprites.append(
-				DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.dropdown_menu_font_color, configFile.dropdown_menu_option_color))
-		self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
+		if self.dropdown_menu_flag == False:
+			self.mouse_pos = pygame.mouse.get_pos()
+			self.dropdown_menu_bg = [self.mouse_pos[0], self.mouse_pos[1], configFile.dropdown_menu_x_size, configFile.dropdown_menu_y_size]
+			self.dropdown_options_sprites = []
+			self.option_border = int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * 0.1)
+			self.option_x_size = int(configFile.dropdown_menu_x_size - 2 * self.option_border)
+			self.option_y_size = int((configFile.dropdown_menu_y_size - (self.option_border * (configFile.dropdown_menu_options_amount +1)))/configFile.dropdown_menu_options_amount)
+			self.options_positions = []
+			for option in range(0, configFile.dropdown_menu_options_amount):
+				self.options_positions.append((self.mouse_pos[0] + configFile.dropdown_menu_x_size / 2,
+											   self.mouse_pos[1] + (int((configFile.dropdown_menu_y_size / configFile.dropdown_menu_options_amount) * option) + configFile.dropdown_menu_y_size / (
+																				2 * configFile.dropdown_menu_options_amount))))
+			for option_name, position in zip(configFile.dropdown_menu_options, self.options_positions):
+				self.dropdown_options_sprites.append(
+					DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.dropdown_menu_font_color, configFile.dropdown_menu_option_color))
+			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
+			self.dropdown_menu_flag = True
 
 
 
 	def reset_flaws_colors(self, flaws_to_Skip = [None, None]):
-		if str(self.displayed_h_layer_flaws) != '[]':
-			for flaw in self.displayed_h_layer_flaws:
-				if flaw in flaws_to_Skip:
-					pass
-				else:
-					flaw.change_color(configFile.h_layer_color)
-		if str(self.displayed_b_layer_flaws) != '[]':
-			for flaw in self.displayed_b_layer_flaws:
-				if flaw in flaws_to_Skip:
-					pass
-				else:
-					flaw.change_color(configFile.b_layer_color)
-		if str(self.displayed_g_layer_flaws) != '[]':
-			for flaw in self.displayed_g_layer_flaws:
-				if flaw in flaws_to_Skip:
-					pass
-				else:
-					flaw.change_color(configFile.g_layer_color)
-		if str(self.displayed_y_layer_flaws) != '[]':
-			for flaw in self.displayed_y_layer_flaws:
-				if flaw in flaws_to_Skip:
-					pass
-				else:
-					flaw.change_color(configFile.y_layer_color)
-		if str(self.displayed_r_layer_flaws) != '[]':
-			for flaw in self.displayed_r_layer_flaws:
-				if flaw in flaws_to_Skip:
-					pass
-				else:
-					flaw.change_color(configFile.r_layer_color)
+		if self.flaw_sprites != None:
+			for flaw_list in self.flaw_sprites:
+				for flaw in flaw_list:
+					if flaw in flaws_to_Skip:
+						pass
+					else:
+						if flaw.flaw_type == 'blue':
+							flaw.change_color(configFile.b_layer_color)
+						elif flaw.flaw_type == 'green':
+							flaw.change_color(configFile.g_layer_color)
+						elif flaw.flaw_type == 'yellow':
+							flaw.change_color(configFile.y_layer_color)
+						elif flaw.flaw_type == 'red':
+							flaw.change_color(configFile.r_layer_color)
 
 	def load_data (self, leather):
 		self.c_layer_items = leather[0]
