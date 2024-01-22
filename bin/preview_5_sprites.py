@@ -147,6 +147,7 @@ class CursorSprite(pygame.sprite.Sprite):
 class FlawSprite(pygame.sprite.Sprite):
 	def __init__ (self, item, color, position, flaw_type):
 		super().__init__()
+		self.item = item
 		self.color = color
 		self.flaw_type = flaw_type
 		self.linetype = None
@@ -195,6 +196,12 @@ class FlawSprite(pygame.sprite.Sprite):
 		self.image.set_colorkey((0, 0, 0))
 		self.rect = self.image.get_rect(center=position)
 		self.mask = pygame.mask.from_surface(self.image)
+
+	def update_position(self, position):
+		temp_item = []
+		for point in self.item:
+			temp_item.append([point[0] + (position[0] - self.position[0]), point[1] + (position[1] - self.position[1])])
+		self.__init__(temp_item, self.color, position, self.flaw_type)
 
 	def update (self):
 		self.image.fill(0)
@@ -312,6 +319,10 @@ class LeatherWindow_preview(tk.Frame):
 		self.dropdown_menu_flag = False
 
 		self.edit_mode = False
+		self.editted_flaw = None
+		self.editted_flaw_offset = None
+		self.flaw_center_list_index = None
+		self.editted_flaw_start_position = None
 
 		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
@@ -499,7 +510,7 @@ class LeatherWindow_preview(tk.Frame):
 					self.choosed_menu_option = option
 				else:
 					if option.on_leave() == 'Warstwa' and self.dropdown_layer_menu_bg != None:
-						print('dropdown_layer menu', self.dropdown_layer_menu_bg)
+
 						if pygame.mouse.get_pos()[0] >= self.dropdown_layer_menu_bg[0] and pygame.mouse.get_pos()[1] >= self.dropdown_layer_menu_bg[1] and pygame.mouse.get_pos()[0] <= self.dropdown_layer_menu_bg[0] + self.dropdown_layer_menu_bg[2] and pygame.mouse.get_pos()[1] <= self.dropdown_layer_menu_bg[1] + self.dropdown_layer_menu_bg[3]:
 							pass
 						else:
@@ -522,16 +533,24 @@ class LeatherWindow_preview(tk.Frame):
 				elif event.y != 1 and self.edit_mode == False:
 					self.zoom_out(False, True)
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if event.button == 1 and self.displayed_c_layer_items != None:
+				if event.button == 1 and self.displayed_c_layer_items != None and self.edit_mode == False:
 					if self.dropdown_menu_flag == True:
 						self.dropdown_menu_flag = False
 					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys():
 						self.choosed_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws', self.clicked_flaws)
+						if self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+							self.edit_mode = True
 						self.choosed_menu_option = None
 					if self.choosed_layer_menu_option != None and self.dropdown_layer_option_on_hoover != None and self.choosed_layer_menu_option in self.dropdown_layer_option_on_hoover.keys():
 						self.choosed_layer_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws', self.clicked_flaws)
+						if self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+							self.edit_mode = True
 						self.choosed_layer_menu_option = None
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 					if str(collide_list) != '{}':
@@ -577,6 +596,8 @@ class LeatherWindow_preview(tk.Frame):
 							for point in item:
 								offset_list.append([(point[0] - mouse_x), point[1] - mouse_y])
 							self.r_layer_items_offset.append(offset_list)
+				elif event.button == 1 and self.edit_mode == True and self.editted_flaw != None:
+					self.editted_flaw_offset = [self.editted_flaw.position[0] - pygame.mouse.get_pos()[0], self.editted_flaw.position[1] - pygame.mouse.get_pos()[1]]
 				elif event.button == 3 and self.displayed_c_layer_items != None:
 					self.leather_draging = False
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
@@ -678,9 +699,26 @@ class LeatherWindow_preview(tk.Frame):
 											self.temp_drag_diff_y_layer_items, self.temp_drag_diff_r_layer_items]
 						self.queue.put(['main_dragging', dragging_changes])
 						self.updating_shapes = True
+				elif self.edit_mode == True and self.editted_flaw != None and self.editted_flaw_offset != None:
+					mouse_pos = pygame.mouse.get_pos()
+					if self.editted_flaw_start_position == None:
+						self.editted_flaw_start_position = self.editted_flaw.position
+					self.editted_flaw.update_position([self.editted_flaw_offset[0] + mouse_pos[0], self.editted_flaw_offset[1] + mouse_pos[1]])
 
 			elif event.type == pygame.MOUSEBUTTONUP:
 				if event.button == 1:
+					if self.edit_mode == True and self.editted_flaw_start_position != None:
+						if self.editted_flaw.flaw_type == 'blue':
+							flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw_start_position)
+							self.b_layer_flaw_center_list[flaw_index] = self.editted_flaw.position
+							print('editted flaw items 1', self.displayed_b_layer_items[flaw_index])
+							self.displayed_b_layer_items[flaw_index] = self.editted_flaw.item
+							print('editted flaw items 2', self.displayed_b_layer_items[flaw_index])
+							#hulk
+						self.editted_flaw_start_position = None
+						self.edit_mode = False
+						self.editted_flaw_offset = None
+						self.editted_flaw = None
 					self.leather_draging = False
 					self.c_layer_items_offset = []
 					self.h_layer_items_offset = []
