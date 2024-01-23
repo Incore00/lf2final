@@ -103,6 +103,7 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 				flaw.kill()
 			elif self.text == 'Przesuń':
 				print('Przesuń')
+
 			elif self.text == 'Rysuj skaze':
 				print('Rysuj skaze')
 			elif self.text == 'Niebieska':
@@ -237,6 +238,7 @@ class FlawSprite(pygame.sprite.Sprite):
 		elif type == 'red':
 			self.color = configFile.r_layer_color
 
+
 class LeatherWindow_preview(tk.Frame):
 	def __init__ (self, parent, queue, *args, **kwargs):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -323,6 +325,7 @@ class LeatherWindow_preview(tk.Frame):
 		self.editted_flaw_offset = None
 		self.flaw_center_list_index = None
 		self.editted_flaw_start_position = None
+		self.editted_flaw_index = None
 
 		self.clicked_flaws = None
 		self.flaw_grouped_sprites = None
@@ -538,7 +541,7 @@ class LeatherWindow_preview(tk.Frame):
 						self.dropdown_menu_flag = False
 					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys():
 						self.choosed_menu_option.on_click(self.clicked_flaws)
-						print('clicked flaws', self.clicked_flaws)
+						print('clicked flaws 1', self.clicked_flaws)
 						if self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
@@ -546,11 +549,91 @@ class LeatherWindow_preview(tk.Frame):
 						self.choosed_menu_option = None
 					if self.choosed_layer_menu_option != None and self.dropdown_layer_option_on_hoover != None and self.choosed_layer_menu_option in self.dropdown_layer_option_on_hoover.keys():
 						self.choosed_layer_menu_option.on_click(self.clicked_flaws)
-						print('clicked flaws', self.clicked_flaws)
+						print('clicked flaws 2', self.clicked_flaws)
 						if self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
+						if self.choosed_layer_menu_option.text == 'Niebieska':
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+								if self.editted_flaw.position in self.b_layer_flaw_center_list:
+									pass
+								elif self.editted_flaw.position in self.g_layer_flaw_center_list:
+									flaw_index = self.g_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.b_layer_flaw_center_list.append(self.g_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_b_layer_items.append(self.displayed_g_layer_items.pop(flaw_index))
+									self.displayed_b_layer_flaws.append(self.displayed_g_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.y_layer_flaw_center_list:
+									flaw_index = self.y_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.b_layer_flaw_center_list.append(self.y_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_b_layer_items.append(self.displayed_y_layer_items.pop(flaw_index))
+									self.displayed_b_layer_flaws.append(self.displayed_y_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.r_layer_flaw_center_list:
+									flaw_index = self.r_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.b_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_b_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
+									self.displayed_b_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
+						elif self.choosed_layer_menu_option.text == 'Zielona':
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+								if self.editted_flaw.position in self.b_layer_flaw_center_list:
+									flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.g_layer_flaw_center_list.append(self.b_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_g_layer_items.append(self.displayed_b_layer_items.pop(flaw_index))
+									self.displayed_g_layer_flaws.append(self.displayed_b_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.g_layer_flaw_center_list:
+									pass
+								elif self.editted_flaw.position in self.y_layer_flaw_center_list:
+									flaw_index = self.y_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.g_layer_flaw_center_list.append(self.y_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_g_layer_items.append(self.displayed_y_layer_items.pop(flaw_index))
+									self.displayed_g_layer_flaws.append(self.displayed_y_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.r_layer_flaw_center_list:
+									flaw_index = self.r_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.g_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_g_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
+									self.displayed_g_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
+						elif self.choosed_layer_menu_option.text == 'Żółta':
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+								if self.editted_flaw.position in self.b_layer_flaw_center_list:
+									flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.y_layer_flaw_center_list.append(self.b_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_y_layer_items.append(self.displayed_b_layer_items.pop(flaw_index))
+									self.displayed_y_layer_flaws.append(self.displayed_b_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.g_layer_flaw_center_list:
+									flaw_index = self.g_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.y_layer_flaw_center_list.append(self.g_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_y_layer_items.append(self.displayed_g_layer_items.pop(flaw_index))
+									self.displayed_y_layer_flaws.append(self.displayed_g_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.y_layer_flaw_center_list:
+									pass
+								elif self.editted_flaw.position in self.r_layer_flaw_center_list:
+									flaw_index = self.r_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.y_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_y_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
+									self.displayed_y_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
+						elif self.choosed_layer_menu_option.text == 'Czerwona':
+							for flaw in self.clicked_flaws.keys():
+								self.editted_flaw = flaw
+								if self.editted_flaw.position in self.b_layer_flaw_center_list:
+									flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.r_layer_flaw_center_list.append(self.b_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_r_layer_items.append(self.displayed_b_layer_items.pop(flaw_index))
+									self.displayed_r_layer_flaws.append(self.displayed_b_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.g_layer_flaw_center_list:
+									flaw_index = self.g_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.r_layer_flaw_center_list.append(self.g_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_r_layer_items.append(self.displayed_g_layer_items.pop(flaw_index))
+									self.displayed_r_layer_flaws.append(self.displayed_g_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.y_layer_flaw_center_list:
+									flaw_index = self.y_layer_flaw_center_list.index(self.editted_flaw.position)
+									self.r_layer_flaw_center_list.append(self.y_layer_flaw_center_list.pop(flaw_index))
+									self.displayed_r_layer_items.append(self.displayed_y_layer_items.pop(flaw_index))
+									self.displayed_r_layer_flaws.append(self.displayed_y_layer_flaws.pop(flaw_index))
+								elif self.editted_flaw.position in self.r_layer_flaw_center_list:
+									pass
 						self.choosed_layer_menu_option = None
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 					if str(collide_list) != '{}':
@@ -597,7 +680,28 @@ class LeatherWindow_preview(tk.Frame):
 								offset_list.append([(point[0] - mouse_x), point[1] - mouse_y])
 							self.r_layer_items_offset.append(offset_list)
 				elif event.button == 1 and self.edit_mode == True and self.editted_flaw != None:
-					self.editted_flaw_offset = [self.editted_flaw.position[0] - pygame.mouse.get_pos()[0], self.editted_flaw.position[1] - pygame.mouse.get_pos()[1]]
+					self.editted_flaw_offset = []
+					mouse_x, mouse_y = pygame.mouse.get_pos()
+					if self.editted_flaw.flaw_type == 'hole':
+						self.editted_flaw_index = self.h_layer_flaw_center_list.index(self.editted_flaw.position)
+						for point in self.displayed_h_layer_items[self.editted_flaw_index]:
+							self.editted_flaw_offset.append([(point[0] - mouse_x) , point[1] - mouse_y])
+					elif self.editted_flaw.flaw_type == 'blue':
+						self.editted_flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
+						for point in self.displayed_b_layer_items[self.editted_flaw_index]:
+							self.editted_flaw_offset.append([(point[0] - mouse_x) , point[1] - mouse_y])
+					elif self.editted_flaw.flaw_type == 'green':
+						self.editted_flaw_index = self.g_layer_flaw_center_list.index(self.editted_flaw.position)
+						for point in self.displayed_g_layer_items[self.editted_flaw_index]:
+							self.editted_flaw_offset.append([(point[0] - mouse_x) , point[1] - mouse_y])
+					elif self.editted_flaw.flaw_type == 'yellow':
+						self.editted_flaw_index = self.y_layer_flaw_center_list.index(self.editted_flaw.position)
+						for point in self.displayed_y_layer_items[self.editted_flaw_index]:
+							self.editted_flaw_offset.append([(point[0] - mouse_x) , point[1] - mouse_y])
+					elif self.editted_flaw.flaw_type == 'red':
+						self.editted_flaw_index = self.r_layer_flaw_center_list.index(self.editted_flaw.position)
+						for point in self.displayed_r_layer_items[self.editted_flaw_index]:
+							self.editted_flaw_offset.append([(point[0] - mouse_x) , point[1] - mouse_y])
 				elif event.button == 3 and self.displayed_c_layer_items != None:
 					self.leather_draging = False
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
@@ -699,26 +803,67 @@ class LeatherWindow_preview(tk.Frame):
 											self.temp_drag_diff_y_layer_items, self.temp_drag_diff_r_layer_items]
 						self.queue.put(['main_dragging', dragging_changes])
 						self.updating_shapes = True
-				elif self.edit_mode == True and self.editted_flaw != None and self.editted_flaw_offset != None:
+				elif self.edit_mode == True and self.editted_flaw != None and self.editted_flaw_offset != None and str(self.editted_flaw_offset) != '[]':
+					sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
 					mouse_pos = pygame.mouse.get_pos()
 					if self.editted_flaw_start_position == None:
 						self.editted_flaw_start_position = self.editted_flaw.position
-					self.editted_flaw.update_position([self.editted_flaw_offset[0] + mouse_pos[0], self.editted_flaw_offset[1] + mouse_pos[1]])
+					if self.editted_flaw.flaw_type == 'hole':
+						item_list = []
+						diff_list = []
+						for point, offset in zip(self.displayed_h_layer_items[self.editted_flaw_index], self.editted_flaw_offset):
+							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
+							diff_list.append(
+								[(point[0] - (offset[0] + mouse_pos[0])) / sw, (point[1] - (offset[1] + mouse_pos[1])) / sh])
+						self.displayed_h_layer_items[self.editted_flaw_index] = item_list
+					if self.editted_flaw.flaw_type == 'blue':
+						item_list = []
+						diff_list = []
+						for point, offset in zip(self.displayed_b_layer_items[self.editted_flaw_index], self.editted_flaw_offset):
+							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
+							diff_list.append(
+								[(point[0] - (offset[0] + mouse_pos[0])) / sw, (point[1] - (offset[1] + mouse_pos[1])) / sh])
+						self.displayed_b_layer_items[self.editted_flaw_index] = item_list
+					if self.editted_flaw.flaw_type == 'green':
+						item_list = []
+						diff_list = []
+						for point, offset in zip(self.displayed_g_layer_items[self.editted_flaw_index], self.editted_flaw_offset):
+							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
+							diff_list.append(
+								[(point[0] - (offset[0] + mouse_pos[0])) / sw, (point[1] - (offset[1] + mouse_pos[1])) / sh])
+						self.displayed_g_layer_items[self.editted_flaw_index] = item_list
+					if self.editted_flaw.flaw_type == 'yellow':
+						item_list = []
+						diff_list = []
+						for point, offset in zip(self.displayed_y_layer_items[self.editted_flaw_index], self.editted_flaw_offset):
+							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
+							diff_list.append(
+								[(point[0] - (offset[0] + mouse_pos[0])) / sw, (point[1] - (offset[1] + mouse_pos[1])) / sh])
+						self.displayed_y_layer_items[self.editted_flaw_index] = item_list
+					if self.editted_flaw.flaw_type == 'red':
+						item_list = []
+						diff_list = []
+						for point, offset in zip(self.displayed_r_layer_items[self.editted_flaw_index], self.editted_flaw_offset):
+							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
+							diff_list.append(
+								[(point[0] - (offset[0] + mouse_pos[0])) / sw, (point[1] - (offset[1] + mouse_pos[1])) / sh])
+						self.displayed_r_layer_items[self.editted_flaw_index] = item_list
+					self.updating_shapes = True
+						# jeszcze diff
+					#self.editted_flaw.update_position([self.editted_flaw_offset[0] + mouse_pos[0], self.editted_flaw_offset[1] + mouse_pos[1]])
 
 			elif event.type == pygame.MOUSEBUTTONUP:
 				if event.button == 1:
 					if self.edit_mode == True and self.editted_flaw_start_position != None:
-						if self.editted_flaw.flaw_type == 'blue':
-							flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw_start_position)
-							self.b_layer_flaw_center_list[flaw_index] = self.editted_flaw.position
-							print('editted flaw items 1', self.displayed_b_layer_items[flaw_index])
-							self.displayed_b_layer_items[flaw_index] = self.editted_flaw.item
-							print('editted flaw items 2', self.displayed_b_layer_items[flaw_index])
-							#hulk
+						#if self.editted_flaw.flaw_type == 'blue':
+						#	self.displayed_b_layer_items[self.editted_flaw_index] = self.editted_flaw.item
+						#	print('editted flaw items btnup', self.displayed_b_layer_items[self.editted_flaw_index])
+						#	print('editted from flaw btnup', self.editted_flaw.item)
+						#	#hulk
 						self.editted_flaw_start_position = None
 						self.edit_mode = False
 						self.editted_flaw_offset = None
-						self.editted_flaw = None
+						#self.editted_flaw = None
 					self.leather_draging = False
 					self.c_layer_items_offset = []
 					self.h_layer_items_offset = []
@@ -1392,7 +1537,7 @@ class LeatherWindow_preview(tk.Frame):
 				flaw.update_flaw(flaw_points, flaw_center)
 		if self.displayed_b_layer_flaws != None:
 			for flaw, flaw_points, flaw_center in zip(self.displayed_b_layer_flaws, self.displayed_b_layer_items, self.b_layer_flaw_center_list):
-				flaw.update_flaw(flaw_points, flaw_center)
+					flaw.update_flaw(flaw_points, flaw_center)
 		if self.displayed_g_layer_flaws != None:
 			for flaw, flaw_points, flaw_center in zip(self.displayed_g_layer_flaws, self.displayed_g_layer_items, self.g_layer_flaw_center_list):
 				flaw.update_flaw(flaw_points, flaw_center)
