@@ -26,13 +26,13 @@ bg_layer_color = (0, 0, 0)
 c_layer_color = (255, 255, 255)
 h_layer_color = (127, 127, 127)
 b_layer_color = (0, 0, 255)
-b_layer_linetype = "lines"
+b_layer_linetype = 'polygon'
 g_layer_color = (0, 255, 0)
-g_layer_linetype = "lines"
+g_layer_linetype = 'polygon'
 y_layer_color = (255, 255, 0)
-y_layer_linetype = "lines"
+y_layer_linetype = 'polygon'
 r_layer_color = (255, 0, 0)
-r_layer_linetype = "lines"
+r_layer_linetype = 'polygon'
 
 h_layer_flag = True
 b_layer_flag = True

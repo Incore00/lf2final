@@ -84,19 +84,19 @@ class Toolbar(tk.Frame):
         if self.change_colors_flag == False:
             configFile.c_layer_color = (0, 0, 0)
             configFile.bg_layer_color = (255, 255, 255)
-            configFile.b_layer_linetype = "polygon"
-            configFile.g_layer_linetype = "polygon"
-            configFile.y_layer_linetype = "polygon"
-            configFile.r_layer_linetype = "polygon"
+            configFile.b_layer_linetype = "lines"
+            configFile.g_layer_linetype = "lines"
+            configFile.y_layer_linetype = "lines"
+            configFile.r_layer_linetype = "lines"
             self.change_colors_flag = True
             self.change_colors_btn.configure(image=self.change_colors_icon_active)
         elif self.change_colors_flag == True:
             configFile.c_layer_color = (255, 255, 255)
             configFile.bg_layer_color = (0, 0, 0)
-            configFile.b_layer_linetype = "lines"
-            configFile.g_layer_linetype = "lines"
-            configFile.y_layer_linetype = "lines"
-            configFile.r_layer_linetype = "lines"
+            configFile.b_layer_linetype = "polygon"
+            configFile.g_layer_linetype = "polygon"
+            configFile.y_layer_linetype = "polygon"
+            configFile.r_layer_linetype = "polygon"
             self.change_colors_flag = False
             self.change_colors_btn.configure(image=self.change_colors_icon_inactive)
         self.queue.put(['preview_reload'])
