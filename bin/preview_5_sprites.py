@@ -4,6 +4,8 @@ import pygame
 import pyglet
 from bin import configFile
 from tkfontawesome import icon_to_image
+from playsound import playsound
+from multiprocessing import Process
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -106,12 +108,16 @@ class DropdownMenuOption(pygame.sprite.Sprite):
 					print('Przesuń')
 				elif self.text == 'Niebieska':
 					flaw.change_flaw_type('blue')
+					playsound('sounds\Q1.wav', False)
 				elif self.text == 'Zielona':
 					flaw.change_flaw_type('green')
+					playsound('sounds\Q2.wav', False)
 				elif self.text == 'Żółta':
 					flaw.change_flaw_type('yellow')
+					playsound('sounds\Q3.wav', False)
 				elif self.text == 'Czerwona':
 					flaw.change_flaw_type('red')
+					playsound('sounds\Q4.wav', False)
 		else:
 			if self.text == 'Rysuj skaze':
 				print('Rysuj skaze')

@@ -1,0 +1,65 @@
+#############################################################################
+#############################################################################
+### LABEL DESCRIPTION                                                     ###
+#############################################################################
+#############################################################################
+
+#############################################################################
+### General label attributes                                              ###
+###     -> Item   = Label                                                 ###   
+###     -> Width  : label width (in mm)                                   ###
+###     -> Height : label height (in mm)                                  ###
+###     -> Gap    : gap between two labels (in dots, optional)            ###
+#############################################################################
+Item=Label ; Width=100 ; Height=40
+
+#############################################################################
+### Barcode                                                               ###
+###     -> Item = BarCode                                                 ###
+###     -> PosX : x position of the barcode                               ###
+###     -> PosY : y position of the barcode                               ###                                
+#############################################################################
+Item=BarCode ; PosX=2 ; PosY=12
+
+#############################################################################
+### Text item                                                             ###
+###     -> Item  = FreeTxt                                                ###
+###     -> PosX  : x position of the text                                 ###
+###     -> PosY  : y position of the text                                 ###
+###     -> Align : alignment (optional)                                   ###
+###                     - L = left (default value)                        ###
+###                     - R = right                                       ###
+###                     - C = center                                      ###
+###     -> Size  : font size, between 1 and 4                             ###          
+###     -> Value : text to print, with variables ("$variable$")           ###
+###                available variables (not case sensitive) :             ###
+###                     - $NAME$       : name of the hide                 ###
+###                     - $LEATHER$    : leather type                     ###                
+###                     - $SCAREA$     : scanned area                     ###
+###                     - $SUPPLIER$   : supplier                         ###
+###                     - $SUPAREA$    : supplier area                    ###
+###                     - $AUTOCHOICE$ : automatically computed choice    ###
+###                     - $SUPCHOICE$  : supplier choice                  ###
+###                     - $OPCHOICE$   : operator choice                  ###
+###                     - $RATIOCHOICE$: ratio choice                     ###
+###                     - $BATCH$      : batch name                       ###
+###                     - $COLOR$      : leather color                    ###                
+###                     - $OPERATOR$   : operator                         ###
+###                Remark : "$" character can be printed using "$$"       ###                        
+#############################################################################
+Item=FreeTxt ; PosX=2   ; PosY=170 ; Align=L; Size=2 ; Value=Supplier:
+Item=FreeTxt ; PosX=2   ; PosY=200 ; Align=L; Size=2 ; Value=Scanned area:
+Item=FreeTxt ; PosX=2   ; PosY=230 ; Align=L; Size=2 ; Value=Leather type:
+Item=FreeTxt ; PosX=2   ; PosY=260 ; Align=L; Size=2 ; Value=Color:
+Item=FreeTxt ; PosX=360 ; PosY=170 ; Align=R; Size=3 ; Value=$supplier$
+Item=FreeTxt ; PosX=360 ; PosY=200 ; Align=R; Size=3 ; Value=$scArea$
+Item=FreeTxt ; PosX=360 ; PosY=230 ; Align=R; Size=3 ; Value=$leather$
+Item=FreeTxt ; PosX=360 ; PosY=260 ; Align=R; Size=3 ; Value=$color$
+Item=FreeTxt ; PosX=390 ; PosY=170 ; Align=L; Size=2 ; Value=Choice(s,o,c,%):
+Item=FreeTxt ; PosX=390 ; PosY=200 ; Align=L; Size=2 ; Value=Supplier area:
+Item=FreeTxt ; PosX=390 ; PosY=230 ; Align=L; Size=2 ; Value=Batch:
+Item=FreeTxt ; PosX=390 ; PosY=260 ; Align=L; Size=2 ; Value=Operator:
+Item=FreeTxt ; PosX=755 ; PosY=170 ; Align=R; Size=3 ; Value=$supChoice$,$opChoice$,$AUTOCHOICE$,$RATIOCHOICE$%
+Item=FreeTxt ; PosX=755 ; PosY=200 ; Align=R; Size=3 ; Value=$supArea$
+Item=FreeTxt ; PosX=755 ; PosY=230 ; Align=R; Size=3 ; Value=$batch$
+Item=FreeTxt ; PosX=755 ; PosY=260 ; Align=R; Size=3 ; Value=$operator$
