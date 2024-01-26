@@ -740,16 +740,19 @@ class LeatherWindow_preview(tk.Frame):
 					self.leather_draging = False
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
 															  False, collided=pygame.sprite.collide_mask)
-					if len(collide_list) >= 1:
-						self.clicked_flaws = collide_list
-						self.flaw_dropdown_menu()
-						self.updating_shapes = True
-						break
+					#if len(collide_list) >= 1:
+					#	print('option 1')
+					#	self.clicked_flaws = collide_list
+					#	self.flaw_dropdown_menu()
+					#	self.updating_shapes = True
+					#	break
 					if self.clicked_flaws != None and len(self.clicked_flaws) >= 1:
+						print('option 2')
 						self.flaw_dropdown_menu()
 						self.updating_shapes = True
 						break
 					if str(collide_list) == '{}' and self.clicked_flaws == None or self.clicked_flaws == 0 and str(collide_list) == '{}':
+						print('option 3')
 						self.dropdown_menu()
 						self.clicked_flaws = None
 						self.updating_shapes = True
