@@ -34,6 +34,8 @@ y_layer_linetype = 'polygon'
 r_layer_color = (255, 0, 0)
 r_layer_linetype = 'polygon'
 
+new_flaw_color = (255,255,255)
+
 h_layer_flag = True
 b_layer_flag = True
 g_layer_flag = True
