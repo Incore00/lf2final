@@ -2,7 +2,7 @@
 preview_redraw = False
 main_redraw = False
 
-cursor_radius = 10
+cursor_radius = 30
 cursor_color = (255,255,0)
 
 flaw_dropdown_menu_x_size = 120

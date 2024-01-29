@@ -15,25 +15,31 @@ class Layerinfo(tk.Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
         self.columnconfigure((1, 2, 3, 4), weight=1)
-        self.rowconfigure(4, weight=1)
+        self.rowconfigure(6, weight=1)
+
+        self.clicked_flaws_list = []
 
         self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.235), height=int(parent.winfo_reqheight()*0.865))
 
-        tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
+        tk.Label(self, text='Wybrane skazy:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
+        self.clicked_flaws_frame = tk.Frame(self, background='#303030', height = 200)
+        self.clicked_flaws_frame.grid_propagate(0)
+        self.clicked_flaws_frame.grid(column=1, columnspan=4, row=2, sticky='nsew')
+        tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=3)
 
         self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=40)
         self.blue_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.blue_layer_btn = ctk.CTkButton(self, image=self.blue_layer_icon_active, fg_color='#505050',
                                             hover_color='#404040', compound='top', corner_radius=10, text='Niebieska',
                                             text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('blue'))
-        self.blue_layer_btn.grid(column=1, row=2, sticky='nsew')
+        self.blue_layer_btn.grid(column=1, row=4, sticky='nsew')
 
         self.green_layer_icon_active = icon_to_image("layer-group", fill='#00FF00', scale_to_width=40)
         self.green_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.green_layer_btn = ctk.CTkButton(self, image=self.green_layer_icon_active, fg_color='#505050',
                                              hover_color='#404040', compound='top', corner_radius=10, text='Zielona',
                                              text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('green'))
-        self.green_layer_btn.grid(column=2, row=2, sticky='nsew')
+        self.green_layer_btn.grid(column=2, row=4, sticky='nsew')
 
         self.yellow_layer_icon_active = icon_to_image("layer-group", fill='#FFFF00', scale_to_width=40)
         self.yellow_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
@@ -41,22 +47,22 @@ class Layerinfo(tk.Frame):
                                               fg_color='#505050',
                                               hover_color='#404040', compound='top', corner_radius=10, text='Zółta',
                                               text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('yellow'))
-        self.yellow_layer_btn.grid(column=3, row=2, sticky='nsew')
+        self.yellow_layer_btn.grid(column=3, row=4, sticky='nsew')
 
         self.red_layer_icon_active = icon_to_image("layer-group", fill='#FF0000', scale_to_width=40)
         self.red_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
         self.red_layer_btn = ctk.CTkButton(self, image=self.red_layer_icon_active, fg_color='#505050',
                                            hover_color='#404040', compound='top', corner_radius=10, text='Czerwona',
                                            text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('red'))
-        self.red_layer_btn.grid(column=4, row=2, sticky='nsew')
+        self.red_layer_btn.grid(column=4, row=4, sticky='nsew')
 
-        ctk.CTkLabel(self, text="     Warstwa:", text_font=('OpenSans.ttf', 16)).grid(column=1, columnspan=2, row=3, sticky='nsew')
-        ctk.CTkLabel(self, text="Liczba skaz:", text_font=('OpenSans.ttf', 16)).grid(column=3, columnspan=2, row=3, sticky='w')
+        ctk.CTkLabel(self, text="     Warstwa:", text_font=('OpenSans.ttf', 16)).grid(column=1, columnspan=2, row=5, sticky='nsew')
+        ctk.CTkLabel(self, text="Liczba skaz:", text_font=('OpenSans.ttf', 16)).grid(column=3, columnspan=2, row=5, sticky='w')
 
         self.layer_frame = VerticalScrolledFrame(self)
         self.layer_frame.columnconfigure((1, 2, 3, 4, 5), weight=1)
         self.layer_frame.rowconfigure(1, weight=1)
-        self.layer_frame.grid(column=1, columnspan=4, row=4, sticky='nsew')
+        self.layer_frame.grid(column=1, columnspan=4, row=6, sticky='nsew')
 
         self.rarrow = icon_to_image("caret-right", fill="#adaba5", scale_to_width=10)
         self.darrow = icon_to_image("caret-down", fill="#adaba5", scale_to_width=15)
@@ -131,6 +137,44 @@ class Layerinfo(tk.Frame):
         for widget in self.layer_frame.interior.winfo_children():
             widget.grid(padx=2, pady=2)
 
+    def rgb_to_hex (self,r, g, b):
+        return '#{:02x}{:02x}{:02x}'.format(r, g, b)
+
+    def clicked_flaws_update(self, flaw_id_list, flaw_list, flaw_type_list, flaw_position_list):
+        if flaw_list == None or str(flaw_list) == '[]':
+            for child in self.clicked_flaws_frame.winfo_children():
+                child.destroy()
+        else:
+            for index, flaw_id, flaw, flaw_type, flaw_position in zip(range(0, len(flaw_list)), flaw_id_list, flaw_list, flaw_type_list, flaw_position_list):
+                flaw_frame = ctk.CTkFrame(self.clicked_flaws_frame, bg_color='#303030', fg_color='#303030',
+                             corner_radius=5, border_width=2, border_color='#000000')
+                #flaw_frame.columnconfigure((0,1,2,3,4), weight=1)
+                flaw_frame.grid(column=0, row=index, sticky='nse', pady=1, padx=1)
+                ctk.CTkLabel(flaw_frame, text="Skaza #%d" %flaw_id, text_font=('OpenSans.ttf', 13)).grid(column=0, row=0, sticky='nsew', padx=1, pady=3)
+                if flaw_type == 'hole':
+                    ctk.CTkLabel(flaw_frame, text="DZIURA", text_color=self.rgb_to_hex(*configFile.h_layer_color),
+                                 text_font=('OpenSans.ttf', 13)).grid(column=1,row=0, pady=3, sticky='nsew')
+                elif flaw_type == 'blue':
+                    ctk.CTkLabel(flaw_frame, text="NIEBIESKA", text_color=self.rgb_to_hex(*configFile.b_layer_color),
+                                 text_font=('OpenSans.ttf', 13)).grid(column=1, row=0, pady=3, sticky='nsew')
+                elif flaw_type == 'green':
+                    ctk.CTkLabel(flaw_frame, text="ZIELONA", text_color=self.rgb_to_hex(*configFile.g_layer_color),
+                                 text_font=('OpenSans.ttf', 13)).grid(column=1, row=0, pady=3, sticky='nsew')
+                elif flaw_type == 'yellow':
+                    ctk.CTkLabel(flaw_frame, text="ŻÓŁTA", text_color=self.rgb_to_hex(*configFile.y_layer_color),
+                                 text_font=('OpenSans.ttf', 13)).grid(column=1, row=0, pady=3, sticky='nsew')
+                elif flaw_type == 'red':
+                    ctk.CTkLabel(flaw_frame, text="CZERWONA", text_color=self.rgb_to_hex(*configFile.r_layer_color),
+                                 text_font=('OpenSans.ttf', 13)).grid(column=1, row=0, pady=3, sticky='nsew')
+
+                ctk.CTkLabel(flaw_frame, text="x:%d, y:%d" % (int(flaw_position[0]), int(flaw_position[1])),
+                             text_font=('OpenSans.ttf', 13)).grid(column=2, row=0, pady=3, sticky='nsew')
+
+                exit_icon = icon_to_image("times", fill='#c7c6c5', scale_to_width=20)
+                exit_btn = ctk.CTkButton(flaw_frame, image=exit_icon, width=1, height=1, bg_color='#303030',
+                                         fg_color='#303030', hover_color='#303030',
+                                         command=flaw_frame.destroy, text='')
+                exit_btn.grid(column=3, row=0, pady=3, sticky='nsew')
     def change_layer_visibility(self, layer):
         if layer == 'blue':
             if configFile.b_layer_flag == True:
