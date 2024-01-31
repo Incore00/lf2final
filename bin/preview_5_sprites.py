@@ -21,7 +21,8 @@ class Leatherpreview(tk.Frame):
 		print(self.sw, self.sh)
 		self.configure(height=self.sh, width=self.sw, bg='#0000FF')
 
-		LeatherWindow_preview(self, self.queue, height=self.sh, width=self.sw).pack(side="top", fill="both",
+		self.lw_prev = LeatherWindow_preview(self, self.queue, height=self.sh, width=self.sw)
+		self.lw_prev.pack(side="top", fill="both",
 																					expand=True)
 #Na skórze (pozaz skazą):
 #-cofnij
@@ -803,7 +804,7 @@ class LeatherWindow_preview(tk.Frame):
 					#	self.flaw_dropdown_menu()
 					#	self.updating_shapes = True
 					#	break
-					if self.clicked_flaws != None and len(self.clicked_flaws) >= 1:
+					if self.clicked_flaws != None and len(self.clicked_flaws) == 1:
 						print('option 2')
 						self.flaw_dropdown_menu()
 						self.updating_shapes = True
@@ -1087,23 +1088,25 @@ class LeatherWindow_preview(tk.Frame):
 					self.r_layer_items_offset = []
 
 	def layerinfo_update(self, clicked_flaws):
+		print('clicked_flaws', clicked_flaws)
 		flaw_id_list = []
 		flaw_list = []
 		flaw_type_list = []
 		flaw_position_list = []
 		if clicked_flaws != None:
-			for flaw in clicked_flaws.keys():
+			for flaw_key, flaw_value in clicked_flaws.items():
 				iter = 0
 				for list in self.flaw_sprites:
 					for item in list:
 						iter += 1
-						if flaw == item:
+						if flaw_key == item:
 							flaw_id_list.append(iter)
-				flaw_list.append(flaw)
-				flaw_type_list.append(flaw.flaw_type)
-				flaw_position_list.append(flaw.position)
+				flaw_list.append([flaw_key, flaw_value])
+				flaw_type_list.append(flaw_key.flaw_type)
+				flaw_position_list.append(flaw_key.position)
 		self.parent.parent.layer_info.clicked_flaws_update(None, None, None, None)
 		self.parent.parent.layer_info.clicked_flaws_update(flaw_id_list, flaw_list, flaw_type_list, flaw_position_list)
+
 	def flaw_type_assignation_func(self, point_list):
 		a_point = point_list[0]
 		b_point = point_list[-1]
@@ -1159,7 +1162,9 @@ class LeatherWindow_preview(tk.Frame):
 			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 			self.dropdown_menu_flag = True
 
-
+	def clicked_flaw_editor(self, new_clicked_flaws):
+		self.reset_flaws_colors(new_clicked_flaws)
+		self.clicked_flaws = new_clicked_flaws
 
 	def reset_flaws_colors(self, flaws_to_Skip = [None, None]):
 		if self.flaw_sprites != None:

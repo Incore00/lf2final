@@ -17,12 +17,10 @@ class Layerinfo(tk.Frame):
         self.columnconfigure((1, 2, 3, 4), weight=1)
         self.rowconfigure(6, weight=1)
 
-        self.clicked_flaws_list = []
-
         self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.235), height=int(parent.winfo_reqheight()*0.865))
 
         tk.Label(self, text='Wybrane skazy:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
-        self.clicked_flaws_frame = tk.Frame(self, background='#303030', height = 200)
+        self.clicked_flaws_frame = tk.Frame(self, background='#303030', height = 215)
         self.clicked_flaws_frame.grid_propagate(0)
         self.clicked_flaws_frame.grid(column=1, columnspan=4, row=2, sticky='nsew')
         tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=3)
@@ -144,11 +142,11 @@ class Layerinfo(tk.Frame):
         if flaw_list == None or str(flaw_list) == '[]':
             for child in self.clicked_flaws_frame.winfo_children():
                 child.destroy()
+            self.flaw_frame_list = []
         else:
             for index, flaw_id, flaw, flaw_type, flaw_position in zip(range(0, len(flaw_list)), flaw_id_list, flaw_list, flaw_type_list, flaw_position_list):
                 flaw_frame = ctk.CTkFrame(self.clicked_flaws_frame, bg_color='#303030', fg_color='#303030',
                              corner_radius=5, border_width=2, border_color='#000000')
-                #flaw_frame.columnconfigure((0,1,2,3,4), weight=1)
                 flaw_frame.grid(column=0, row=index, sticky='nse', pady=1, padx=1)
                 ctk.CTkLabel(flaw_frame, text="Skaza #%d" %flaw_id, text_font=('OpenSans.ttf', 13)).grid(column=0, row=0, sticky='nsew', padx=1, pady=3)
                 if flaw_type == 'hole':
@@ -173,8 +171,28 @@ class Layerinfo(tk.Frame):
                 exit_icon = icon_to_image("times", fill='#c7c6c5', scale_to_width=20)
                 exit_btn = ctk.CTkButton(flaw_frame, image=exit_icon, width=1, height=1, bg_color='#303030',
                                          fg_color='#303030', hover_color='#303030',
-                                         command=flaw_frame.destroy, text='')
+                                         command=lambda x=flaw_frame, y=flaw, z=flaw_list:self.exit_btn_handler(x, y, z), text='')
                 exit_btn.grid(column=3, row=0, pady=3, sticky='nsew')
+
+    def exit_btn_handler(self, flaw_frame, flaw, flaw_list):
+        flaw_frame.destroy()
+        flaw_list.remove(flaw)
+        new_list = []
+        for item in flaw_list:
+            try:
+                new_list.append(*item)
+            except TypeError:
+                new_list.append(item[0])
+                new_list.append(item[1])
+        print(new_list)
+        flaw_dict = self.convert_list_to_dict(new_list)
+        self.parent.leather_preview.lw_prev.clicked_flaw_editor(flaw_dict)
+
+    def convert_list_to_dict(self, list):
+        it = iter(list)
+        res_dct = dict(zip(it, it))
+        return res_dct
+
     def change_layer_visibility(self, layer):
         if layer == 'blue':
             if configFile.b_layer_flag == True:
