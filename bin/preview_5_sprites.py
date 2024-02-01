@@ -17,7 +17,8 @@ class Leatherpreview(tk.Frame):
 		self.queue = queue
 		self.pack_propagate(0)
 		self.grid_propagate(0)
-		self.sw, self.sh = int(parent.winfo_reqwidth() * 0.765), int(parent.winfo_reqheight() * 0.765)
+		#self.sw, self.sh = int(parent.winfo_reqwidth() * 0.765), int(parent.winfo_reqheight() * 0.765)
+		self.sw, self.sh = int(parent.winfo_reqwidth() * 0.843), int(parent.winfo_reqheight() * 0.843)
 		print(self.sw, self.sh)
 		self.configure(height=self.sh, width=self.sw, bg='#0000FF')
 

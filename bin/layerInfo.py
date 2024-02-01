@@ -17,7 +17,7 @@ class Layerinfo(tk.Frame):
         self.columnconfigure((1, 2, 3, 4), weight=1)
         self.rowconfigure(6, weight=1)
 
-        self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.235), height=int(parent.winfo_reqheight()*0.865))
+        self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.157), height=int(parent.winfo_reqheight()*0.865))
 
         tk.Label(self, text='Wybrane skazy:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
         self.clicked_flaws_frame = tk.Frame(self, background='#303030', height = 215)
@@ -25,33 +25,33 @@ class Layerinfo(tk.Frame):
         self.clicked_flaws_frame.grid(column=1, columnspan=4, row=2, sticky='nsew')
         tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=3)
 
-        self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=40)
-        self.blue_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
+        self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=50)
+        self.blue_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=50)
         self.blue_layer_btn = ctk.CTkButton(self, image=self.blue_layer_icon_active, fg_color='#505050',
-                                            hover_color='#404040', compound='top', corner_radius=10, text='Niebieska',
-                                            text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('blue'))
+                                            hover_color='#404040', compound='top', corner_radius=10, text='',
+                                            text_font=('OpenSans.ttf', 1), command=lambda: self.change_layer_visibility('blue'))
         self.blue_layer_btn.grid(column=1, row=4, sticky='nsew')
 
-        self.green_layer_icon_active = icon_to_image("layer-group", fill='#00FF00', scale_to_width=40)
-        self.green_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
+        self.green_layer_icon_active = icon_to_image("layer-group", fill='#00FF00', scale_to_width=50)
+        self.green_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=50)
         self.green_layer_btn = ctk.CTkButton(self, image=self.green_layer_icon_active, fg_color='#505050',
-                                             hover_color='#404040', compound='top', corner_radius=10, text='Zielona',
-                                             text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('green'))
+                                             hover_color='#404040', compound='top', corner_radius=10, text='',
+                                             text_font=('OpenSans.ttf', 1), command=lambda: self.change_layer_visibility('green'))
         self.green_layer_btn.grid(column=2, row=4, sticky='nsew')
 
-        self.yellow_layer_icon_active = icon_to_image("layer-group", fill='#FFFF00', scale_to_width=40)
-        self.yellow_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
+        self.yellow_layer_icon_active = icon_to_image("layer-group", fill='#FFFF00', scale_to_width=50)
+        self.yellow_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=50)
         self.yellow_layer_btn = ctk.CTkButton(self, image=self.yellow_layer_icon_active,
                                               fg_color='#505050',
-                                              hover_color='#404040', compound='top', corner_radius=10, text='Zółta',
-                                              text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('yellow'))
+                                              hover_color='#404040', compound='top', corner_radius=10, text='',
+                                              text_font=('OpenSans.ttf', 1), command=lambda: self.change_layer_visibility('yellow'))
         self.yellow_layer_btn.grid(column=3, row=4, sticky='nsew')
 
-        self.red_layer_icon_active = icon_to_image("layer-group", fill='#FF0000', scale_to_width=40)
-        self.red_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
+        self.red_layer_icon_active = icon_to_image("layer-group", fill='#FF0000', scale_to_width=50)
+        self.red_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=50)
         self.red_layer_btn = ctk.CTkButton(self, image=self.red_layer_icon_active, fg_color='#505050',
-                                           hover_color='#404040', compound='top', corner_radius=10, text='Czerwona',
-                                           text_font=('OpenSans.ttf', 15), command=lambda: self.change_layer_visibility('red'))
+                                           hover_color='#404040', compound='top', corner_radius=10, text='',
+                                           text_font=('OpenSans.ttf', 1), command=lambda: self.change_layer_visibility('red'))
         self.red_layer_btn.grid(column=4, row=4, sticky='nsew')
 
         ctk.CTkLabel(self, text="     Warstwa:", text_font=('OpenSans.ttf', 16)).grid(column=1, columnspan=2, row=5, sticky='nsew')

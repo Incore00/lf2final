@@ -18,8 +18,9 @@ class MainApplication(tk.Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
 
-        self.leather_tools = leather_tools(self, queue)
-        self.leather_tools.grid(column=1, row=4, sticky='nsew')
+        #self.leather_tools = leather_tools(self, queue)
+        #self.leather_tools.grid(column=1, row=4, sticky='nsew')
+        #bez 1468 826
 
         self.toolbar = Toolbar(self, queue)
         self.toolbar.grid(column=1, row=1, columnspan=2, sticky='nsew')
