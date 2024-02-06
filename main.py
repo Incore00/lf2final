@@ -7,7 +7,7 @@ from bin.infobar import Infobar
 from bin.preview_5_sprites import Leatherpreview
 #from bin.preview_4_wo_history import Leatherpreview
 from bin.layerInfo import Layerinfo
-from bin.projector import Leathermain
+from bin.projector1 import Leathermain
 from bin.leather_toolbar import leather_tools
 
 class MainApplication(tk.Frame):

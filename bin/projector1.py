@@ -10,20 +10,17 @@ from multiprocessing import Process
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
 
-class Leatherpreview(tk.Frame):
-	def __init__ (self, parent, queue, *args, **kwargs):
-		tk.Frame.__init__(self, parent, *args, **kwargs)
-		self.parent = parent
-		self.queue = queue
-		self.pack_propagate(0)
-		self.grid_propagate(0)
-		self.sw, self.sh = int(parent.winfo_reqwidth() * 0.765), int(parent.winfo_reqheight() * 0.765)
-		#self.sw, self.sh = int(parent.winfo_reqwidth() * 0.843), int(parent.winfo_reqheight() * 0.843)
-		print(self.sw, self.sh)
-		self.configure(height=self.sh, width=self.sw, bg='#0000FF')
+class Leathermain():
+	def __init__(self, queue):
+		root = tk.Tk()
+		root.iconbitmap("images/icon.ico")
+		root.title("LeatherView")
+		sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
+		root.geometry('%dx%d%+d+%d' % (sw, sh, 0, -sh))
+		root.overrideredirect(True)
+		LeatherWindow_main(root, queue, height=sh, width=sw).pack(side="top", fill="both", expand=True)
 
-		self.lw_prev = LeatherWindow_preview(self, self.queue, height=self.sh, width=self.sw)
-		self.lw_prev.pack(side="top", fill="both",expand=True)
+		root.mainloop()
 class DropdownMenuOption(pygame.sprite.Sprite):
 	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None, flaw_type = None):
 		super().__init__()
@@ -236,7 +233,7 @@ class FlawSprite(pygame.sprite.Sprite):
 			self.color = configFile.r_layer_color
 
 
-class LeatherWindow_preview(tk.Frame):
+class LeatherWindow_main(tk.Frame):
 	def __init__ (self, parent, queue, *args, **kwargs):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
 		self.parent = parent
@@ -368,7 +365,7 @@ class LeatherWindow_preview(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_reload':
+			if item[0] == 'main_reload':
 				self.updating_shapes = True
 			else:
 				self.queue.put(item)
@@ -376,7 +373,7 @@ class LeatherWindow_preview(tk.Frame):
 			pass
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_load_data':
+			if item[0] == 'main_load_data':
 				self.load_data(item[1])
 			else:
 				self.queue.put(item)
@@ -384,7 +381,7 @@ class LeatherWindow_preview(tk.Frame):
 			pass
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_in':
+			if item[0] == 'main_zoom_in':
 				self.zoom_in(item[1])
 			else:
 				self.queue.put(item)
@@ -393,7 +390,7 @@ class LeatherWindow_preview(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_out':
+			if item[0] == 'main_zoom_out':
 				self.zoom_out(item[1], True)
 			else:
 				self.queue.put(item)
@@ -402,7 +399,7 @@ class LeatherWindow_preview(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_dragging':
+			if item[0] == 'main_dragging':
 				self.dragging_income(item[1])
 			else:
 				self.queue.put(item)
@@ -414,12 +411,11 @@ class LeatherWindow_preview(tk.Frame):
 		if self.creating_shapes == True:
 			self.create_shapes()
 			self.creating_shapes = False
+
 		if self.updating_shapes == True:
 			self.update_shapes()
 			self.updating_shapes = False
-
 		self.screen.fill(configFile.bg_layer_color)
-
 		if self.c_layer_items != None:
 			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
 		if str(self.drawing_flaw_points) != '[]' and self.drawing_flaw_points != None and len(self.drawing_flaw_points) >= 2:
