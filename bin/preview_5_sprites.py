@@ -3,9 +3,10 @@ import os
 import pygame
 import pyglet
 from bin import configFile
-from tkfontawesome import icon_to_image
 from playsound import playsound
-from multiprocessing import Process
+from bin.flaws import FlawSprite
+from bin.dropdown import DropdownMenuOption
+from bin.cursor import CursorSprite
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -18,222 +19,12 @@ class Leatherpreview(tk.Frame):
 		self.pack_propagate(0)
 		self.grid_propagate(0)
 		self.sw, self.sh = int(parent.winfo_reqwidth() * 0.765), int(parent.winfo_reqheight() * 0.765)
-		#self.sw, self.sh = int(parent.winfo_reqwidth() * 0.843), int(parent.winfo_reqheight() * 0.843)
 		print(self.sw, self.sh)
 		self.configure(height=self.sh, width=self.sw, bg='#0000FF')
 
 		self.lw_prev = LeatherWindow_preview(self, self.queue, height=self.sh, width=self.sw)
 		self.lw_prev.pack(side="top", fill="both",expand=True)
-class DropdownMenuOption(pygame.sprite.Sprite):
-	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None, flaw_type = None):
-		super().__init__()
-		self.position = position
-		self.x_size = x_size
-		self.y_size = y_size
-		self.text = text
-		self.font_color = font_color
-		self.flaw_type = flaw_type
-		self.bg_color = bg_color
-		self.image = pygame.Surface((x_size, y_size))
-		self.image.set_colorkey((0, 0, 0))
-		self.rect = self.image.get_rect(center=self.position)
-		self.image.fill(bg_color)
-		if font == None:
-			self.font = pygame.font.Font('fonts/OpenSans/OpenSans.ttf', y_size)
-		else:
-			self.font = font
-		self.rendered_text = self.font.render(text, True, font_color, bg_color)
-		if self.text == 'Warstwa':
-			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
-			pygame.draw.polygon(self.image, font_color, ((x_size, y_size/2), (x_size-x_size*0.1, 0+y_size*0.1), (x_size-x_size*0.1, y_size-y_size*0.1)))
-		elif self.text == 'Niebieska' and self.flaw_type == 'blue':
-			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
-			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
-			(x_size - x_size*0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
-			(x_size - x_size * 0.01,  y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Zielona' and self.flaw_type == 'green':
-			self.image.blit(self.rendered_text,
-							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
-			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
-				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
-				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Czerwona' and self.flaw_type == 'red':
-			self.image.blit(self.rendered_text,
-							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
-			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
-				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
-				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
-		elif self.text == 'Żółta' and self.flaw_type == 'yellow':
-			self.image.blit(self.rendered_text,
-							self.rendered_text.get_rect(center=((x_size - x_size * 0.1) / 2, y_size / 2)))
-			pygame.draw.lines(self.image, configFile.flaw_dropdown_menu_font_color, False, (
-				(x_size - x_size * 0.1, y_size / 2), (x_size - x_size * 0.05, y_size - y_size * 0.1),
-				(x_size - x_size * 0.01, y_size * 0.01)), int(y_size * 0.15))
-		else:
-			self.image.blit(self.rendered_text, self.rendered_text.get_rect(center=(x_size / 2, y_size / 2)))
-		self.mask = pygame.mask.from_surface(self.image)
 
-	def on_hoover(self):
-		self.font.bold = True
-		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font, self.flaw_type)
-		if self.text == 'Warstwa':
-			return 'Warstwa'
-
-	def on_leave(self):
-		self.font.bold = False
-		self.__init__(self.x_size, self.y_size, self.position, self.text, self.font_color, self.bg_color, self.font, self.flaw_type)
-		if self.text == 'Warstwa':
-			return 'Warstwa'
-
-	def on_click(self, flaw_list = None):
-		if flaw_list != None:
-			for flaw in flaw_list.keys():
-				if self.text == 'Cofnij':
-					print('Cofnij')
-				elif self.text == 'Warstwa':
-					print('Warstwa')
-				elif self.text == 'Usuń':
-					print('Usuń')
-					flaw.kill()
-				elif self.text == 'Przesuń':
-					print('Przesuń')
-				elif self.text == 'Niebieska':
-					flaw.change_flaw_type('blue')
-					playsound('sounds\Q1.wav', False)
-				elif self.text == 'Zielona':
-					flaw.change_flaw_type('green')
-					playsound('sounds\Q2.wav', False)
-				elif self.text == 'Żółta':
-					flaw.change_flaw_type('yellow')
-					playsound('sounds\Q3.wav', False)
-				elif self.text == 'Czerwona':
-					flaw.change_flaw_type('red')
-					playsound('sounds\Q4.wav', False)
-		else:
-			if self.text == 'Rysuj skaze':
-				print('Rysuj skaze')
-	#def update(self):
-	#	#pygame.draw.rect(self.image, configFile.flaw_dropdown_menu_option_color, self.rect, border_radius=0)
-	#	self.rect = self.image.get_rect(center=self.position)
-	#	self.mask = pygame.mask.from_surface(self.image)
-
-#-cofnij
-#-warstwa(z kolejnym menu)
-#-usuń
-#-zmień rozmiar
-#-przesuń
-
-
-
-
-
-class CursorSprite(pygame.sprite.Sprite):
-	def __init__(self):
-		super().__init__()
-		self.image = pygame.Surface((configFile.cursor_radius*2,configFile.cursor_radius*2))
-		self.image.set_colorkey((0, 0, 0))
-		self.rect = self.image.get_rect(center=(configFile.cursor_radius, configFile.cursor_radius))
-		self.mask = pygame.mask.from_surface(self.image)
-
-	def update(self):
-		mouse_pos = pygame.mouse.get_pos()
-		pygame.draw.circle(self.image, configFile.cursor_color, (configFile.cursor_radius, configFile.cursor_radius), configFile.cursor_radius)
-		self.mask = pygame.mask.from_surface(self.image)
-		self.rect.center = mouse_pos
-
-
-class FlawSprite(pygame.sprite.Sprite):
-	def __init__ (self, item, color, position, flaw_type):
-		super().__init__()
-		self.item = item
-		self.color = color
-		self.flaw_type = flaw_type
-		self.linetype = None
-		self.visable = True
-		self.position = position
-		self.new_item = []
-		self.lowest_x = item[0][0]
-		self.highest_x = item[0][0]
-		self.lowest_y = item[0][1]
-		self.highest_y = item[0][1]
-		for point in item:
-			if point[0] > self.highest_x:
-				self.highest_x = point[0]
-			if point[0] < self.lowest_x:
-				self.lowest_x = point[0]
-			if point[1] < self.lowest_y:
-				self.lowest_y = point[1]
-			if point[1] > self.highest_y:
-				self.highest_y = point[1]
-		for point in item:
-			self.new_item.append([point[0] - self.lowest_x, point[1] - self.lowest_y])
-
-		self.image = pygame.Surface((self.highest_x - self.lowest_x + 1, self.highest_y - self.lowest_y + 1))
-		self.image.set_colorkey((0, 0, 0))
-		self.rect = self.image.get_rect(center=self.position)
-	def update_flaw(self, item, position):
-		self.position = position
-		self.new_item = []
-		self.lowest_x = item[0][0]
-		self.highest_x = item[0][0]
-		self.lowest_y = item[0][1]
-		self.highest_y = item[0][1]
-		for point in item:
-			if point[0] > self.highest_x:
-				self.highest_x = point[0]
-			if point[0] < self.lowest_x:
-				self.lowest_x = point[0]
-			if point[1] < self.lowest_y:
-				self.lowest_y = point[1]
-			if point[1] > self.highest_y:
-				self.highest_y = point[1]
-		for point in item:
-			self.new_item.append([point[0] - self.lowest_x, point[1] - self.lowest_y])
-
-		self.image = pygame.Surface((self.highest_x - self.lowest_x + 1, self.highest_y - self.lowest_y + 1))
-		self.image.set_colorkey((0, 0, 0))
-		self.rect = self.image.get_rect(center=position)
-		self.mask = pygame.mask.from_surface(self.image)
-
-	def update_position(self, position):
-		temp_item = []
-		for point in self.item:
-			temp_item.append([point[0] + (position[0] - self.position[0]), point[1] + (position[1] - self.position[1])])
-		self.__init__(temp_item, self.color, position, self.flaw_type)
-
-	def update (self):
-		self.image.fill(0)
-		if self.flaw_type == 'blue':
-			self.linetype = configFile.b_layer_linetype
-			self.visable = configFile.b_layer_flag
-		elif self.flaw_type == 'red':
-			self.linetype = configFile.r_layer_linetype
-			self.visable = configFile.r_layer_flag
-		elif self.flaw_type == 'green':
-			self.linetype = configFile.g_layer_linetype
-			self.visable = configFile.g_layer_flag
-		elif self.flaw_type == 'yellow':
-			self.linetype = configFile.y_layer_linetype
-			self.visable = configFile.y_layer_flag
-		if self.linetype == 'polygon' and self.visable == True:
-			pygame.draw.polygon(self.image, self.color, self.new_item)
-		elif self.linetype == 'lines' and self.visable == True:
-			pygame.draw.lines(self.image, self.color, True, self.new_item)
-		self.mask = pygame.mask.from_surface(self.image)
-
-	def change_color (self, color):
-		self.color = color
-
-	def change_flaw_type(self, type):
-		self.flaw_type = type
-		if type == 'blue':
-			self.color = configFile.b_layer_color
-		elif type == 'green':
-			self.color = configFile.g_layer_color
-		elif type == 'yellow':
-			self.color = configFile.y_layer_color
-		elif type == 'red':
-			self.color = configFile.r_layer_color
 
 
 class LeatherWindow_preview(tk.Frame):
@@ -776,12 +567,6 @@ class LeatherWindow_preview(tk.Frame):
 					self.leather_draging = False
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
 															  False, collided=pygame.sprite.collide_mask)
-					#if len(collide_list) >= 1:
-					#	print('option 1')
-					#	self.clicked_flaws = collide_list
-					#	self.flaw_dropdown_menu()
-					#	self.updating_shapes = True
-					#	break
 					if self.clicked_flaws != None and len(self.clicked_flaws) == 1:
 						print('option 2')
 						self.flaw_dropdown_menu()
@@ -795,9 +580,14 @@ class LeatherWindow_preview(tk.Frame):
 						self.updating_shapes = True
 
 			elif event.type == pygame.MOUSEMOTION:
+				sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+				if pygame.mouse.get_focused():
+					mouse_x, mouse_y = pygame.mouse.get_pos()
+					mou_x = mouse_x/sw
+					mou_y = mouse_y/sh
+					self.queue.put(['main_mouse_move', [mou_x, mou_y]])
 				if self.leather_draging and self.edit_mode == False and self.drawing_mode == False and self.drawing_flaw_started == False and self.assignation_flaw_mode == False and self.assignation_flaw_mode_started == False:
 					mouse_x, mouse_y = event.pos
-					sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
 					new_c_layer_items = []
 					new_h_layer_items = []
 					new_b_layer_items = []
