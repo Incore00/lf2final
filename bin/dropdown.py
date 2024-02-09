@@ -1,6 +1,6 @@
 import pygame
 from bin import configFile
-import playsound
+from playsound import playsound
 class DropdownMenuOption(pygame.sprite.Sprite):
 	def __init__(self, x_size, y_size, position, text, font_color, bg_color, font = None, flaw_type = None):
 		super().__init__()

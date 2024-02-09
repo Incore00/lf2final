@@ -45,8 +45,8 @@ class LeatherWindow_preview(tk.Frame):
 		self.screen = pygame.display.set_mode(window_size)
 		#pygame.mouse.set_visible(False)
 
-		self.cursor_sprite = CursorSprite()
-		self.cursor_sprite = pygame.sprite.GroupSingle(self.cursor_sprite)
+		self.cursor_single_sprite = CursorSprite()
+		self.cursor_sprite = pygame.sprite.GroupSingle(self.cursor_single_sprite)
 
 		self.all_sprites = pygame.sprite.Group([self.cursor_sprite])
 
@@ -133,6 +133,19 @@ class LeatherWindow_preview(tk.Frame):
 		self.pygame_loop()
 
 	def pygame_loop (self):
+		if pygame.mouse.get_focused() == False and self.cursor_single_sprite != None:
+			self.cursor_single_sprite.kill()
+			self.cursor_single_sprite = None
+		elif pygame.mouse.get_focused() == True and self.cursor_single_sprite == None:
+			if self.flaw_sprites != None:
+				self.cursor_single_sprite = CursorSprite()
+				self.cursor_sprite = pygame.sprite.GroupSingle(self.cursor_single_sprite)
+				self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
+			elif self.flaw_sprites == None:
+				self.cursor_single_sprite = CursorSprite()
+				self.cursor_sprite = pygame.sprite.GroupSingle(self.cursor_single_sprite)
+				self.all_sprites = pygame.sprite.Group([self.cursor_sprite])
+
 		self.all_sprites.update()
 		self.all_sprites.draw(self.screen)
 
@@ -159,46 +172,34 @@ class LeatherWindow_preview(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
-			if item[0] == 'preview_reload':
+			print('queue item', item[0])
+			if item[0] == 'preview_flaw_clicked':
+				self.clicked_flaw_income(*item[1])
+			elif item[0] == 'preview_reload':
 				self.updating_shapes = True
-			else:
-				self.queue.put(item)
-		except:
-			pass
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_load_data':
+			elif item[0] == 'preview_load_data':
 				self.load_data(item[1])
-			else:
-				self.queue.put(item)
-		except:
-			pass
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_in':
+			elif item[0] == 'preview_zoom_in':
 				self.zoom_in(item[1])
-			else:
-				self.queue.put(item)
-		except:
-			pass
-
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_out':
+			elif item[0] == 'preview_zoom_out':
 				self.zoom_out(item[1], True)
+			elif item[0] == 'preview_dragging':
+				self.dragging_income(item[1])
+			elif item[0] == 'preview_blue_assignation':
+				self.blue_assignation_func(True)
+			elif item[0] == 'preview_green_assignation':
+				self.green_assignation_func(True)
+			elif item[0] == 'preview_yellow_assignation':
+				self.yellow_assignation_func(True)
+			elif item[0] == 'preview_red_assignation':
+				self.red_assignation_func(True)
+			elif item[0] == 'preview_delete':
+				self.delete_option_func(True)
 			else:
 				self.queue.put(item)
 		except:
 			pass
 
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_dragging':
-				self.dragging_income(item[1])
-			else:
-				self.queue.put(item)
-		except:
-			pass
 
 		self.event_checker()
 
@@ -279,8 +280,10 @@ class LeatherWindow_preview(tk.Frame):
 																				  configFile.r_layer_color, configFile.flaw_dropdown_menu_option_color, None, self.flaw_layer))
 			self.dropdown_layer_options_grouped_sprites = pygame.sprite.Group([*self.dropdown_layer_options_sprites])
 
-	def delete_option_func(self):
+	def delete_option_func(self, income = False):
 		for flaw in self.clicked_flaws.keys():
+			if income == True:
+				flaw.kill()
 			if flaw.flaw_type == 'hole':
 				flaw_index = self.h_layer_flaw_center_list.index(flaw.position)
 				del self.h_layer_flaw_center_list[flaw_index]
@@ -307,8 +310,10 @@ class LeatherWindow_preview(tk.Frame):
 				del self.displayed_r_layer_items[flaw_index]
 				del self.displayed_r_layer_flaws[flaw_index]
 
-	def blue_assignation_func(self):
+	def blue_assignation_func(self, income = False):
 		for flaw in self.clicked_flaws.keys():
+			if income == True:
+				flaw.change_flaw_type('blue')
 			self.editted_flaw = flaw
 			if self.editted_flaw.position in self.b_layer_flaw_center_list:
 				pass
@@ -328,8 +333,10 @@ class LeatherWindow_preview(tk.Frame):
 				self.displayed_b_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_b_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
 
-	def green_assignation_func(self):
+	def green_assignation_func(self, income = False):
 		for flaw in self.clicked_flaws.keys():
+			if income == True:
+				flaw.change_flaw_type('green')
 			self.editted_flaw = flaw
 			if self.editted_flaw.position in self.b_layer_flaw_center_list:
 				flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
@@ -349,8 +356,10 @@ class LeatherWindow_preview(tk.Frame):
 				self.displayed_g_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_g_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
 
-	def yellow_assignation_func(self):
+	def yellow_assignation_func(self, income = False):
 		for flaw in self.clicked_flaws.keys():
+			if income == True:
+				flaw.change_flaw_type('yellow')
 			self.editted_flaw = flaw
 			if self.editted_flaw.position in self.b_layer_flaw_center_list:
 				flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
@@ -370,8 +379,10 @@ class LeatherWindow_preview(tk.Frame):
 				self.displayed_y_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_y_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
 
-	def red_assignation_func(self):
+	def red_assignation_func(self, income = False):
 		for flaw in self.clicked_flaws.keys():
+			if income == True:
+				flaw.change_flaw_type('red')
 			self.editted_flaw = flaw
 			if self.editted_flaw.position in self.b_layer_flaw_center_list:
 				flaw_index = self.b_layer_flaw_center_list.index(self.editted_flaw.position)
@@ -462,6 +473,7 @@ class LeatherWindow_preview(tk.Frame):
 						print('clicked flaws 1', self.clicked_flaws)
 						if self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
+							self.queue.put(['main_delete'])
 						elif self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
@@ -478,18 +490,23 @@ class LeatherWindow_preview(tk.Frame):
 						print('clicked flaws 2', self.clicked_flaws)
 						if self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
+							self.queue.put(['main_delete'])
 						elif self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
 						if self.choosed_layer_menu_option.text == 'Niebieska':
 							self.blue_assignation_func()
+							self.queue.put(['main_blue_assignation'])
 						elif self.choosed_layer_menu_option.text == 'Zielona':
 							self.green_assignation_func()
+							self.queue.put(['main_green_assignation'])
 						elif self.choosed_layer_menu_option.text == 'Żółta':
 							self.yellow_assignation_func()
+							self.queue.put(['main_yellow_assignation'])
 						elif self.choosed_layer_menu_option.text == 'Czerwona':
 							self.red_assignation_func()
+							self.queue.put(['main_red_assignation'])
 						self.choosed_layer_menu_option = None
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites,self.cursor_sprite, False, False, collided = pygame.sprite.collide_mask)
 					if str(collide_list) != '{}':
@@ -581,11 +598,6 @@ class LeatherWindow_preview(tk.Frame):
 
 			elif event.type == pygame.MOUSEMOTION:
 				sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
-				if pygame.mouse.get_focused():
-					mouse_x, mouse_y = pygame.mouse.get_pos()
-					mou_x = mouse_x/sw
-					mou_y = mouse_y/sh
-					self.queue.put(['main_mouse_move', [mou_x, mou_y]])
 				if self.leather_draging and self.edit_mode == False and self.drawing_mode == False and self.drawing_flaw_started == False and self.assignation_flaw_mode == False and self.assignation_flaw_mode_started == False:
 					mouse_x, mouse_y = event.pos
 					new_c_layer_items = []
@@ -714,7 +726,7 @@ class LeatherWindow_preview(tk.Frame):
 						self.displayed_r_layer_items[self.editted_flaw_index] = item_list
 					self.updating_shapes = True
 						# jeszcze diff
-					#self.editted_flaw.update_position([self.editted_flaw_offset[0] + mouse_pos[0], self.editted_flaw_offset[1] + mouse_pos[1]])
+
 
 			elif event.type == pygame.MOUSEBUTTONUP:
 				if event.button == 1:
@@ -855,8 +867,34 @@ class LeatherWindow_preview(tk.Frame):
 					self.y_layer_items_offset = []
 					self.r_layer_items_offset = []
 
+	def clicked_flaw_income(self, flaw_id_list, flaw_type_list, flaw_position_list):
+		print('layerinfo_update_income')
+		flaw_list = []
+		flaw_list_to_dict = []
+		flaw_list_to_send = []
+		for flaw_id in flaw_id_list:
+			iter = 0
+			for list in self.flaw_sprites:
+				for item in list:
+					iter += 1
+					if flaw_id == iter:
+						flaw_list.append(item)
+		print('flaw_list_income' , flaw_list)
+		for flaw in flaw_list:
+			flaw_list_to_dict.append(flaw)
+			flaw_list_to_dict.append(self.cursor_single_sprite)
+			flaw_list_to_send.append([flaw, self.cursor_single_sprite])
+
+		self.clicked_flaws = self.convert_list_to_dict(flaw_list_to_dict)
+		self.reset_flaws_colors(self.clicked_flaws.keys())
+		self.parent.parent.layer_info.clicked_flaws_update(None, None, None, None)
+		self.parent.parent.layer_info.clicked_flaws_update(flaw_id_list, flaw_list_to_send, flaw_type_list, flaw_position_list)
+
+	def convert_list_to_dict (self, list):
+		it = iter(list)
+		res_dct = dict(zip(it, it))
+		return res_dct
 	def layerinfo_update(self, clicked_flaws):
-		print('clicked_flaws', clicked_flaws)
 		flaw_id_list = []
 		flaw_list = []
 		flaw_type_list = []
@@ -870,8 +908,10 @@ class LeatherWindow_preview(tk.Frame):
 						if flaw_key == item:
 							flaw_id_list.append(iter)
 				flaw_list.append([flaw_key, flaw_value])
+				print('flaw_list', flaw_list)
 				flaw_type_list.append(flaw_key.flaw_type)
 				flaw_position_list.append(flaw_key.position)
+		self.queue.put(['main_flaw_clicked', [flaw_id_list, flaw_type_list, flaw_position_list]])
 		self.parent.parent.layer_info.clicked_flaws_update(None, None, None, None)
 		self.parent.parent.layer_info.clicked_flaws_update(flaw_id_list, flaw_list, flaw_type_list, flaw_position_list)
 
@@ -931,6 +971,23 @@ class LeatherWindow_preview(tk.Frame):
 			self.dropdown_menu_flag = True
 
 	def clicked_flaw_editor(self, new_clicked_flaws):
+		print('prev clicked flaw editor')
+		flaw_id_list = []
+		flaw_list = []
+		flaw_type_list = []
+		flaw_position_list = []
+		if new_clicked_flaws != None:
+			for flaw_key, flaw_value in new_clicked_flaws.items():
+				iter = 0
+				for list in self.flaw_sprites:
+					for item in list:
+						iter += 1
+						if flaw_key == item:
+							flaw_id_list.append(iter)
+				flaw_list.append([flaw_key, flaw_value])
+				flaw_type_list.append(flaw_key.flaw_type)
+				flaw_position_list.append(flaw_key.position)
+		self.queue.put(['main_clicked_flaw_updater', [flaw_id_list, flaw_type_list, flaw_position_list]])
 		self.reset_flaws_colors(new_clicked_flaws)
 		self.clicked_flaws = new_clicked_flaws
 
