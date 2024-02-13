@@ -2,6 +2,7 @@ import tkinter as tk
 import os
 import pygame
 import pyglet
+import cmath
 from bin import configFile
 from playsound import playsound
 from bin.flaws import FlawSprite
@@ -997,7 +998,28 @@ class LeatherWindow_preview(tk.Frame):
 							self.flaw_sprites.append(self.displayed_r_layer_flaws)
 
 						elif flaw_type == 'open':
-							continue
+							for index in range(0, len(self.temp_drawed_flaw)):
+								try:
+									point_a = self.temp_drawed_flaw[index]
+									point_b = self.temp_drawed_flaw[index + 1]
+									#punkty a i b są takie same czasami, wyeliminować powtórki
+								except IndexError:
+									break
+								mianownik_rp = (point_a[0] - point_b[0])
+								if mianownik_rp == 0:
+									mianownik_rp = 0.001
+								wspol_kier = (point_a[1] - point_b[1]) / mianownik_rp
+								if wspol_kier == 0:
+									wspol_kier = 0.001
+								mianownik_przes = (point_a[0] - point_b[0])
+								if mianownik_przes == 0:
+									mianownik_przes = 0.001
+								przesuniecie = (point_a[1]-((point_a[1]-point_b[1])/mianownik_przes)*point_a[0])
+								wkp = -1 / wspol_kier
+								pp = point_a[1] / (wkp * point_a[0])
+
+								print('otworz, punkt', point_a, 'punkty_obok',self.solve_for_xb(point_a, wkp, pp, configFile.open_flaw_line_width))
+
 
 						self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
 						self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
@@ -1031,6 +1053,34 @@ class LeatherWindow_preview(tk.Frame):
 					self.y_layer_items_offset = []
 					self.r_layer_items_offset = []
 
+	def solve_for_xb(self, point_a, a, b, r):
+		a_coeff = 1 + a ** 2
+		b_coeff = -2 * (point_a[0] + a * b - a * point_a[1])
+		c_coeff = point_a[0] ** 2 + b ** 2 + point_a[1] ** 2 - 2 * b * point_a[1] - r ** 2
+
+		discriminant = b_coeff ** 2 - 4 * a_coeff * c_coeff
+
+		# Oblicz obie możliwe wartości dla xb w dziedzinie liczb zespolonych
+		xb_1 = (-b_coeff + cmath.sqrt(discriminant)) / (2 * a_coeff)
+		xb_2 = (-b_coeff - cmath.sqrt(discriminant)) / (2 * a_coeff)
+
+		xb_1 = cmath.phase(xb_1)
+		xb_2 = cmath.phase(xb_2)
+
+		return xb_1, xb_2
+		#a_coeff = 1 + a ** 2
+		#b_coeff = -2 * (point_a[0] + a * b - a * point_a[1])
+		#c_coeff = point_a[0] ** 2 + b ** 2 + point_a[1] ** 2 - 2 * b * point_a[1] - r ** 2
+#
+		#discriminant = b_coeff ** 2 - 4 * a_coeff * c_coeff
+#
+		## Oblicz obie możliwe wartości dla xb
+		#xb_1 = (-b_coeff + cmath.sqrt(discriminant)) / (2 * a_coeff)
+		#xb_2 = (-b_coeff - cmath.sqrt(discriminant)) / (2 * a_coeff)
+#
+		## Wybierz tylko rzeczywiste wartości
+		#real_solutions = [sol.real for sol in [xb_1, xb_2] if sol.imag == 0]
+		#return real_solutions
 	def clicked_flaw_income(self, flaw_id_list, flaw_type_list, flaw_position_list):
 		print('layerinfo_update_income')
 		flaw_list = []
@@ -1109,20 +1159,20 @@ class LeatherWindow_preview(tk.Frame):
 		lowest_y = 0
 
 		if wspol_kier <= -1 and a_point[1] > b_point[1] or wspol_kier >= 1 and a_point[1] > b_point[1]:
-			playsound('sounds\Q2.wav', False)
+			#playsound('sounds\Q2.wav', False)
 			return 'green'
 		elif wspol_kier <= 1 and wspol_kier >= -1 and a_point[0] < b_point[0]:
-			playsound('sounds\Q1.wav', False)
+			#playsound('sounds\Q1.wav', False)
 			return 'blue'
 		elif wspol_kier <= 1 and wspol_kier >= -1 and a_point[0] > b_point[0]:
-			playsound('sounds\Q3.wav', False)
+			#playsound('sounds\Q3.wav', False)
 			return 'yellow'
 		elif wspol_kier <= 1 and a_point[1] < b_point[1] or wspol_kier >= -1 and a_point[1] < b_point[1]:
 			if highest_x >= highest_y * 0.3:
-				playsound('sounds\OPEN.wav', False)
+				#playsound('sounds\OPEN.wav', False)
 				return 'open'
 			else:
-				playsound('sounds\Q4.wav', False)
+				#playsound('sounds\Q4.wav', False)
 				return 'red'
 	def flaw_dropdown_menu(self):
 		if self.dropdown_menu_flag == False:
