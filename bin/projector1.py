@@ -166,6 +166,7 @@ class LeatherWindow_main(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
+			print(item[0])
 			if item[0] == 'main_flaw_clicked':
 				self.clicked_flaw_income(*item[1])
 			elif item[0] == 'main_clicked_flaw_updater':
@@ -190,6 +191,18 @@ class LeatherWindow_main(tk.Frame):
 				self.red_assignation_func(True)
 			elif item[0] == 'main_delete':
 				self.delete_option_func(True)
+			elif item[0] == 'main_item_dragging':
+				self.dragging_item_income(item[1])
+			elif item[0] == 'main_flaw_drawing':
+				self.flaw_drawing()
+			elif item[0] == 'main_drawing_flaw_start':
+				self.flaw_drawing_start()
+			elif item[0] == 'main_drawing_flaw_points_income':
+				self.drawing_flaw_points_income(item[1])
+			elif item[0] == 'main_drawing_flaw_btnup':
+				self.drawing_flaw_btnup()
+			elif item[0] == 'main_flaw_assignation':
+				self.assignation_flaw_income(item[1])
 			else:
 				self.queue.put(item)
 		except:
@@ -203,6 +216,8 @@ class LeatherWindow_main(tk.Frame):
 		if self.updating_shapes == True:
 			self.update_shapes()
 			self.updating_shapes = False
+		if self.assignation_flaw_mode == True:
+			self.drawing_flaw_points = []
 
 		self.screen.fill(configFile.bg_layer_color)
 
@@ -211,15 +226,64 @@ class LeatherWindow_main(tk.Frame):
 		if str(self.drawing_flaw_points) != '[]' and self.drawing_flaw_points != None and len(
 				self.drawing_flaw_points) >= 2:
 			pygame.draw.lines(self.screen, configFile.new_flaw_color, False, self.drawing_flaw_points)
-		if self.drawing_flaw_started == True:
+		if self.drawing_flaw_started == True and pygame.mouse.get_focused() == True:
 			self.drawing_flaw_points.append(pygame.mouse.get_pos())
+			drawing_flaw_points_to_send = []
+			sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+			for point in self.drawing_flaw_points:
+				drawing_flaw_points_to_send.append((point[0]/sw, point[1]/sh))
+			self.queue.put(['preview_drawing_flaw_points_income', drawing_flaw_points_to_send])
 		if self.temp_drawed_flaw != None:
 			pygame.draw.polygon(self.screen, configFile.new_flaw_color, self.temp_drawed_flaw)
 		if self.assignation_flaw_mode_started == True:
 			self.assignation_flaw_points.append(pygame.mouse.get_pos())
 
+
 		self.after(1, self.pygame_loop)
 
+	def drawing_flaw_btnup(self):
+		self.drawing_mode = False
+		self.drawing_flaw_started = False
+		self.temp_drawed_flaw = self.drawing_flaw_points
+		self.drawing_flaw_points = []
+		self.assignation_flaw_mode = True
+	def drawing_flaw_points_income(self, drawing_flaw_points_income):
+		self.drawing_flaw_points = []
+		sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+		for point in drawing_flaw_points_income:
+			self.drawing_flaw_points.append((point[0]*sw, point[1]*sh))
+	def flaw_drawing_start(self):
+		self.drawing_flaw_started = True
+	def flaw_drawing(self):
+		self.drawing_mode = True
+		self.choosed_menu_option = None
+	def dragging_item_income(self, item_changes):
+		sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+		dragged_flaw_type = item_changes[0]
+		dragged_flaw_index = item_changes[1]
+		diff_list = item_changes[2]
+		new_item = []
+		if dragged_flaw_type == 'hole':
+			for point, diff in zip(self.displayed_h_layer_items[dragged_flaw_index], diff_list):
+				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
+			self.displayed_h_layer_items[dragged_flaw_index] = new_item
+		elif dragged_flaw_type == 'blue':
+			for point, diff in zip(self.displayed_b_layer_items[dragged_flaw_index], diff_list):
+				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
+			self.displayed_b_layer_items[dragged_flaw_index] = new_item
+		elif dragged_flaw_type == 'green':
+			for point, diff in zip(self.displayed_g_layer_items[dragged_flaw_index], diff_list):
+				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
+			self.displayed_g_layer_items[dragged_flaw_index] = new_item
+		elif dragged_flaw_type == 'yellow':
+			for point, diff in zip(self.displayed_y_layer_items[dragged_flaw_index], diff_list):
+				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
+			self.displayed_y_layer_items[dragged_flaw_index] = new_item
+		elif dragged_flaw_type == 'red':
+			for point, diff in zip(self.displayed_r_layer_items[dragged_flaw_index], diff_list):
+				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
+			self.displayed_r_layer_items[dragged_flaw_index] = new_item
+		self.updating_shapes = True
 	def change_flaw_color (self, collide_list):
 		for flaw in collide_list.keys():
 			if flaw.flaw_type == 'hole':
@@ -319,6 +383,122 @@ class LeatherWindow_main(tk.Frame):
 				del self.r_layer_flaw_center_list[flaw_index]
 				del self.displayed_r_layer_items[flaw_index]
 				del self.displayed_r_layer_flaws[flaw_index]
+
+	def assignation_flaw_income(self, flaw_type):
+		if flaw_type == 'blue':
+			self.flaw_sprites = []
+			self.displayed_b_layer_items.append(self.temp_drawed_flaw)
+			self.lowest_x = self.temp_drawed_flaw[0][0]
+			self.highest_x = self.temp_drawed_flaw[0][0]
+			self.lowest_y = self.temp_drawed_flaw[0][1]
+			self.highest_y = self.temp_drawed_flaw[0][1]
+			for point in self.temp_drawed_flaw:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			flaw_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+						   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+			self.b_layer_flaw_center_list.append(flaw_center)
+			self.displayed_b_layer_flaws.append(
+				FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'blue'))
+			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_b_layer_flaws)
+			self.flaw_sprites.append(self.displayed_g_layer_flaws)
+			self.flaw_sprites.append(self.displayed_y_layer_flaws)
+			self.flaw_sprites.append(self.displayed_r_layer_flaws)
+			print('blue blue')
+		elif flaw_type == 'green':
+			self.flaw_sprites = []
+			self.displayed_g_layer_items.append(self.temp_drawed_flaw)
+			self.lowest_x = self.temp_drawed_flaw[0][0]
+			self.highest_x = self.temp_drawed_flaw[0][0]
+			self.lowest_y = self.temp_drawed_flaw[0][1]
+			self.highest_y = self.temp_drawed_flaw[0][1]
+			for point in self.temp_drawed_flaw:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			flaw_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+						   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+			self.g_layer_flaw_center_list.append(flaw_center)
+			self.displayed_g_layer_flaws.append(
+				FlawSprite(self.temp_drawed_flaw, configFile.g_layer_color, flaw_center, 'green'))
+			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_b_layer_flaws)
+			self.flaw_sprites.append(self.displayed_g_layer_flaws)
+			self.flaw_sprites.append(self.displayed_y_layer_flaws)
+			self.flaw_sprites.append(self.displayed_r_layer_flaws)
+		elif flaw_type == 'yellow':
+			self.flaw_sprites = []
+			self.displayed_y_layer_items.append(self.temp_drawed_flaw)
+			self.lowest_x = self.temp_drawed_flaw[0][0]
+			self.highest_x = self.temp_drawed_flaw[0][0]
+			self.lowest_y = self.temp_drawed_flaw[0][1]
+			self.highest_y = self.temp_drawed_flaw[0][1]
+			for point in self.temp_drawed_flaw:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			flaw_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+						   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+			self.y_layer_flaw_center_list.append(flaw_center)
+			self.displayed_y_layer_flaws.append(
+				FlawSprite(self.temp_drawed_flaw, configFile.y_layer_color, flaw_center, 'yellow'))
+			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_b_layer_flaws)
+			self.flaw_sprites.append(self.displayed_g_layer_flaws)
+			self.flaw_sprites.append(self.displayed_y_layer_flaws)
+			self.flaw_sprites.append(self.displayed_r_layer_flaws)
+		elif flaw_type == 'red':
+			self.flaw_sprites = []
+			self.displayed_r_layer_items.append(self.temp_drawed_flaw)
+			self.lowest_x = self.temp_drawed_flaw[0][0]
+			self.highest_x = self.temp_drawed_flaw[0][0]
+			self.lowest_y = self.temp_drawed_flaw[0][1]
+			self.highest_y = self.temp_drawed_flaw[0][1]
+			for point in self.temp_drawed_flaw:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			flaw_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+						   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+			self.r_layer_flaw_center_list.append(flaw_center)
+			self.displayed_r_layer_flaws.append(
+				FlawSprite(self.temp_drawed_flaw, configFile.r_layer_color, flaw_center, 'red'))
+			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_b_layer_flaws)
+			self.flaw_sprites.append(self.displayed_g_layer_flaws)
+			self.flaw_sprites.append(self.displayed_y_layer_flaws)
+			self.flaw_sprites.append(self.displayed_r_layer_flaws)
+
+		self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
+		self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
+
+		self.updating_shapes = True
+		self.assignation_flaw_mode_started = False
+		self.assignation_flaw_points = []
+		self.assignation_flaw_mode = False
+		self.temp_drawed_flaw = None
 
 	def blue_assignation_func (self, income = False):
 		print('main_blue_assignation_func', self.clicked_flaws)
@@ -501,10 +681,10 @@ class LeatherWindow_main(tk.Frame):
 					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.clicked_flaws != None:
 						self.choosed_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws 1', self.clicked_flaws)
-						if self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
+						if self.choosed_menu_option != None and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
 							self.queue.put(['preview_delete'])
-						elif self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+						elif self.choosed_menu_option != None and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
@@ -515,26 +695,27 @@ class LeatherWindow_main(tk.Frame):
 							self.choosed_menu_option.on_click()
 							self.drawing_mode = True
 							self.choosed_menu_option = None
+							self.queue.put(['preview_flaw_drawing'])
 					if self.choosed_layer_menu_option != None and self.dropdown_layer_option_on_hoover != None and self.choosed_layer_menu_option in self.dropdown_layer_option_on_hoover.keys():
 						self.choosed_layer_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws 2', self.clicked_flaws)
-						if self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
+						if self.choosed_menu_option != None and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
 							self.queue.put(['preview_delete'])
-						elif self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+						elif self.choosed_menu_option != None and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
-						if self.choosed_layer_menu_option.text == 'Niebieska':
+						if self.choosed_layer_menu_option != None and self.choosed_layer_menu_option.text == 'Niebieska':
 							self.blue_assignation_func()
 							self.queue.put(['preview_blue_assignation'])
-						elif self.choosed_layer_menu_option.text == 'Zielona':
+						elif self.choosed_layer_menu_option != None and self.choosed_layer_menu_option.text == 'Zielona':
 							self.green_assignation_func()
 							self.queue.put(['preview_green_assignation'])
-						elif self.choosed_layer_menu_option.text == 'Żółta':
+						elif self.choosed_layer_menu_option != None and self.choosed_layer_menu_option.text == 'Żółta':
 							self.yellow_assignation_func()
 							self.queue.put(['preview_yellow_assignation'])
-						elif self.choosed_layer_menu_option.text == 'Czerwona':
+						elif self.choosed_layer_menu_option != None and self.choosed_layer_menu_option.text == 'Czerwona':
 							self.red_assignation_func()
 							self.queue.put(['preview_red_assignation'])
 						self.choosed_layer_menu_option = None
@@ -611,6 +792,7 @@ class LeatherWindow_main(tk.Frame):
 				elif event.button == 1 and self.drawing_mode == True:
 					# rysowanie nowej skazy
 					self.drawing_flaw_started = True
+					self.queue.put(['preview_drawing_flaw_start'])
 				elif event.button == 3 and self.displayed_c_layer_items != None:
 					self.leather_draging = False
 					collide_list = pygame.sprite.groupcollide(self.flaw_grouped_sprites, self.cursor_sprite, False,
@@ -714,11 +896,12 @@ class LeatherWindow_main(tk.Frame):
 						self.editted_flaw_offset) != '[]':
 					sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
 					mouse_pos = pygame.mouse.get_pos()
+					item_list = []
+					diff_list = []
 					if self.editted_flaw_start_position == None:
 						self.editted_flaw_start_position = self.editted_flaw.position
 					if self.editted_flaw.flaw_type == 'hole':
-						item_list = []
-						diff_list = []
+						dragged_flaw_type = 'hole'
 						for point, offset in zip(self.displayed_h_layer_items[self.editted_flaw_index],
 												 self.editted_flaw_offset):
 							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
@@ -727,8 +910,7 @@ class LeatherWindow_main(tk.Frame):
 								 (point[1] - (offset[1] + mouse_pos[1])) / sh])
 						self.displayed_h_layer_items[self.editted_flaw_index] = item_list
 					if self.editted_flaw.flaw_type == 'blue':
-						item_list = []
-						diff_list = []
+						dragged_flaw_type = 'blue'
 						for point, offset in zip(self.displayed_b_layer_items[self.editted_flaw_index],
 												 self.editted_flaw_offset):
 							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
@@ -737,8 +919,7 @@ class LeatherWindow_main(tk.Frame):
 								 (point[1] - (offset[1] + mouse_pos[1])) / sh])
 						self.displayed_b_layer_items[self.editted_flaw_index] = item_list
 					if self.editted_flaw.flaw_type == 'green':
-						item_list = []
-						diff_list = []
+						dragged_flaw_type = 'green'
 						for point, offset in zip(self.displayed_g_layer_items[self.editted_flaw_index],
 												 self.editted_flaw_offset):
 							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
@@ -747,8 +928,7 @@ class LeatherWindow_main(tk.Frame):
 								 (point[1] - (offset[1] + mouse_pos[1])) / sh])
 						self.displayed_g_layer_items[self.editted_flaw_index] = item_list
 					if self.editted_flaw.flaw_type == 'yellow':
-						item_list = []
-						diff_list = []
+						dragged_flaw_type = 'yellow'
 						for point, offset in zip(self.displayed_y_layer_items[self.editted_flaw_index],
 												 self.editted_flaw_offset):
 							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
@@ -757,8 +937,7 @@ class LeatherWindow_main(tk.Frame):
 								 (point[1] - (offset[1] + mouse_pos[1])) / sh])
 						self.displayed_y_layer_items[self.editted_flaw_index] = item_list
 					if self.editted_flaw.flaw_type == 'red':
-						item_list = []
-						diff_list = []
+						dragged_flaw_type = 'red'
 						for point, offset in zip(self.displayed_r_layer_items[self.editted_flaw_index],
 												 self.editted_flaw_offset):
 							item_list.append([(offset[0] + mouse_pos[0]), offset[1] + mouse_pos[1]])
@@ -766,6 +945,9 @@ class LeatherWindow_main(tk.Frame):
 								[(point[0] - (offset[0] + mouse_pos[0])) / sw,
 								 (point[1] - (offset[1] + mouse_pos[1])) / sh])
 						self.displayed_r_layer_items[self.editted_flaw_index] = item_list
+					dragged_flaw_index = self.editted_flaw_index
+					item_changes = [dragged_flaw_type, dragged_flaw_index, diff_list]
+					self.queue.put(['preview_item_dragging', item_changes])
 					self.updating_shapes = True
 			# jeszcze diff
 			# self.editted_flaw.update_position([self.editted_flaw_offset[0] + mouse_pos[0], self.editted_flaw_offset[1] + mouse_pos[1]])
@@ -776,6 +958,7 @@ class LeatherWindow_main(tk.Frame):
 						self.assignation_flaw_mode = False
 					if self.assignation_flaw_mode_started == True:
 						flaw_type = self.flaw_type_assignation_func(self.assignation_flaw_points)
+						self.queue.put(['preview_flaw_assignation', flaw_type])
 						if flaw_type == 'blue':
 							self.flaw_sprites = []
 							self.displayed_b_layer_items.append(self.temp_drawed_flaw)
@@ -902,6 +1085,7 @@ class LeatherWindow_main(tk.Frame):
 						self.temp_drawed_flaw = self.drawing_flaw_points
 						self.drawing_flaw_points = []
 						self.assignation_flaw_mode = True
+						self.queue.put(['preview_drawing_flaw_btnup'])
 					self.leather_draging = False
 					self.c_layer_items_offset = []
 					self.h_layer_items_offset = []
@@ -959,7 +1143,28 @@ class LeatherWindow_main(tk.Frame):
 		if dol == 0:
 			dol = 0.001
 		wspol_kier = (a_point[1] - b_point[1]) / dol
-		print('espol kier', wspol_kier)
+		print('wspol kier', wspol_kier)
+
+		highest_x = point_list[0][0]
+		highest_y = point_list[0][1]
+		lowest_x = point_list[0][0]
+		lowest_y = point_list[0][1]
+
+		for point in point_list:
+			if point[0] > highest_x:
+				highest_x = point[0]
+			if point[0] < lowest_x:
+				lowest_x = point[0]
+			if point[1] < lowest_y:
+				lowest_y = point[1]
+			if point[1] > highest_y:
+				highest_y = point[1]
+
+		highest_x = highest_x - lowest_x
+		highest_y = highest_y - lowest_y
+		lowest_x = 0
+		lowest_y = 0
+
 		if wspol_kier <= -1 and a_point[1] > b_point[1] or wspol_kier >= 1 and a_point[1] > b_point[1]:
 			playsound('sounds\Q2.wav', False)
 			return 'green'
@@ -970,8 +1175,12 @@ class LeatherWindow_main(tk.Frame):
 			playsound('sounds\Q3.wav', False)
 			return 'yellow'
 		elif wspol_kier <= 1 and a_point[1] < b_point[1] or wspol_kier >= -1 and a_point[1] < b_point[1]:
-			playsound('sounds\Q4.wav', False)
-			return 'red'
+			if highest_x >= highest_y * 0.3:
+				playsound('sounds\OPEN.wav', False)
+				return 'open'
+			else:
+				playsound('sounds\Q4.wav', False)
+				return 'red'
 
 	def flaw_dropdown_menu (self):
 		if self.dropdown_menu_flag == False:

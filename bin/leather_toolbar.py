@@ -18,36 +18,6 @@ class leather_tools(tk.Frame):
 
         self.configure(height=int(parent.winfo_reqheight() * 0.1), width=int(parent.winfo_reqwidth() * 0.767), bg='#303030')
 
-        self.back_icon = icon_to_image("undo", fill='#c7c6c5', scale_to_width=40)
-        self.back_btn = ctk.CTkButton(self, image=self.back_icon, fg_color='#505050', hover_color='#404040',
-                                          compound='left', corner_radius=10, text='Cofnij', text_font=('OpenSans.ttf', 18))
-        self.back_btn.grid(column=1, row=1, padx=2, pady=2, sticky='nsew')
-
-        self.add_flaw_icon = icon_to_image("draw-polygon", fill='#c7c6c5', scale_to_width=40)
-        self.add_flaw_btn = ctk.CTkButton(self, image=self.add_flaw_icon, fg_color='#505050', hover_color='#404040',
-                                          compound='left', corner_radius=10, text='Rysuj skaze', text_font=('OpenSans.ttf', 18))
-        self.add_flaw_btn.grid(column=2, row=1, padx=2, pady=2, sticky='nsew')
-
-        self.layer_icon = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)
-        self.layer_btn = ctk.CTkButton(self, image=self.layer_icon, fg_color='#505050', hover_color='#404040',
-                                      compound='left', corner_radius=10, text='Warstwa', text_font=('OpenSans.ttf', 18))
-        self.layer_btn.grid(column=3, row=1, padx=2, pady=2, sticky='nsew')
-
-        self.move_flaw_icon = icon_to_image("arrows-alt", fill='#c7c6c5', scale_to_width=40)
-        self.move_flaw_btn = ctk.CTkButton(self, image=self.move_flaw_icon, fg_color='#505050', hover_color='#404040',
-                                        compound='left', corner_radius=10, text='Przesuń skazę',
-                                        text_font=('OpenSans.ttf', 18))
-        self.move_flaw_btn.grid(column=4, row=1, padx=2, pady=2, sticky='nsew')
-
-        self.delete_icon = icon_to_image("eraser", fill='#c7c6c5', scale_to_width=40)
-        self.delete_btn = ctk.CTkButton(self, image=self.delete_icon, fg_color='#505050', hover_color='#404040',
-                                       compound='left', corner_radius=10, text='Usuń skazę',
-                                       text_font=('OpenSans.ttf', 18))
-        self.delete_btn.grid(column=5, row=1, padx=2, pady=2, sticky='nsew')
-
-
-
-
-
-        #for widget in self.winfo_children():
-        #    widget.grid(padx=10, pady=10)
+        self.to_do_bar = ctk.CTkLabel(self, text='Załaduj plik', height=int(parent.winfo_reqheight() * 0.),
+                                      width=int(parent.winfo_reqwidth() * 0.767), text_font=('OpenSans.ttf', 30))
+        self.to_do_bar.grid(column=1, row=1, sticky='nsew')

@@ -33,6 +33,7 @@ y_layer_color = (255, 255, 0)
 y_layer_linetype = 'polygon'
 r_layer_color = (255, 0, 0)
 r_layer_linetype = 'polygon'
+open_flaw_line_width = 5
 
 new_flaw_color = (255,255,255)
 
