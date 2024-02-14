@@ -2,6 +2,7 @@ import tkinter as tk
 import os
 import pygame
 import pyglet
+import numpy as np
 from bin import configFile
 from playsound import playsound
 from bin.flaws import FlawSprite
@@ -108,6 +109,7 @@ class LeatherWindow_main(tk.Frame):
 		self.flaw_center_list_index = None
 		self.editted_flaw_start_position = None
 		self.editted_flaw_index = None
+		self.flaw_open_flag = False
 
 		self.drawing_mode = False
 		self.drawing_flaw_started = False
@@ -491,14 +493,46 @@ class LeatherWindow_main(tk.Frame):
 			self.flaw_sprites.append(self.displayed_y_layer_flaws)
 			self.flaw_sprites.append(self.displayed_r_layer_flaws)
 
-		self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
-		self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
+		elif flaw_type == 'open' and self.flaw_open_flag == False:
+			print('assignation income projector open')
+			self.flaw_open_flag = True
+			temp_flaw_x_list = []
+			temp_flaw_y_list = []
+			new_temp_flaw = []
+			new_temp_flaw = list(dict.fromkeys(self.temp_drawed_flaw))
+			print('old flaw', self.temp_drawed_flaw)
+			print('new flaw', new_temp_flaw)
+			self.temp_drawed_flaw = new_temp_flaw
+			for item in self.temp_drawed_flaw:
+				temp_flaw_x_list.append(item[0])
+				temp_flaw_y_list.append(item[1])
 
-		self.updating_shapes = True
-		self.assignation_flaw_mode_started = False
-		self.assignation_flaw_points = []
-		self.assignation_flaw_mode = False
-		self.temp_drawed_flaw = None
+			new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list, temp_flaw_y_list,
+																	 configFile.open_flaw_line_width, 1)
+
+			new_temp_drawed_flaw = []
+			for index in range(0, len(new_x_list_outer)):
+				new_temp_drawed_flaw.append([new_x_list_outer[index], new_y_list_outer[index]])
+
+			for index in range(0, len(temp_flaw_x_list)):
+				index2 = len(self.temp_drawed_flaw) - index - 1
+				new_temp_drawed_flaw.append([temp_flaw_x_list[index2], temp_flaw_y_list[index2]])
+
+			self.assignation_flaw_points = []
+			self.assignation_flaw_mode_started = False
+			self.assignation_flaw_mode = True
+			self.temp_drawed_flaw = new_temp_drawed_flaw
+
+		if flaw_type != 'open':
+			self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
+			self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
+
+			self.flaw_open_flag = False
+			self.updating_shapes = True
+			self.assignation_flaw_mode_started = False
+			self.assignation_flaw_points = []
+			self.assignation_flaw_mode = False
+			self.temp_drawed_flaw = None
 
 	def blue_assignation_func (self, income = False):
 		print('main_blue_assignation_func', self.clicked_flaws)
@@ -1065,14 +1099,42 @@ class LeatherWindow_main(tk.Frame):
 							self.flaw_sprites.append(self.displayed_y_layer_flaws)
 							self.flaw_sprites.append(self.displayed_r_layer_flaws)
 
-						self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
-						self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
+						elif flaw_type == 'open' and self.flaw_open_flag == False:
+							self.flaw_open_flag = True
+							temp_flaw_x_list = []
+							temp_flaw_y_list = []
+							new_temp_flaw = []
+							new_temp_flaw = list(dict.fromkeys(self.temp_drawed_flaw))
+							print('old flaw', self.temp_drawed_flaw)
+							print('new flaw', new_temp_flaw)
+							self.temp_drawed_flaw = new_temp_flaw
+							for item in self.temp_drawed_flaw:
+								temp_flaw_x_list.append(item[0])
+								temp_flaw_y_list.append(item[1])
 
-						self.updating_shapes = True
-						self.assignation_flaw_mode_started = False
-						self.assignation_flaw_points = []
-						self.assignation_flaw_mode = False
-						self.temp_drawed_flaw = None
+							new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list, temp_flaw_y_list, configFile.open_flaw_line_width, 1)
+
+							new_temp_drawed_flaw = []
+							for index in range(0, len(new_x_list_outer)):
+								new_temp_drawed_flaw.append([new_x_list_outer[index], new_y_list_outer[index]])
+
+							for index in range(0, len(temp_flaw_x_list)):
+								index2 = len(self.temp_drawed_flaw) - index -1
+								new_temp_drawed_flaw.append([temp_flaw_x_list[index2], temp_flaw_y_list[index2]])
+
+							self.temp_drawed_flaw = new_temp_drawed_flaw
+
+						if flaw_type != 'open':
+							self.all_sprites = pygame.sprite.Group([*self.flaw_sprites, self.cursor_sprite])
+							self.flaw_grouped_sprites = pygame.sprite.Group([*self.flaw_sprites])
+
+							self.flaw_open_flag = False
+							self.updating_shapes = True
+							self.assignation_flaw_mode_started = False
+							self.assignation_flaw_points = []
+							self.assignation_flaw_mode = False
+							self.temp_drawed_flaw = None
+
 					if self.edit_mode == True and self.editted_flaw_start_position != None:
 						self.editted_flaw_start_position = None
 						self.edit_mode = False
@@ -1093,6 +1155,44 @@ class LeatherWindow_main(tk.Frame):
 					self.g_layer_items_offset = []
 					self.y_layer_items_offset = []
 					self.r_layer_items_offset = []
+
+	def normalizeVec(self, x, y):
+		distance = np.sqrt(x * x + y * y)
+		if distance == 0:
+			distance = 0.000000000000000000000000001
+		new_x = x/distance
+		new_y = y/distance
+		return new_x, new_y
+
+	def makeOffsetPoly(self, oldX, oldY, offset, outer_ccw=1):
+		new_x_list = []
+		new_y_list = []
+		num_points = len(oldX)
+
+		for curr in range(num_points):
+			prev = (curr + num_points - 1) % num_points
+			next = (curr + 1) % num_points
+			vnX = oldX[next] - oldX[curr]
+			vnY = oldY[next] - oldY[curr]
+			vnnX, vnnY = self.normalizeVec(vnX, vnY)
+			nnnX = vnnY
+			nnnY = -vnnX
+			vpX = oldX[curr] - oldX[prev]
+			vpY = oldY[curr] - oldY[prev]
+			vpnX, vpnY = self.normalizeVec(vpX, vpY)
+			npnX = vpnY * outer_ccw
+			npnY = -vpnX * outer_ccw
+			bisX = (nnnX + npnX) * outer_ccw
+			bisY = (nnnY + npnY) * outer_ccw
+			bisnX, bisnY = self.normalizeVec(bisX, bisY)
+			dol = np.sqrt((1 + nnnX * npnX + nnnY * npnY) / 2)
+			if dol == 0:
+				dol = 0.0000000000000000000000000001
+			bislen = offset / dol
+			new_x_list.append(oldX[curr] + bislen * bisnX)
+			new_y_list.append(oldY[curr] + bislen * bisnY)
+
+		return new_x_list , new_y_list
 
 	def clicked_flaw_income(self, flaw_id_list, flaw_type_list, flaw_position_list):
 		print('layerinfo_update_income')
@@ -1175,7 +1275,7 @@ class LeatherWindow_main(tk.Frame):
 			playsound('sounds\Q3.wav', False)
 			return 'yellow'
 		elif wspol_kier <= 1 and a_point[1] < b_point[1] or wspol_kier >= -1 and a_point[1] < b_point[1]:
-			if highest_x >= highest_y * 0.3:
+			if highest_x >= highest_y * 0.3 and self.flaw_open_flag == False:
 				playsound('sounds\OPEN.wav', False)
 				return 'open'
 			else:

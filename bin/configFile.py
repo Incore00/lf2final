@@ -2,24 +2,24 @@
 preview_redraw = False
 main_redraw = False
 
-cursor_radius = 30
+cursor_radius = 5
 cursor_color = (255,255,0)
 
 flaw_dropdown_menu_x_size = 120
-flaw_dropdown_menu_y_size = 100
+flaw_dropdown_menu_y_size = 75
 flaw_dropdown_menu_color = (245, 65, 230)
 flaw_dropdown_menu_option_color = (185, 0, 174)
 flaw_dropdown_menu_font_color = (65, 245, 80)
-flaw_dropdown_menu_options = ['Cofnij', 'Warstwa', 'Usuń', 'Przesuń']
+flaw_dropdown_menu_options = ['Warstwa', 'Usuń', 'Przesuń']
 flaw_dropdown_layer_menu_options = ['Niebieska', 'Zielona', 'Żółta', 'Czerwona']
 flaw_dropdown_menu_options_amount = len(flaw_dropdown_menu_options)
 
 dropdown_menu_x_size = 130
-dropdown_menu_y_size = 50
+dropdown_menu_y_size = 30
 dropdown_menu_color = (152, 12, 243)
 dropdown_menu_option_color = (90, 0, 185)
 dropdown_menu_font_color = (103, 243, 12)
-dropdown_menu_options = ['Cofnij', 'Rysuj skaze']
+dropdown_menu_options = ['Rysuj skaze']
 dropdown_menu_options_amount = len(dropdown_menu_options)
 
 bg_layer_color = (0, 0, 0)
@@ -33,7 +33,7 @@ y_layer_color = (255, 255, 0)
 y_layer_linetype = 'polygon'
 r_layer_color = (255, 0, 0)
 r_layer_linetype = 'polygon'
-open_flaw_line_width = 5
+open_flaw_line_width = 3
 
 new_flaw_color = (255,255,255)
 
