@@ -60,6 +60,7 @@ class Toolbar(tk.Frame):
 
         self.save_file_icon = icon_to_image("save", fill='#c7c6c5', scale_to_width=60)
         self.save_file_btn = ctk.CTkButton(self, image=self.save_file_icon, fg_color='#505050',
+                                           command=lambda: self.save_leather_data(),
                                            hover_color='#404040', compound='top', corner_radius=10, text='Zapisz plik',
                                            text_font=('OpenSans.ttf', 18))
         self.save_file_btn.grid(column=6, row=1, sticky='nsew')
@@ -101,7 +102,8 @@ class Toolbar(tk.Frame):
             self.change_colors_btn.configure(image=self.change_colors_icon_inactive)
         self.queue.put(['preview_reload'])
 
-
+    def save_leather_data (self):
+        leather_data = self.parent.parent.leather_preview.lw_prev.save_leather_data()
     def load_leather_data (self, file=None):
         if file == None:
             file = filedialog.askopenfile()
@@ -152,7 +154,8 @@ class Toolbar(tk.Frame):
                         h_layer.append(item)
                     elif str(item.dxf.get('layer')) == '1':
                         c_layer.append(item)
-
+        else:
+            pass
         try:
             for item in c_layer:
                 for point in item.points():

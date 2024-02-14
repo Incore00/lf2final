@@ -246,6 +246,10 @@ class LeatherWindow_preview(tk.Frame):
 
 		self.after(1, self.pygame_loop)
 
+	def save_leather_data(self):
+		for flaw in self.displayed_b_layer_flaws:
+			pass
+
 	def drawing_flaw_btnup(self):
 		self.drawing_mode = False
 		self.drawing_flaw_started = False
