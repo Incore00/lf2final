@@ -8,6 +8,7 @@ from PIL import ImageTk
 from datetime import datetime
 from threading import Thread
 import ezdxf
+from ezdxf.enums import TextEntityAlignment
 from bin import configFile
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
@@ -18,6 +19,7 @@ class Toolbar(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.queue = queue
+        self.filename = None
 
         self.configure(height=int(parent.winfo_reqheight() * 0.1), width=parent.winfo_reqwidth(), bg='#303030')
         self.pack_propagate(0)
@@ -100,14 +102,51 @@ class Toolbar(tk.Frame):
             configFile.r_layer_linetype = "polygon"
             self.change_colors_flag = False
             self.change_colors_btn.configure(image=self.change_colors_icon_inactive)
+        linetypes = [configFile.b_layer_linetype, configFile.g_layer_linetype, configFile.y_layer_linetype, configFile.r_layer_linetype]
+        self.queue.put(['main_change_colors', linetypes])
         self.queue.put(['preview_reload'])
+        self.queue.put(['main_reload'])
 
     def save_leather_data (self):
-        leather_data = self.parent.parent.leather_preview.lw_prev.save_leather_data()
+        leather_data = self.parent.leather_preview.lw_prev.save_leather_data()
+        c_layer_points = leather_data[0]
+        h_layer_items = leather_data[1]
+        b_layer_items = leather_data[2]
+        g_layer_items = leather_data[3]
+        y_layer_items = leather_data[4]
+        r_layer_items = leather_data[5]
+        text_layer_items = leather_data[6]
+
+        print('get red', r_layer_items)
+
+        new_doc = ezdxf.new()
+        msp = new_doc.modelspace()
+
+        new_doc.layers.add(name="72", color=7)
+
+        msp.add_text("MARK_1", dxfattribs={"layer": "72", }).set_placement((text_layer_items[0]), align=TextEntityAlignment.BOTTOM_LEFT)
+        msp.add_text("MARK_2", dxfattribs={"layer": "72"}).set_placement((text_layer_items[1]), align=TextEntityAlignment.BOTTOM_LEFT)
+
+        msp.add_polyline2d(c_layer_points, close=True, dxfattribs={"layer": "1"})
+        for item in h_layer_items:
+            msp.add_polyline2d(item, close=True, dxfattribs={"layer": "11"})
+        for item in b_layer_items:
+            msp.add_polyline2d(item, close=True, dxfattribs={"layer": "51"})
+        for item in g_layer_items:
+            msp.add_polyline2d(item, close=True, dxfattribs={"layer": "52"})
+        for item in y_layer_items:
+            msp.add_polyline2d(item, close=True, dxfattribs={"layer": "53"})
+        for item in r_layer_items:
+            msp.add_polyline2d(item, close=True, dxfattribs={"layer": "54"})
+
+        #new_doc.saveas(self.filename)
+        new_doc.saveas("testowy_pliczek.dxf")
+
     def load_leather_data (self, file=None):
         if file == None:
             file = filedialog.askopenfile()
             print(file)
+            self.filename = file.name
 
         c_layer = []
         c_layer_points = []
@@ -131,14 +170,16 @@ class Toolbar(tk.Frame):
                 leather = ezdxf.readfile(file)
                 self.active_file = file
             msp = leather.modelspace()
+            for layer in leather.layers:
+                print('layer color:', layer.color)
             for item in msp:
-                #print(item)
+                print('msp - item', item, 'item - type', item.dxf.get('layer'))
                 if 'TEXT' in str(item):
                     # text -> layer 72
                     #print(item)
                     #print(item.dxf.get('layer'))
-                    #print(item.get_placement())
-                    #print(item.plain_text())
+                    print(item.get_placement())
+                    print(item.plain_text())
                     text_layer_items.append([item.get_placement()[1][0],item.get_placement()[1][1]])
                     #print(text_layer_items)
                 if 'POLYLINE' in str(item):

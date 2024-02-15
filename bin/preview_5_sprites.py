@@ -247,8 +247,388 @@ class LeatherWindow_preview(tk.Frame):
 		self.after(1, self.pygame_loop)
 
 	def save_leather_data(self):
-		for flaw in self.displayed_b_layer_flaws:
-			pass
+		c_layer_items_to_calc = self.displayed_c_layer_items
+		h_layer_items_to_calc = self.displayed_h_layer_items
+		b_layer_items_to_calc = self.displayed_b_layer_items
+		g_layer_items_to_calc = self.displayed_g_layer_items
+		y_layer_items_to_calc = self.displayed_y_layer_items
+		r_layer_items_to_calc = self.displayed_r_layer_items
+		leather_data = []
+
+		if self.c_layer_items != None:
+			self.highest_x = c_layer_items_to_calc[0][0]
+			self.highest_y = c_layer_items_to_calc[0][1]
+			self.lowest_x = c_layer_items_to_calc[0][0]
+			self.lowest_y = c_layer_items_to_calc[0][1]
+
+			for point in c_layer_items_to_calc:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			leather_width1 = self.highest_x - self.lowest_x
+			leather_center1 = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+							   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+
+			self.highest_x = self.c_layer_items[0][0]
+			self.highest_y = self.c_layer_items[0][1]
+			self.lowest_x = self.c_layer_items[0][0]
+			self.lowest_y = self.c_layer_items[0][1]
+
+			for point in self.c_layer_items:
+				if point[0] > self.highest_x:
+					self.highest_x = point[0]
+				if point[0] < self.lowest_x:
+					self.lowest_x = point[0]
+				if point[1] < self.lowest_y:
+					self.lowest_y = point[1]
+				if point[1] > self.highest_y:
+					self.highest_y = point[1]
+			original_leather_width = self.highest_y - self.lowest_y
+			original_leather_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+								   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+
+			size_perc_diff = leather_width1 / original_leather_width
+
+####################################################################################przesuwanie do centrum ekranu
+
+			sw, sh = self.winfo_reqwidth(), self.winfo_reqheight()
+			screen_center = [sw / 2, sh / 2]
+
+			c_layer_items_to_calc_pos_offset = []
+			h_layer_items_to_calc_pos_offset = []
+			b_layer_items_to_calc_pos_offset = []
+			g_layer_items_to_calc_pos_offset = []
+			y_layer_items_to_calc_pos_offset = []
+			r_layer_items_to_calc_pos_offset = []
+			for point in c_layer_items_to_calc:
+				c_layer_items_to_calc_pos_offset.append(
+					[(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+			for item in h_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+				h_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in b_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+				b_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in g_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+				g_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in y_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+				y_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in r_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center1[0]), point[1] - leather_center1[1]])
+				r_layer_items_to_calc_pos_offset.append(offset_list)
+
+			new_c_layer_items = []
+			new_h_layer_items = []
+			new_b_layer_items = []
+			new_g_layer_items = []
+			new_y_layer_items = []
+			new_r_layer_items = []
+
+			for offset in c_layer_items_to_calc_pos_offset:
+				new_c_layer_items.append(
+					[(offset[0] + screen_center[0]), (offset[1] + screen_center[1])])
+			c_layer_items_to_calc = new_c_layer_items
+			for item, item_offset in zip(h_layer_items_to_calc, h_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
+				new_h_layer_items.append(item_list)
+			h_layer_items_to_calc = new_h_layer_items
+			for item, item_offset in zip(b_layer_items_to_calc, b_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
+				new_b_layer_items.append(item_list)
+			b_layer_items_to_calc = new_b_layer_items
+			for item, item_offset in zip(g_layer_items_to_calc, g_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
+				new_g_layer_items.append(item_list)
+			g_layer_items_to_calc = new_g_layer_items
+			for item, item_offset in zip(y_layer_items_to_calc, y_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
+				new_y_layer_items.append(item_list)
+			y_layer_items_to_calc = new_y_layer_items
+			for item, item_offset in zip(r_layer_items_to_calc, r_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
+				new_r_layer_items.append(item_list)
+			r_layer_items_to_calc = new_r_layer_items
+
+#################################################################################zoom
+			center_point = [self.winfo_reqwidth() / 2, self.winfo_reqheight() / 2]
+			new_layer = []
+			if c_layer_items_to_calc != None:
+				for point in c_layer_items_to_calc:
+					if point[0] == center_point[0]:
+						center_point[0] += 0.01
+					wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+					wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+					nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+					nowe_y = wspol_a * nowe_x + wspol_b
+					new_layer.append([nowe_x, nowe_y])
+					if center_point[0] - point[0] == 0.01:
+						center_point[0] -= 0.01
+				c_layer_items_to_calc = new_layer
+			new_layer = []
+			if h_layer_items_to_calc != None:
+				for item in h_layer_items_to_calc:
+					item_list = []
+					for point in item:
+						if point[0] == center_point[0]:
+							center_point[0] += 0.01
+						wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+						wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+						nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+						nowe_y = wspol_a * nowe_x + wspol_b
+						item_list.append([nowe_x, nowe_y])
+						if center_point[0] - point[0] == 0.01:
+							center_point[0] -= 0.01
+					new_layer.append(item_list)
+				h_layer_items_to_calc = new_layer
+			new_layer = []
+			if b_layer_items_to_calc != None:
+				for item in b_layer_items_to_calc:
+					item_list = []
+					for point in item:
+						if point[0] == center_point[0]:
+							center_point[0] += 0.01
+						wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+						wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+						nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+						nowe_y = wspol_a * nowe_x + wspol_b
+						item_list.append([nowe_x, nowe_y])
+						if center_point[0] - point[0] == 0.01:
+							center_point[0] -= 0.01
+					new_layer.append(item_list)
+				b_layer_items_to_calc = new_layer
+			new_layer = []
+			if g_layer_items_to_calc != None:
+				for item in g_layer_items_to_calc:
+					item_list = []
+					for point in item:
+						if point[0] == center_point[0]:
+							center_point[0] += 0.01
+						wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+						wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+						nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+						nowe_y = wspol_a * nowe_x + wspol_b
+						item_list.append([nowe_x, nowe_y])
+						if center_point[0] - point[0] == 0.01:
+							center_point[0] -= 0.01
+					new_layer.append(item_list)
+				g_layer_items_to_calc = new_layer
+			new_layer = []
+			if y_layer_items_to_calc != None:
+				for item in y_layer_items_to_calc:
+					item_list = []
+					for point in item:
+						if point[0] == center_point[0]:
+							center_point[0] += 0.01
+						wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+						wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+						nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+						nowe_y = wspol_a * nowe_x + wspol_b
+						item_list.append([nowe_x, nowe_y])
+						if center_point[0] - point[0] == 0.01:
+							center_point[0] -= 0.01
+					new_layer.append(item_list)
+				y_layer_items_to_calc = new_layer
+			new_layer = []
+			if r_layer_items_to_calc != None:
+				for item in r_layer_items_to_calc:
+					item_list = []
+					for point in item:
+						if point[0] == center_point[0]:
+							center_point[0] += 0.01
+						wspol_a = (point[1] - center_point[1]) / (point[0] - center_point[0])
+						wspol_b = point[1] - (((point[1] - center_point[1]) / (point[0] - center_point[0]) * point[0]))
+						nowe_x = center_point[0] + (point[0] - center_point[0]) / size_perc_diff
+						nowe_y = wspol_a * nowe_x + wspol_b
+						item_list.append([nowe_x, nowe_y])
+						if center_point[0] - point[0] == 0.01:
+							center_point[0] -= 0.01
+					new_layer.append(item_list)
+				r_layer_items_to_calc = new_layer
+
+####################################################################################rotacja
+
+			new_c_layer_points = []
+			new_h_layer_items = []
+			new_b_layer_items = []
+			new_g_layer_items = []
+			new_y_layer_items = []
+			new_r_layer_items = []
+			for point in c_layer_items_to_calc:
+				new_c_layer_points.append([point[1], point[0]])
+			c_layer_items_to_calc = new_c_layer_points
+			for item in h_layer_items_to_calc:
+				point_list = []
+				for point in item:
+					point_list.append([point[1], point[0]])
+				new_h_layer_items.append(point_list)
+			h_layer_items_to_calc = new_h_layer_items
+			for item in b_layer_items_to_calc:
+				point_list = []
+				for point in item:
+					point_list.append([point[1], point[0]])
+				new_b_layer_items.append(point_list)
+			b_layer_items_to_calc = new_b_layer_items
+			for item in g_layer_items_to_calc:
+				point_list = []
+				for point in item:
+					point_list.append([point[1], point[0]])
+				new_g_layer_items.append(point_list)
+			g_layer_items_to_calc = new_g_layer_items
+			for item in y_layer_items_to_calc:
+				point_list = []
+				for point in item:
+					point_list.append([point[1], point[0]])
+				new_y_layer_items.append(point_list)
+			y_layer_items_to_calc = new_y_layer_items
+			for item in r_layer_items_to_calc:
+				point_list = []
+				for point in item:
+					point_list.append([point[1], point[0]])
+				new_r_layer_items.append(point_list)
+			r_layer_items_to_calc = new_r_layer_items
+
+#####################################################################################nowy srodek
+			if self.c_layer_items != None:
+				self.highest_x = c_layer_items_to_calc[0][0]
+				self.highest_y = c_layer_items_to_calc[0][1]
+				self.lowest_x = c_layer_items_to_calc[0][0]
+				self.lowest_y = c_layer_items_to_calc[0][1]
+
+				for point in c_layer_items_to_calc:
+					if point[0] > self.highest_x:
+						self.highest_x = point[0]
+					if point[0] < self.lowest_x:
+						self.lowest_x = point[0]
+					if point[1] < self.lowest_y:
+						self.lowest_y = point[1]
+					if point[1] > self.highest_y:
+						self.highest_y = point[1]
+				leather_width = self.highest_x - self.lowest_x
+				leather_center = [self.lowest_x + ((self.highest_x - self.lowest_x) / 2),
+								  self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
+####################################################################################przesuwanie do starego centrum
+			c_layer_items_to_calc_pos_offset = []
+			h_layer_items_to_calc_pos_offset = []
+			b_layer_items_to_calc_pos_offset = []
+			g_layer_items_to_calc_pos_offset = []
+			y_layer_items_to_calc_pos_offset = []
+			r_layer_items_to_calc_pos_offset = []
+			for point in c_layer_items_to_calc:
+				c_layer_items_to_calc_pos_offset.append(
+					[(point[0] - leather_center[0]), point[1] - leather_center[1]])
+			for item in h_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center[0]), point[1] - leather_center[1]])
+				h_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in b_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center[0]), point[1] - leather_center[1]])
+				b_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in g_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center[0]), point[1] - leather_center[1]])
+				g_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in y_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center[0]), point[1] - leather_center[1]])
+				y_layer_items_to_calc_pos_offset.append(offset_list)
+			for item in r_layer_items_to_calc:
+				offset_list = []
+				for point in item:
+					offset_list.append([(point[0] - leather_center[0]), point[1] - leather_center[1]])
+				r_layer_items_to_calc_pos_offset.append(offset_list)
+
+			new_c_layer_items = []
+			new_h_layer_items = []
+			new_b_layer_items = []
+			new_g_layer_items = []
+			new_y_layer_items = []
+			new_r_layer_items = []
+
+			for offset in c_layer_items_to_calc_pos_offset:
+				new_c_layer_items.append(
+					[(offset[0] + original_leather_center[0]), (offset[1] + original_leather_center[1])])
+			c_layer_items_to_calc = new_c_layer_items
+			for item, item_offset in zip(h_layer_items_to_calc, h_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + original_leather_center[0]), offset[1] + original_leather_center[1]])
+				new_h_layer_items.append(item_list)
+			h_layer_items_to_calc = new_h_layer_items
+			for item, item_offset in zip(b_layer_items_to_calc, b_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + original_leather_center[0]), offset[1] + original_leather_center[1]])
+				new_b_layer_items.append(item_list)
+			b_layer_items_to_calc = new_b_layer_items
+			for item, item_offset in zip(g_layer_items_to_calc, g_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + original_leather_center[0]), offset[1] + original_leather_center[1]])
+				new_g_layer_items.append(item_list)
+			g_layer_items_to_calc = new_g_layer_items
+			for item, item_offset in zip(y_layer_items_to_calc, y_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + original_leather_center[0]), offset[1] + original_leather_center[1]])
+				new_y_layer_items.append(item_list)
+			y_layer_items_to_calc = new_y_layer_items
+			for item, item_offset in zip(r_layer_items_to_calc, r_layer_items_to_calc_pos_offset):
+				item_list = []
+				for point, offset in zip(item, item_offset):
+					item_list.append(
+						[(offset[0] + original_leather_center[0]), offset[1] + original_leather_center[1]])
+				new_r_layer_items.append(item_list)
+			r_layer_items_to_calc = new_r_layer_items
+
+		leather_data = [c_layer_items_to_calc,
+						h_layer_items_to_calc,
+						b_layer_items_to_calc,
+						g_layer_items_to_calc,
+						y_layer_items_to_calc,
+						r_layer_items_to_calc,
+						self.text_layer_items]
+		return leather_data
 
 	def drawing_flaw_btnup(self):
 		self.drawing_mode = False
@@ -299,7 +679,7 @@ class LeatherWindow_preview(tk.Frame):
 		if len(flaw_list) == 1 and self.dropdown_layer_options_grouped_sprites == None:
 			self.dropdown_layer_options_sprites = []
 			self.dropdown_layer_menu_bg = [position[0], position[1], configFile.flaw_dropdown_menu_x_size,
-									 configFile.flaw_dropdown_menu_y_size]
+										   (configFile.flaw_dropdown_menu_y_size/3)*4]
 			self.option_border = int((configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
 			self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
 			self.option_y_size = int((configFile.flaw_dropdown_menu_y_size - (self.option_border * (configFile.flaw_dropdown_menu_options_amount + 1))) / configFile.flaw_dropdown_menu_options_amount)
@@ -973,7 +1353,7 @@ class LeatherWindow_preview(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.g_layer_flaw_center_list.append(flaw_center)
 							self.displayed_g_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'green'))
+								FlawSprite(self.temp_drawed_flaw, configFile.g_layer_color, flaw_center, 'green'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
@@ -999,7 +1379,7 @@ class LeatherWindow_preview(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.y_layer_flaw_center_list.append(flaw_center)
 							self.displayed_y_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'yellow'))
+								FlawSprite(self.temp_drawed_flaw, configFile.y_layer_color, flaw_center, 'yellow'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
@@ -1025,7 +1405,7 @@ class LeatherWindow_preview(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.r_layer_flaw_center_list.append(flaw_center)
 							self.displayed_r_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'red'))
+								FlawSprite(self.temp_drawed_flaw, configFile.r_layer_color, flaw_center, 'red'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
@@ -1098,7 +1478,7 @@ class LeatherWindow_preview(tk.Frame):
 	def normalizeVec(self, x, y):
 		distance = np.sqrt(x * x + y * y)
 		if distance == 0:
-			distance = 0.000000000000000000000000001
+			distance = 0.000000000000000000000000000000000000000000000000000000001
 		new_x = x/distance
 		new_y = y/distance
 		return new_x, new_y
@@ -1126,7 +1506,7 @@ class LeatherWindow_preview(tk.Frame):
 			bisnX, bisnY = self.normalizeVec(bisX, bisY)
 			dol = np.sqrt((1 + nnnX * npnX + nnnY * npnY) / 2)
 			if dol == 0:
-				dol = 0.0000000000000000000000000001
+				dol = 0.0000000000000000000000000000000000000000000000000000000000000001
 			bislen = offset / dol
 			new_x_list.append(oldX[curr] + bislen * bisnX)
 			new_y_list.append(oldY[curr] + bislen * bisnY)
@@ -1513,40 +1893,40 @@ class LeatherWindow_preview(tk.Frame):
 
 		for offset in self.c_layer_items_pos_offset:
 			new_c_layer_items.append(
-				[round((offset[0] + screen_center[0]), 1), round((offset[1] + screen_center[1]), 1)])
+				[(offset[0] + screen_center[0]), (offset[1] + screen_center[1])])
 		self.displayed_c_layer_items = new_c_layer_items
 		for item, item_offset in zip(self.displayed_h_layer_items, self.h_layer_items_pos_offset):
 			item_list = []
 			for point, offset in zip(item, item_offset):
-				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+				item_list.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 			new_h_layer_items.append(item_list)
 		self.displayed_h_layer_items = new_h_layer_items
 		for item, item_offset in zip(self.displayed_b_layer_items, self.b_layer_items_pos_offset):
 			item_list = []
 			for point, offset in zip(item, item_offset):
-				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+				item_list.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 			new_b_layer_items.append(item_list)
 		self.displayed_b_layer_items = new_b_layer_items
 		for item, item_offset in zip(self.displayed_g_layer_items, self.g_layer_items_pos_offset):
 			item_list = []
 			for point, offset in zip(item, item_offset):
-				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+				item_list.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 			new_g_layer_items.append(item_list)
 		self.displayed_g_layer_items = new_g_layer_items
 		for item, item_offset in zip(self.displayed_y_layer_items, self.y_layer_items_pos_offset):
 			item_list = []
 			for point, offset in zip(item, item_offset):
-				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+				item_list.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 			new_y_layer_items.append(item_list)
 		self.displayed_y_layer_items = new_y_layer_items
 		for item, item_offset in zip(self.displayed_r_layer_items, self.r_layer_items_pos_offset):
 			item_list = []
 			for point, offset in zip(item, item_offset):
-				item_list.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+				item_list.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 			new_r_layer_items.append(item_list)
 		self.displayed_r_layer_items = new_r_layer_items
 		for point, offset in zip(self.displayed_text_layer_items, self.text_layer_items_pos_offset):
-			new_text_layer_items.append([round((offset[0] + screen_center[0]), 1), round(offset[1] + screen_center[1], 1)])
+			new_text_layer_items.append([(offset[0] + screen_center[0]), offset[1] + screen_center[1]])
 		self.displayed_text_layer_items = new_text_layer_items
 
 	def calculate_zoom (self):

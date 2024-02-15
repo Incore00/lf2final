@@ -168,7 +168,6 @@ class LeatherWindow_main(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
-			print(item[0])
 			if item[0] == 'main_flaw_clicked':
 				self.clicked_flaw_income(*item[1])
 			elif item[0] == 'main_clicked_flaw_updater':
@@ -205,6 +204,8 @@ class LeatherWindow_main(tk.Frame):
 				self.drawing_flaw_btnup()
 			elif item[0] == 'main_flaw_assignation':
 				self.assignation_flaw_income(item[1])
+			elif item[0] == 'main_change_colors':
+				self.change_colors_income(item[1])
 			else:
 				self.queue.put(item)
 		except:
@@ -243,6 +244,11 @@ class LeatherWindow_main(tk.Frame):
 
 		self.after(1, self.pygame_loop)
 
+	def change_colors_income(self, linetypes):
+		configFile.b_layer_linetype = linetypes[0]
+		configFile.g_layer_linetype = linetypes[1]
+		configFile.y_layer_linetype = linetypes[2]
+		configFile.r_layer_linetype = linetypes[3]
 	def drawing_flaw_btnup(self):
 		self.drawing_mode = False
 		self.drawing_flaw_started = False
@@ -318,7 +324,7 @@ class LeatherWindow_main(tk.Frame):
 		if len(flaw_list) == 1 and self.dropdown_layer_options_grouped_sprites == None:
 			self.dropdown_layer_options_sprites = []
 			self.dropdown_layer_menu_bg = [position[0], position[1], configFile.flaw_dropdown_menu_x_size,
-										   configFile.flaw_dropdown_menu_y_size]
+										   (configFile.flaw_dropdown_menu_y_size/3)*4]
 			self.option_border = int(
 				(configFile.flaw_dropdown_menu_y_size / configFile.flaw_dropdown_menu_options_amount) * 0.1)
 			self.option_x_size = int(configFile.flaw_dropdown_menu_x_size - 2 * self.option_border)
