@@ -145,8 +145,12 @@ class Toolbar(tk.Frame):
     def load_leather_data (self, file=None):
         if file == None:
             file = filedialog.askopenfile()
-            print(file)
-            self.filename = file.name
+            if file != None:
+                print(file)
+                self.filename = file.name
+            else:
+                pass
+
 
         c_layer = []
         c_layer_points = []
@@ -162,7 +166,7 @@ class Toolbar(tk.Frame):
         h_layer_items = []
         text_layer_items = []
 
-        if file != 'NotNone':
+        if file != None:
             try:
                 leather = ezdxf.readfile(file.name)
                 self.active_file = file.name
@@ -245,13 +249,14 @@ class Toolbar(tk.Frame):
         except:
             raise Exception("Błąd podczas odczytu punktów warstwy dziur")
 
-        leather_data = c_layer_points, h_layer_items, b_layer_items, g_layer_items, y_layer_items, r_layer_items, text_layer_items
+        if str(c_layer_points) != '[]':
+            leather_data = c_layer_points, h_layer_items, b_layer_items, g_layer_items, y_layer_items, r_layer_items, text_layer_items
 
-        self.queue.put(['preview_load_data', leather_data])
-        self.queue.put(['main_load_data', leather_data])
-        self.parent.infobar.update_info(file.name)
+            self.queue.put(['preview_load_data', leather_data])
+            self.queue.put(['main_load_data', leather_data])
+            self.parent.infobar.update_info(file.name)
 
-        self.parent.layer_info.load_data(len(h_layer_items),len(b_layer_items),len(g_layer_items),len(y_layer_items),len(r_layer_items))
+            self.parent.layer_info.load_data(len(h_layer_items),len(b_layer_items),len(g_layer_items),len(y_layer_items),len(r_layer_items))
 
 
 

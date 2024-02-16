@@ -1478,7 +1478,7 @@ class LeatherWindow_preview(tk.Frame):
 	def normalizeVec(self, x, y):
 		distance = np.sqrt(x * x + y * y)
 		if distance == 0:
-			distance = 0.000000000000000000000000000000000000000000000000000000001
+			distance = 0.0001
 		new_x = x/distance
 		new_y = y/distance
 		return new_x, new_y
@@ -1506,7 +1506,7 @@ class LeatherWindow_preview(tk.Frame):
 			bisnX, bisnY = self.normalizeVec(bisX, bisY)
 			dol = np.sqrt((1 + nnnX * npnX + nnnY * npnY) / 2)
 			if dol == 0:
-				dol = 0.0000000000000000000000000000000000000000000000000000000000000001
+				dol = 0.0001
 			bislen = offset / dol
 			new_x_list.append(oldX[curr] + bislen * bisnX)
 			new_y_list.append(oldY[curr] + bislen * bisnY)
