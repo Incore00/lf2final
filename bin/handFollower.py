@@ -47,18 +47,18 @@ def task(frame):
 			# print(x,y)
 			if id == 8:
 				pyautogui.moveTo(x, -1080 + y)
-			#if id == 4:
-			#	thumb_x = landmark.x * frame_width
-			#	thumb_y = landmark.y * frame_height
-			#if id == 6:
-			#	sec_x = landmark.x * frame_width
-			#	sec_y = landmark.y * frame_height
-			#if thumb_x != None and sec_x != None:
-			#	calc_x = thumb_x - sec_x
-			#	calc_y = thumb_y - sec_y
-			#	# print(math.sqrt(calc_x*calc_x+calc_y*calc_y))
-			#	if sqrt(calc_x * calc_x + calc_y * calc_y) < 40:
-			#		pyautogui.click(button='left')
+			if id == 4:
+				thumb_x = landmark.x * frame_width
+				thumb_y = landmark.y * frame_height
+			if id == 6:
+				sec_x = landmark.x * frame_width
+				sec_y = landmark.y * frame_height
+			if thumb_x != None and sec_x != None:
+				calc_x = thumb_x - sec_x
+				calc_y = thumb_y - sec_y
+				# print(math.sqrt(calc_x*calc_x+calc_y*calc_y))
+				if sqrt(calc_x * calc_x + calc_y * calc_y) < 40:
+					pyautogui.click(button='left')
 
 while 1:
 	time1 = datetime.now()

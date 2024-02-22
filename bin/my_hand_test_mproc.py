@@ -72,26 +72,26 @@ if __name__=="__main__":
 	detector1 = mproc.Process(name='detector1', target=DetectorInstance, args=(raw_queue, proc_queue))
 	detector1.daemon = True
 
-	detector2 = mproc.Process(name='detector2', target=DetectorInstance, args=(raw_queue, proc_queue))
-	detector2.daemon = True
-
-	detector3 = mproc.Process(name='detector3', target=DetectorInstance, args=(raw_queue, proc_queue))
-	detector3.daemon = True
-
-	detector4 = mproc.Process(name='detector4', target=DetectorInstance, args=(raw_queue, proc_queue))
-	detector4.daemon = True
+	#detector2 = mproc.Process(name='detector2', target=DetectorInstance, args=(raw_queue, proc_queue))
+	#detector2.daemon = True
+#
+	#detector3 = mproc.Process(name='detector3', target=DetectorInstance, args=(raw_queue, proc_queue))
+	#detector3.daemon = True
+#
+	#detector4 = mproc.Process(name='detector4', target=DetectorInstance, args=(raw_queue, proc_queue))
+	#detector4.daemon = True
 
 	cam.start()
 	detector1.start()
-	detector2.start()
-	detector3.start()
-	detector4.start()
+	#detector2.start()
+	#detector3.start()
+	#detector4.start()
 
 	cam.join()
 	detector1.join()
-	detector2.join()
-	detector3.join()
-	detector4.join()
+	#detector2.join()
+	#detector3.join()
+	#detector4.join()
 
 
 
