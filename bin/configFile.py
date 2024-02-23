@@ -2,6 +2,12 @@
 preview_redraw = False
 main_redraw = False
 
+leathers_to_edit_directory = None
+leathers_saving_directory = None
+leathers_backup_directory = None
+
+
+
 cursor_radius = 5
 cursor_color = (255,255,0)
 

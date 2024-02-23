@@ -10,6 +10,8 @@ from threading import Thread
 import ezdxf
 from ezdxf.enums import TextEntityAlignment
 from bin import configFile
+from tkinter import ttk
+from tkinter.colorchooser import askcolor
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -37,7 +39,7 @@ class Toolbar(tk.Frame):
         self.settings_icon = icon_to_image("cog", fill='#c7c6c5', scale_to_width=60)
         self.settings_btn = ctk.CTkButton(self, image=self.settings_icon, fg_color='#505050', hover_color='#404040',
                                           compound='top', corner_radius=10, text='Ustawienia',
-                                          text_font=('OpenSans.ttf', 18))
+                                          text_font=('OpenSans.ttf', 18), command =lambda: self.show_settings())
         self.settings_btn.grid(column=2, row=1, sticky='nsew')
 
         self.change_colors_icon_inactive = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
@@ -76,12 +78,18 @@ class Toolbar(tk.Frame):
         for widget in self.winfo_children():
             widget.grid(padx=2, pady=2)
 
+        self.current_topwindow = tk.Label(self)
+
 
     def clockLoop (self):
         clock = datetime.now().strftime('%Y-%m-%d\n%H:%M:%S') + '\nTydzień ' + str(
             datetime.isocalendar(datetime.now())[1])
         self.clock.set(clock)
         self.after(1000, self.clockLoop)
+
+    def show_settings(self):
+        self.current_topwindow.destroy()
+        self.current_topwindow = Settings(self.parent, self.queue)
 
     def change_colors_func(self):
         if self.change_colors_flag == False:
@@ -257,6 +265,209 @@ class Toolbar(tk.Frame):
             self.parent.infobar.update_info(file.name)
 
             self.parent.layer_info.load_data(len(h_layer_items),len(b_layer_items),len(g_layer_items),len(y_layer_items),len(r_layer_items))
+
+
+class Settings(tk.Toplevel):
+    def __init__(self, parent, queue, *args, **kwargs):
+        tk.Toplevel.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+        self.queue = queue
+
+        self.colorpicker = tk.Label(self)
+
+        self.geometry('%dx%d%+d+%d' % (1600, 900, 160, 90))
+        self.attributes('-topmost', 'true')
+        self.resizable(False, False)
+        self.overrideredirect(True)
+        self.configure(bg='#404040')
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.pack_propagate(0)
+        self.grid_propagate(0)
+
+        self.settings_notebook = ttk.Notebook(self)
+        self.ogolne_tab = ctk.CTkFrame(self.settings_notebook)
+        self.display_tab = ctk.CTkFrame(self.settings_notebook)
+        self.calibration_tab = ctk.CTkFrame(self.settings_notebook)
+        self.settings_notebook.add(self.ogolne_tab, text='       Ogólne       ')
+        self.settings_notebook.add(self.display_tab, text='      Wyświetlanie      ')
+        self.settings_notebook.add(self.calibration_tab, text='      Kalibracja      ')
+        self.settings_notebook.grid(row=1, column=1, sticky='nsew')
+
+
+        self.ramka_cursor = tk.LabelFrame(self.ogolne_tab, text='Opcje kursora', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
+        tk.Label(self.ramka_cursor, text='Średnica kursora:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.cursor_radius_entry = ctk.CTkEntry(self.ramka_cursor, width=50, justify=tk.CENTER, text_font=('OpenSans.ttf', 16))
+        self.cursor_radius_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.cursor_radius_entry.insert(0, configFile.cursor_radius)
+
+        tk.Label(self.ramka_cursor, text='Kolor kursora:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=2, column=1, sticky='nsew', padx=10, pady=10)
+        self.probka_koloru_cursora = tk.Label(self.ramka_cursor, text=' ', bg=self.rgb_to_hex(*configFile.cursor_color),
+                                      fg=self.rgb_to_hex(*configFile.cursor_color), font=('OpenSans.ttf', 16))
+        self.probka_koloru_cursora.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_cursor_btn = ctk.CTkButton(self.ramka_cursor, text='Zmień kolor', text_font=('OpenSans.ttf', 16),
+                                              fg_color='#505050', hover_color='#404040', command=lambda:self.change_cursor_color())
+        self.change_color_cursor_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
+        self.ramka_cursor.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+
+
+        self.ramka_flaw_menu = tk.LabelFrame(self.ogolne_tab, text='Opcje menu na skazie', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
+        tk.Label(self.ramka_flaw_menu, text='Szerokość menu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.szerokosc_menu_skazy_entry = ctk.CTkEntry(self.ramka_flaw_menu, width=70, justify=tk.CENTER, text_font=('OpenSans.ttf', 16))
+        self.szerokosc_menu_skazy_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.szerokosc_menu_skazy_entry.insert(0, configFile.flaw_dropdown_menu_x_size)
+
+        tk.Label(self.ramka_flaw_menu, text='Wysokość menu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=2, column=1, sticky='nsew')
+        self.wysokosc_menu_skazy_entry = ctk.CTkEntry(self.ramka_flaw_menu, width=70, justify=tk.CENTER,
+                                                       text_font=('OpenSans.ttf', 16))
+        self.wysokosc_menu_skazy_entry.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+        self.wysokosc_menu_skazy_entry.insert(0, configFile.flaw_dropdown_menu_y_size)
+
+        tk.Label(self.ramka_flaw_menu, text='Kolor tła menu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=3, column=1, sticky='nsew')
+        self.probka_koloru_tla_menu_skazy = tk.Label(self.ramka_flaw_menu, text=' ', bg=self.rgb_to_hex(*configFile.flaw_dropdown_menu_color),
+                                              fg=self.rgb_to_hex(*configFile.flaw_dropdown_menu_color), font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_menu_skazy.grid(row=3, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_flaw_tlo_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor', text_font=('OpenSans.ttf', 16),
+                                              fg_color='#505050', hover_color='#404040',
+                                              command=lambda: self.change_menu_skazy_tlo_color())
+        self.change_color_flaw_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
+
+        tk.Label(self.ramka_flaw_menu, text='Kolor tła opcji menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=4, column=1, sticky='nsew')
+        self.probka_koloru_tla_opcji_menu_skazy = tk.Label(self.ramka_flaw_menu, text=' ',
+                                                     bg=self.rgb_to_hex(*configFile.flaw_dropdown_menu_option_color),
+                                                     fg=self.rgb_to_hex(*configFile.flaw_dropdown_menu_option_color),
+                                                     font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_opcji_menu_skazy.grid(row=4, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_flaw_tlo_opcji_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor',
+                                                       text_font=('OpenSans.ttf', 16),
+                                                       fg_color='#505050', hover_color='#404040',
+                                                       command=lambda: self.change_menu_skazy_tlo_opcji_color())
+        self.change_color_flaw_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
+
+        tk.Label(self.ramka_flaw_menu, text='Kolor czcionki opcji menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=5, column=1, sticky='nsew')
+        self.probka_koloru_czcionki_menu_skazy = tk.Label(self.ramka_flaw_menu, text=' ',
+                                                           bg=self.rgb_to_hex(
+                                                               *configFile.flaw_dropdown_menu_font_color),
+                                                           fg=self.rgb_to_hex(
+                                                               *configFile.flaw_dropdown_menu_font_color),
+                                                           font=('OpenSans.ttf', 16))
+        self.probka_koloru_czcionki_menu_skazy.grid(row=5, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_flaw_font_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor',
+                                                             text_font=('OpenSans.ttf', 16),
+                                                             fg_color='#505050', hover_color='#404040',
+                                                             command=lambda: self.change_menu_skazy_font_color())
+        self.change_color_flaw_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_flaw_menu.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
+
+
+        self.ramka_menu = tk.LabelFrame(self.ogolne_tab, text='Opcje menu bez skazy', font=('OpenSans.ttf', 13),
+                                             bg='#303030', fg='#c7c6c5')
+        tk.Label(self.ramka_menu, text='Szerokość menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.szerokosc_menu_entry = ctk.CTkEntry(self.ramka_menu, width=70, justify=tk.CENTER,
+                                                       text_font=('OpenSans.ttf', 16))
+        self.szerokosc_menu_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.szerokosc_menu_entry.insert(0, configFile.dropdown_menu_x_size)
+
+        tk.Label(self.ramka_menu, text='Wysokość menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=2, column=1, sticky='nsew')
+        self.wysokosc_menu_entry = ctk.CTkEntry(self.ramka_menu, width=70, justify=tk.CENTER,
+                                                      text_font=('OpenSans.ttf', 16))
+        self.wysokosc_menu_entry.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+        self.wysokosc_menu_entry.insert(0, configFile.dropdown_menu_y_size)
+
+        tk.Label(self.ramka_menu, text='Kolor tła menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=3, column=1, sticky='nsew')
+        self.probka_koloru_tla_menu = tk.Label(self.ramka_menu, text=' ',
+                                                     bg=self.rgb_to_hex(*configFile.dropdown_menu_color),
+                                                     fg=self.rgb_to_hex(*configFile.dropdown_menu_color),
+                                                     font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_menu.grid(row=3, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_tlo_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
+                                                       text_font=('OpenSans.ttf', 16),
+                                                       fg_color='#505050', hover_color='#404040',
+                                                       command=lambda: self.change_menu_tlo_color())
+        self.change_color_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
+
+        tk.Label(self.ramka_menu, text='Kolor tła opcji menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=4, column=1, sticky='nsew')
+        self.probka_koloru_tla_opcji_menu = tk.Label(self.ramka_menu, text=' ',
+                                                           bg=self.rgb_to_hex(
+                                                               *configFile.dropdown_menu_option_color),
+                                                           fg=self.rgb_to_hex(
+                                                               *configFile.dropdown_menu_option_color),
+                                                           font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_opcji_menu.grid(row=4, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_tlo_opcji_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
+                                                             text_font=('OpenSans.ttf', 16),
+                                                             fg_color='#505050', hover_color='#404040',
+                                                             command=lambda: self.change_menu_tlo_opcji_color())
+        self.change_color_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
+
+        tk.Label(self.ramka_menu, text='Kolor czcionki opcji menu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=5, column=1, sticky='nsew')
+        self.probka_koloru_czcionki_menu = tk.Label(self.ramka_menu, text=' ',
+                                                          bg=self.rgb_to_hex(
+                                                              *configFile.dropdown_menu_font_color),
+                                                          fg=self.rgb_to_hex(
+                                                              *configFile.dropdown_menu_font_color),
+                                                          font=('OpenSans.ttf', 16))
+        self.probka_koloru_czcionki_menu.grid(row=5, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_font_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
+                                                        text_font=('OpenSans.ttf', 16),
+                                                        fg_color='#505050', hover_color='#404040',
+                                                        command=lambda: self.change_menu_font_color())
+        self.change_color_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
+        self.ramka_menu.grid(row=3, column=1, sticky='nsew', padx=10, pady=10)
+
+    def change_cursor_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_cursora.configure(fg=color[1], bg=color[1])
+
+    def change_menu_skazy_tlo_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_tla_menu_skazy.configure(fg=color[1], bg=color[1])
+
+    def change_menu_skazy_tlo_opcji_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_tla_opcji_menu_skazy.configure(fg=color[1], bg=color[1])
+
+    def change_menu_skazy_font_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_czcionki_menu_skazy.configure(fg=color[1], bg=color[1])
+
+    def change_menu_tlo_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_tla_menu.configure(fg=color[1], bg=color[1])
+
+    def change_menu_tlo_opcji_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_tla_opcji_menu.configure(fg=color[1], bg=color[1])
+
+    def change_menu_font_color(self):
+        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        self.probka_koloru_czcionki_menu.configure(fg=color[1], bg=color[1])
+
+    def rgb_to_hex (self, r, g, b):
+        return '#{:02x}{:02x}{:02x}'.format(r, g, b)
+
+    def hex_to_rgb (self, hex):
+        rgb = []
+        for i in (0, 2, 4):
+            decimal = int(hex[i:i + 2], 16)
+            rgb.append(decimal)
+        return tuple(rgb)
 
 
 

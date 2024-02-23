@@ -54,7 +54,7 @@ class MainApplication(tk.Frame):
             "TNotebook.Tab":
                 {"configure":
                      {"padding": [110, 0], "background": "#404040", "foreground": "#c7c6c5",
-                      "font": ('OpenSans.ttf', '20')},
+                      "font": ('OpenSans.ttf', '30')},
                  "map":
                      {"background": [("selected", "#505050")], "expand": [("selected", [1, 1, 1, 1])]}},
             "Treeview.Heading":
@@ -97,10 +97,10 @@ class MainApplication(tk.Frame):
 
 if __name__ == '__main__':
     queue = Queue()
-    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
-    leather_view.start()
-    hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
-    hand_follower.start()
+    #leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
+    #leather_view.start()
+    #hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
+    #hand_follower.start()
     main_root = tk.Tk()
     main_root.iconbitmap("images/icon.ico")
     main_root.title("LeatherFlaws")
@@ -108,8 +108,8 @@ if __name__ == '__main__':
     main_root.state("zoomed")
     MainApplication(main_root, queue, width=1920, height=1080).pack(side="top", fill="both", expand=True)
     main_root.mainloop()
-    subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
-    subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))
+    #subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
+    #subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))
 
 
 
