@@ -361,7 +361,7 @@ class Settings(tk.Toplevel):
                                       fg=self.rgb_to_hex(*configFile.cursor_color), font=('OpenSans.ttf', 16))
         self.probka_koloru_cursora.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
         self.change_color_cursor_btn = ctk.CTkButton(self.ramka_cursor, text='Zmień kolor', text_font=('OpenSans.ttf', 16),
-                                              fg_color='#505050', hover_color='#404040', command=lambda:self.change_cursor_color())
+                                              fg_color='#505050', hover_color='#404040', command=lambda x = self.probka_koloru_cursora: self.change_obj_color(x))
         self.change_color_cursor_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
         self.ramka_cursor.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
 
@@ -387,7 +387,7 @@ class Settings(tk.Toplevel):
         self.probka_koloru_tla_menu_skazy.grid(row=3, column=2, sticky='nsew', padx=10, pady=10)
         self.change_color_flaw_tlo_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor', text_font=('OpenSans.ttf', 16),
                                               fg_color='#505050', hover_color='#404040',
-                                              command=lambda: self.change_menu_skazy_tlo_color())
+                                              command=lambda x = self.probka_koloru_tla_menu_skazy: self.change_obj_color(x))
         self.change_color_flaw_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_flaw_menu, text='Kolor tła opcji menu:', bg='#303030', fg='#c7c6c5',
@@ -400,7 +400,7 @@ class Settings(tk.Toplevel):
         self.change_color_flaw_tlo_opcji_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor',
                                                        text_font=('OpenSans.ttf', 16),
                                                        fg_color='#505050', hover_color='#404040',
-                                                       command=lambda: self.change_menu_skazy_tlo_opcji_color())
+                                                       command=lambda x = self.probka_koloru_tla_opcji_menu_skazy: self.change_obj_color(x))
         self.change_color_flaw_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_flaw_menu, text='Kolor czcionki opcji menu:', bg='#303030', fg='#c7c6c5',
@@ -415,7 +415,7 @@ class Settings(tk.Toplevel):
         self.change_color_flaw_font_btn = ctk.CTkButton(self.ramka_flaw_menu, text='Zmień kolor',
                                                              text_font=('OpenSans.ttf', 16),
                                                              fg_color='#505050', hover_color='#404040',
-                                                             command=lambda: self.change_menu_skazy_font_color())
+                                                             command=lambda x = self.probka_koloru_czcionki_menu_skazy: self.change_obj_color(x))
         self.change_color_flaw_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
 
         self.ramka_flaw_menu.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
@@ -450,7 +450,7 @@ class Settings(tk.Toplevel):
         self.change_color_tlo_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
                                                        text_font=('OpenSans.ttf', 16),
                                                        fg_color='#505050', hover_color='#404040',
-                                                       command=lambda: self.change_menu_tlo_color())
+                                                       command=lambda x = self.probka_koloru_tla_menu: self.change_obj_color(x))
         self.change_color_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_menu, text='Kolor tła opcji menu:', bg='#303030', fg='#c7c6c5',
@@ -465,7 +465,7 @@ class Settings(tk.Toplevel):
         self.change_color_tlo_opcji_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
                                                              text_font=('OpenSans.ttf', 16),
                                                              fg_color='#505050', hover_color='#404040',
-                                                             command=lambda: self.change_menu_tlo_opcji_color())
+                                                             command=lambda x = self.probka_koloru_tla_opcji_menu: self.change_obj_color(x))
         self.change_color_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_menu, text='Kolor czcionki opcji menu:', bg='#303030', fg='#c7c6c5',
@@ -480,7 +480,7 @@ class Settings(tk.Toplevel):
         self.change_color_font_btn = ctk.CTkButton(self.ramka_menu, text='Zmień kolor',
                                                         text_font=('OpenSans.ttf', 16),
                                                         fg_color='#505050', hover_color='#404040',
-                                                        command=lambda: self.change_menu_font_color())
+                                                        command=lambda x = self.probka_koloru_czcionki_menu: self.change_obj_color(x))
         self.change_color_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
         self.ramka_menu.grid(row=3, column=1, sticky='nsew', padx=10, pady=10)
 
@@ -493,9 +493,10 @@ class Settings(tk.Toplevel):
         self.ramka_zk_domyslne = tk.LabelFrame(self.ramka_zmien_kolory, text='Opcje domyślne',
                                                 font=('OpenSans.ttf', 13),
                                                 bg='#303030', fg='#c7c6c5')
+        ### 1 rzad
         tk.Label(self.ramka_zk_domyslne, text='Kolor tła:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
             row=1, column=1, sticky='nsew')
-        self.probka_koloru_tla_domyslne = tk.Label(self.ramka_zk_domyslne, text='       ',
+        self.probka_koloru_tla_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
                                                bg=self.rgb_to_hex(*configFile.first_bg_layer_color),
                                                fg=self.rgb_to_hex(*configFile.first_bg_layer_color),
                                                font=('OpenSans.ttf', 16))
@@ -503,13 +504,13 @@ class Settings(tk.Toplevel):
         self.change_color_tlo_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
                                                   text_font=('OpenSans.ttf', 16),
                                                   fg_color='#505050', hover_color='#404040',
-                                                  command=lambda: self.change_color_tlo_domyslne_btn_func())
+                                                  command=lambda x = self.probka_koloru_tla_domyslne: self.change_obj_color(x))
         self.change_color_tlo_domyslne_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
 
-        ###
+        ### 2 rzad
         tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy konturu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
             row=2, column=1, sticky='nsew')
-        self.probka_koloru_konturu_domyslne = tk.Label(self.ramka_zk_domyslne, text='       ',
+        self.probka_koloru_konturu_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
                                                    bg=self.rgb_to_hex(*configFile.first_c_layer_color),
                                                    fg=self.rgb_to_hex(*configFile.first_c_layer_color),
                                                    font=('OpenSans.ttf', 16))
@@ -517,18 +518,153 @@ class Settings(tk.Toplevel):
         self.change_color_konturu_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
                                                            text_font=('OpenSans.ttf', 16),
                                                            fg_color='#505050', hover_color='#404040',
-                                                           command=lambda: self.change_color_konturu_domyslne_btn_func())
+                                                           command=lambda x = self.probka_koloru_konturu_domyslne: self.change_obj_color(x))
         self.change_color_konturu_domyslne_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 3
+
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy dziur:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=3, column=1, sticky='nsew')
+        self.probka_koloru_dziur_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
+                                                   bg=self.rgb_to_hex(*configFile.first_h_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.first_h_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_dziur_domyslne.grid(row=3, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_dziur_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_dziur_domyslne: self.change_obj_color(
+                                                               x))
+        self.change_color_dziur_domyslne_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 4
+
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy niebieskiej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=4, column=1, sticky='nsew')
+        self.probka_koloru_blue_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
+                                                  bg=self.rgb_to_hex(*configFile.first_b_layer_color),
+                                                  fg=self.rgb_to_hex(*configFile.first_b_layer_color),
+                                                  font=('OpenSans.ttf', 16))
+        self.probka_koloru_blue_domyslne.grid(row=4, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_blue_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                          text_font=('OpenSans.ttf', 16),
+                                                          fg_color='#505050', hover_color='#404040',
+                                                          command=lambda
+                                                              x=self.probka_koloru_blue_domyslne: self.change_obj_color(
+                                                              x))
+        self.change_color_blue_domyslne_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 5
+
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy zielonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=5, column=1, sticky='nsew')
+        self.probka_koloru_green_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
+                                                   bg=self.rgb_to_hex(*configFile.first_g_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.first_g_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_green_domyslne.grid(row=5, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_green_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_green_domyslne: self.change_obj_color(
+                                                               x))
+        self.change_color_green_domyslne_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 6
+
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy żółtej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=6, column=1, sticky='nsew')
+        self.probka_koloru_yellow_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
+                                                    bg=self.rgb_to_hex(*configFile.first_y_layer_color),
+                                                    fg=self.rgb_to_hex(*configFile.first_y_layer_color),
+                                                    font=('OpenSans.ttf', 16))
+        self.probka_koloru_yellow_domyslne.grid(row=6, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_yellow_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                            text_font=('OpenSans.ttf', 16),
+                                                            fg_color='#505050', hover_color='#404040',
+                                                            command=lambda
+                                                                x=self.probka_koloru_yellow_domyslne: self.change_obj_color(
+                                                                x))
+        self.change_color_yellow_domyslne_btn.grid(row=6, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 7
+
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy czerwonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=7, column=1, sticky='nsew')
+        self.probka_koloru_red_domyslne = tk.Label(self.ramka_zk_domyslne, text='',
+                                                 bg=self.rgb_to_hex(*configFile.first_r_layer_color),
+                                                 fg=self.rgb_to_hex(*configFile.first_r_layer_color),
+                                                 font=('OpenSans.ttf', 16))
+        self.probka_koloru_red_domyslne.grid(row=7, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_red_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                         text_font=('OpenSans.ttf', 16),
+                                                         fg_color='#505050', hover_color='#404040',
+                                                         command=lambda
+                                                             x=self.probka_koloru_red_domyslne: self.change_obj_color(
+                                                             x))
+        self.change_color_red_domyslne_btn.grid(row=7, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 8
+        linetype_values = ['Obszar', 'Linia']
+        ### RZAD 8
+        tk.Label(self.ramka_zk_domyslne, text='Typ skazy niebieskiej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=8, column=1, sticky='nsew', padx=10, pady=10)
+        self.blue_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
+                                                                 text_font=('OpenSans.ttf', 16))
+        self.blue_first_layer_linetype_choose.grid(row=8, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.first_b_layer_linetype == 'polygon':
+            self.blue_first_layer_linetype_choose.set('Obszar')
+        elif configFile.first_b_layer_linetype == 'lines':
+            self.blue_first_layer_linetype_choose.set('Linia')
+
+        ### RZAD 9
+        tk.Label(self.ramka_zk_domyslne, text='Typ skazy zielonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=9, column=1, sticky='nsew', padx=10, pady=10)
+        self.green_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
+                                                                  text_font=('OpenSans.ttf', 16))
+        self.green_first_layer_linetype_choose.grid(row=9, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.first_g_layer_linetype == 'polygon':
+            self.green_first_layer_linetype_choose.set('Obszar')
+        elif configFile.first_g_layer_linetype == 'lines':
+            self.green_first_layer_linetype_choose.set('Linia')
+
+        ### RZAD 10
+        tk.Label(self.ramka_zk_domyslne, text='Typ skazy żółtej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=10, column=1, sticky='nsew', padx=10, pady=10)
+        self.yellow_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
+                                                                   text_font=('OpenSans.ttf', 16))
+        self.yellow_first_layer_linetype_choose.grid(row=10, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.first_y_layer_linetype == 'polygon':
+            self.yellow_first_layer_linetype_choose.set('Obszar')
+        elif configFile.first_y_layer_linetype == 'lines':
+            self.yellow_first_layer_linetype_choose.set('Linia')
+
+        ### RZAD 11
+        tk.Label(self.ramka_zk_domyslne, text='Typ skazy czerwonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=11, column=1, sticky='nsew', padx=10, pady=10)
+        self.red_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
+                                                                text_font=('OpenSans.ttf', 16))
+        self.red_first_layer_linetype_choose.grid(row=11, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.first_r_layer_linetype == 'polygon':
+            self.red_first_layer_linetype_choose.set('Obszar')
+        elif configFile.first_r_layer_linetype == 'lines':
+            self.red_first_layer_linetype_choose.set('Linia')
 
         self.ramka_zk_domyslne.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
 
         self.ramka_zk_poklik = tk.LabelFrame(self.ramka_zmien_kolory, text='Opcje po kliknięciu',
                                                font=('OpenSans.ttf', 13),
                                                bg='#303030', fg='#c7c6c5')
-
+        ### RZAD 1
         tk.Label(self.ramka_zk_poklik, text='Kolor tła:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
             row=1, column=1, sticky='nsew')
-        self.probka_koloru_tla_poklik = tk.Label(self.ramka_zk_poklik, text='       ',
+        self.probka_koloru_tla_poklik = tk.Label(self.ramka_zk_poklik, text='',
                                                    bg=self.rgb_to_hex(*configFile.second_bg_layer_color),
                                                    fg=self.rgb_to_hex(*configFile.second_bg_layer_color),
                                                    font=('OpenSans.ttf', 16))
@@ -536,13 +672,13 @@ class Settings(tk.Toplevel):
         self.change_color_tlo_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
                                                            text_font=('OpenSans.ttf', 16),
                                                            fg_color='#505050', hover_color='#404040',
-                                                           command=lambda: self.change_color_tlo_poklik_btn_func())
+                                                           command=lambda x = self.probka_koloru_tla_poklik: self.change_obj_color(x))
         self.change_color_tlo_poklik_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
-        ###
+        ### RZAD 2
         tk.Label(self.ramka_zk_poklik, text='Kolor warstwy konturu:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 16)).grid(
             row=2, column=1, sticky='nsew')
-        self.probka_koloru_konturu_poklik = tk.Label(self.ramka_zk_poklik, text='       ',
+        self.probka_koloru_konturu_poklik = tk.Label(self.ramka_zk_poklik, text='',
                                                        bg=self.rgb_to_hex(*configFile.second_c_layer_color),
                                                        fg=self.rgb_to_hex(*configFile.second_c_layer_color),
                                                        font=('OpenSans.ttf', 16))
@@ -550,9 +686,143 @@ class Settings(tk.Toplevel):
         self.change_color_konturu_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
                                                                text_font=('OpenSans.ttf', 16),
                                                                fg_color='#505050', hover_color='#404040',
-                                                               command=lambda: self.change_color_konturu_poklik_btn_func())
+                                                               command=lambda x = self.probka_koloru_konturu_poklik: self.change_obj_color(x))
         self.change_color_konturu_poklik_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
-        ###
+        ### RZAD 3
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy dziur:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=3, column=1, sticky='nsew')
+        self.probka_koloru_dziur_poklik = tk.Label(self.ramka_zk_poklik, text='',
+                                                     bg=self.rgb_to_hex(*configFile.second_h_layer_color),
+                                                     fg=self.rgb_to_hex(*configFile.second_h_layer_color),
+                                                     font=('OpenSans.ttf', 16))
+        self.probka_koloru_dziur_poklik.grid(row=3, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_dziur_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                             text_font=('OpenSans.ttf', 16),
+                                                             fg_color='#505050', hover_color='#404040',
+                                                             command=lambda
+                                                                 x=self.probka_koloru_dziur_poklik: self.change_obj_color(
+                                                                 x))
+        self.change_color_dziur_poklik_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 4
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy niebieskiej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=4, column=1, sticky='nsew')
+        self.probka_koloru_blue_poklik = tk.Label(self.ramka_zk_poklik, text='',
+                                                   bg=self.rgb_to_hex(*configFile.second_b_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.second_b_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_blue_poklik.grid(row=4, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_blue_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_blue_poklik: self.change_obj_color(
+                                                               x))
+        self.change_color_blue_poklik_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 5
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy zielonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=5, column=1, sticky='nsew')
+        self.probka_koloru_green_poklik = tk.Label(self.ramka_zk_poklik, text='',
+                                                   bg=self.rgb_to_hex(*configFile.second_g_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.second_g_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_green_poklik.grid(row=5, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_green_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_green_poklik: self.change_obj_color(
+                                                               x))
+        self.change_color_green_poklik_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 6
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy żółtej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=6, column=1, sticky='nsew')
+        self.probka_koloru_yellow_poklik = tk.Label(self.ramka_zk_poklik, text='',
+                                                   bg=self.rgb_to_hex(*configFile.second_y_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.second_y_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_yellow_poklik.grid(row=6, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_yellow_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_yellow_poklik: self.change_obj_color(
+                                                               x))
+        self.change_color_yellow_poklik_btn.grid(row=6, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 7
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy czerwonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=7, column=1, sticky='nsew')
+        self.probka_koloru_red_poklik = tk.Label(self.ramka_zk_poklik, text='',
+                                                   bg=self.rgb_to_hex(*configFile.second_r_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.second_r_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_red_poklik.grid(row=7, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_red_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda
+                                                               x=self.probka_koloru_red_poklik: self.change_obj_color(
+                                                               x))
+        self.change_color_red_poklik_btn.grid(row=7, column=3, sticky='nsew', padx=10, pady=10)
+
+        ### RZAD 8
+        linetype_values = ['Obszar','Linia']
+        ### RZAD 8
+        tk.Label(self.ramka_zk_poklik, text='Typ skazy niebieskiej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=8, column=1, sticky='nsew', padx=10, pady=10)
+        self.blue_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values, text_font=('OpenSans.ttf', 16))
+        self.blue_second_layer_linetype_choose.grid(row=8, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.second_b_layer_linetype == 'polygon':
+            self.blue_second_layer_linetype_choose.set('Obszar')
+        elif configFile.second_b_layer_linetype == 'lines':
+            self.blue_second_layer_linetype_choose.set('Linia')
+
+        ### RZAD 9
+        tk.Label(self.ramka_zk_poklik, text='Typ skazy zielonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=9, column=1, sticky='nsew', padx=10, pady=10)
+        self.green_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
+                                                          text_font=('OpenSans.ttf', 16))
+        self.green_second_layer_linetype_choose.grid(row=9, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.second_g_layer_linetype == 'polygon':
+            self.green_second_layer_linetype_choose.set('Obszar')
+        elif configFile.second_g_layer_linetype == 'lines':
+            self.green_second_layer_linetype_choose.set('Linia')
+
+        ### RZAD 10
+        tk.Label(self.ramka_zk_poklik, text='Typ skazy żółtej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=10, column=1, sticky='nsew', padx=10, pady=10)
+        self.yellow_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
+                                                           text_font=('OpenSans.ttf', 16))
+        self.yellow_second_layer_linetype_choose.grid(row=10, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.second_y_layer_linetype == 'polygon':
+            self.yellow_second_layer_linetype_choose.set('Obszar')
+        elif configFile.second_y_layer_linetype == 'lines':
+            self.yellow_second_layer_linetype_choose.set('Linia')
+
+        ### RZAD 11
+        tk.Label(self.ramka_zk_poklik, text='Typ skazy czerwonej:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(row=11, column=1, sticky='nsew', padx=10, pady=10)
+        self.red_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
+                                                            text_font=('OpenSans.ttf', 16))
+        self.red_second_layer_linetype_choose.grid(row=11, column=2, sticky='nsew', padx=10, pady=10)
+        if configFile.second_r_layer_linetype == 'polygon':
+            self.red_second_layer_linetype_choose.set('Obszar')
+        elif configFile.second_r_layer_linetype == 'lines':
+            self.red_second_layer_linetype_choose.set('Linia')
+
+
 
 
         self.ramka_zk_poklik.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
@@ -563,46 +833,10 @@ class Settings(tk.Toplevel):
 
     def anuluj_btn_func(self):
         self.destroy()
-    def change_color_konturu_poklik_btn_func(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_konturu_poklik.configure(fg=color[1], bg=color[1])
-    def change_color_konturu_domyslne_btn_func(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_konturu_domyslne.configure(fg=color[1], bg=color[1])
-    def change_color_tlo_poklik_btn_func(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_poklik.configure(fg=color[1], bg=color[1])
-    def change_color_tlo_domyslne_btn_func(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_domyslne.configure(fg=color[1], bg=color[1])
-    def change_cursor_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_cursora.configure(fg=color[1], bg=color[1])
 
-    def change_menu_skazy_tlo_color(self):
+    def change_obj_color(self, object):
         color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_menu_skazy.configure(fg=color[1], bg=color[1])
-
-    def change_menu_skazy_tlo_opcji_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_opcji_menu_skazy.configure(fg=color[1], bg=color[1])
-
-    def change_menu_skazy_font_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_czcionki_menu_skazy.configure(fg=color[1], bg=color[1])
-
-    def change_menu_tlo_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_menu.configure(fg=color[1], bg=color[1])
-
-    def change_menu_tlo_opcji_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_tla_opcji_menu.configure(fg=color[1], bg=color[1])
-
-    def change_menu_font_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor')
-        self.probka_koloru_czcionki_menu.configure(fg=color[1], bg=color[1])
-
+        object.configure(fg=color[1], bg=color[1])
     def rgb_to_hex (self, r, g, b):
         return '#{:02x}{:02x}{:02x}'.format(r, g, b)
 
