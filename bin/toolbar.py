@@ -80,6 +80,39 @@ class Toolbar(tk.Frame):
 
         self.current_topwindow = tk.Label(self)
 
+        self.code = ''
+        self.leather_name = ''
+        self.code_flag = False
+
+        self.parent.parent.bind('<Key>', self.get_key)
+
+    def get_key (self, event):
+        if self.code_flag == False:
+            self.code += str(event.char)
+        else:
+            self.code_flag = False
+            self.code = ''
+        if len(self.code) >= 24 and event.keysym == 'Return':
+            self.leather_name = self.code[-25:]
+            self.load_scanned_leather(self.leather_name)
+            self.code = ''
+            self.code_flag = True
+
+    def load_scanned_leather (self, leather_name):
+        data = leather_name[:-1]
+        path_list = ["g:\hdsk" + "\\" + data + ".DXF",
+                     "g:\hd" + "\\" + data + ".DXF",
+                     "g:\hd-arch" + "\\" + data + ".DXF",
+                     "l:\hdsk" + "\\" + data + ".DXF",
+                     "l:\hd" + "\\" + data + ".DXF",
+                     "l:\hd-arch" + "\\" + data + ".DXF"]
+        for path in path_list:
+            try:
+                self.load_leather_data(path)
+                print('Load file success', path)
+            except:
+                print("Cant load file in: " + path)
+                pass
 
     def clockLoop (self):
         clock = datetime.now().strftime('%Y-%m-%d\n%H:%M:%S') + '\nTydzień ' + str(
@@ -93,21 +126,31 @@ class Toolbar(tk.Frame):
 
     def change_colors_func(self):
         if self.change_colors_flag == False:
-            #configFile.c_layer_color = (0, 0, 0)
-            #configFile.bg_layer_color = (255, 255, 255)
-            configFile.b_layer_linetype = "lines"
-            configFile.g_layer_linetype = "lines"
-            configFile.y_layer_linetype = "lines"
-            configFile.r_layer_linetype = "lines"
+            configFile.bg_layer_color = configFile.second_bg_layer_color
+            configFile.c_layer_color = configFile.second_c_layer_color
+            configFile.h_layer_color = configFile.second_h_layer_color
+            configFile.b_layer_color = configFile.second_b_layer_color
+            configFile.b_layer_linetype = configFile.second_b_layer_linetype
+            configFile.g_layer_color = configFile.second_g_layer_color
+            configFile.g_layer_linetype = configFile.second_g_layer_linetype
+            configFile.y_layer_color = configFile.second_y_layer_color
+            configFile.y_layer_linetype = configFile.second_y_layer_linetype
+            configFile.r_layer_color = configFile.second_r_layer_color
+            configFile.r_layer_linetype = configFile.second_r_layer_linetype
             self.change_colors_flag = True
             self.change_colors_btn.configure(image=self.change_colors_icon_active)
         elif self.change_colors_flag == True:
-            #configFile.c_layer_color = (255, 255, 255)
-            #configFile.bg_layer_color = (0, 0, 0)
-            configFile.b_layer_linetype = "polygon"
-            configFile.g_layer_linetype = "polygon"
-            configFile.y_layer_linetype = "polygon"
-            configFile.r_layer_linetype = "polygon"
+            configFile.bg_layer_color = configFile.first_bg_layer_color
+            configFile.c_layer_color = configFile.first_c_layer_color
+            configFile.h_layer_color = configFile.first_h_layer_color
+            configFile.b_layer_color = configFile.first_b_layer_color
+            configFile.b_layer_linetype = configFile.first_b_layer_linetype
+            configFile.g_layer_color = configFile.first_g_layer_color
+            configFile.g_layer_linetype = configFile.first_g_layer_linetype
+            configFile.y_layer_color = configFile.first_y_layer_color
+            configFile.y_layer_linetype = configFile.first_y_layer_linetype
+            configFile.r_layer_color = configFile.first_r_layer_color
+            configFile.r_layer_linetype = configFile.first_r_layer_linetype
             self.change_colors_flag = False
             self.change_colors_btn.configure(image=self.change_colors_icon_inactive)
         linetypes = [configFile.b_layer_linetype, configFile.g_layer_linetype, configFile.y_layer_linetype, configFile.r_layer_linetype]
@@ -125,7 +168,6 @@ class Toolbar(tk.Frame):
         r_layer_items = leather_data[5]
         text_layer_items = leather_data[6]
 
-        print('get red', r_layer_items)
 
         new_doc = ezdxf.new()
         msp = new_doc.modelspace()
@@ -182,16 +224,12 @@ class Toolbar(tk.Frame):
                 leather = ezdxf.readfile(file)
                 self.active_file = file
             msp = leather.modelspace()
-            for layer in leather.layers:
-                print('layer color:', layer.color)
             for item in msp:
-                print('msp - item', item, 'item - type', item.dxf.get('layer'))
+                #print('msp - item', item, 'item - type', item.dxf.get('layer'))
                 if 'TEXT' in str(item):
                     # text -> layer 72
                     #print(item)
                     #print(item.dxf.get('layer'))
-                    print(item.get_placement())
-                    print(item.plain_text())
                     text_layer_items.append([item.get_placement()[1][0],item.get_placement()[1][1]])
                     #print(text_layer_items)
                 if 'POLYLINE' in str(item):
@@ -262,8 +300,10 @@ class Toolbar(tk.Frame):
 
             self.queue.put(['preview_load_data', leather_data])
             self.queue.put(['main_load_data', leather_data])
-            self.parent.infobar.update_info(file.name)
-
+            try:
+                self.parent.infobar.update_info(file.name)
+            except:
+                self.parent.infobar.update_info(file)
             self.parent.layer_info.load_data(len(h_layer_items),len(b_layer_items),len(g_layer_items),len(y_layer_items),len(r_layer_items))
 
 
@@ -279,23 +319,36 @@ class Settings(tk.Toplevel):
         self.attributes('-topmost', 'true')
         self.resizable(False, False)
         self.overrideredirect(True)
-        self.configure(bg='#404040')
+        self.configure(bg='#303030')
         self.rowconfigure(1, weight=1)
         self.columnconfigure(1, weight=1)
         self.pack_propagate(0)
         self.grid_propagate(0)
 
         self.settings_notebook = ttk.Notebook(self)
-        self.ogolne_tab = ctk.CTkFrame(self.settings_notebook)
+        self.ogolne_tab = ctk.CTkFrame(self.settings_notebook, bg_color='#303030')
         self.display_tab = ctk.CTkFrame(self.settings_notebook)
         self.calibration_tab = ctk.CTkFrame(self.settings_notebook)
+
+        self.display_tab.columnconfigure((1,2,3), weight =1)
+        self.display_tab.rowconfigure((1, 2, 3), weight=1)
+
         self.settings_notebook.add(self.ogolne_tab, text='       Ogólne       ')
         self.settings_notebook.add(self.display_tab, text='      Wyświetlanie      ')
         self.settings_notebook.add(self.calibration_tab, text='      Kalibracja      ')
-        self.settings_notebook.grid(row=1, column=1, sticky='nsew')
+        self.settings_notebook.grid(row=1, column=1, columnspan=3, sticky='nsew')
+
+        self.save_btn = ctk.CTkButton(self, text = 'Zapisz', fg_color='#505050', hover_color='#606060', text_font=('OpenSans.ttf', 20))
+        self.save_btn.grid(row=2, column=1, sticky='e', padx=10, pady=10)
+        self.ok_btn = ctk.CTkButton(self, text='   OK   ', fg_color='#505050', hover_color='#606060',
+                                      text_font=('OpenSans.ttf', 20))
+        self.ok_btn.grid(row=2, column=2, sticky='e', padx=10, pady=10)
+        self.anuluj_btn = ctk.CTkButton(self, text='Anuluj', fg_color='#505050', hover_color='#606060',
+                                    text_font=('OpenSans.ttf', 20), command = lambda:self.anuluj_btn_func())
+        self.anuluj_btn.grid(row=2, column=3, sticky='e', padx=10, pady=10)
 
 
-        self.ramka_cursor = tk.LabelFrame(self.ogolne_tab, text='Opcje kursora', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
+        self.ramka_cursor = tk.LabelFrame(self.display_tab, text='Opcje kursora', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
         tk.Label(self.ramka_cursor, text='Średnica kursora:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.cursor_radius_entry = ctk.CTkEntry(self.ramka_cursor, width=50, justify=tk.CENTER, text_font=('OpenSans.ttf', 16))
@@ -313,7 +366,7 @@ class Settings(tk.Toplevel):
         self.ramka_cursor.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
 
 
-        self.ramka_flaw_menu = tk.LabelFrame(self.ogolne_tab, text='Opcje menu na skazie', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
+        self.ramka_flaw_menu = tk.LabelFrame(self.display_tab, text='Opcje menu na skazie', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
         tk.Label(self.ramka_flaw_menu, text='Szerokość menu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.szerokosc_menu_skazy_entry = ctk.CTkEntry(self.ramka_flaw_menu, width=70, justify=tk.CENTER, text_font=('OpenSans.ttf', 16))
@@ -368,7 +421,7 @@ class Settings(tk.Toplevel):
         self.ramka_flaw_menu.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
 
 
-        self.ramka_menu = tk.LabelFrame(self.ogolne_tab, text='Opcje menu bez skazy', font=('OpenSans.ttf', 13),
+        self.ramka_menu = tk.LabelFrame(self.display_tab, text='Opcje menu bez skazy', font=('OpenSans.ttf', 13),
                                              bg='#303030', fg='#c7c6c5')
         tk.Label(self.ramka_menu, text='Szerokość menu:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 16)).grid(
@@ -431,32 +484,123 @@ class Settings(tk.Toplevel):
         self.change_color_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
         self.ramka_menu.grid(row=3, column=1, sticky='nsew', padx=10, pady=10)
 
+        ######### ZMIEN KOLORY ###################
+
+        self.ramka_zmien_kolory = tk.LabelFrame(self.display_tab, text='Opcje funkcji zmień kolory', font=('OpenSans.ttf', 13),
+                                        bg='#303030', fg='#c7c6c5')
+        self.ramka_zmien_kolory.columnconfigure((1,2), weight=1)
+
+        self.ramka_zk_domyslne = tk.LabelFrame(self.ramka_zmien_kolory, text='Opcje domyślne',
+                                                font=('OpenSans.ttf', 13),
+                                                bg='#303030', fg='#c7c6c5')
+        tk.Label(self.ramka_zk_domyslne, text='Kolor tła:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=1, column=1, sticky='nsew')
+        self.probka_koloru_tla_domyslne = tk.Label(self.ramka_zk_domyslne, text='       ',
+                                               bg=self.rgb_to_hex(*configFile.first_bg_layer_color),
+                                               fg=self.rgb_to_hex(*configFile.first_bg_layer_color),
+                                               font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_domyslne.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_tlo_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                  text_font=('OpenSans.ttf', 16),
+                                                  fg_color='#505050', hover_color='#404040',
+                                                  command=lambda: self.change_color_tlo_domyslne_btn_func())
+        self.change_color_tlo_domyslne_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
+
+        ###
+        tk.Label(self.ramka_zk_domyslne, text='Kolor warstwy konturu:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=2, column=1, sticky='nsew')
+        self.probka_koloru_konturu_domyslne = tk.Label(self.ramka_zk_domyslne, text='       ',
+                                                   bg=self.rgb_to_hex(*configFile.first_c_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.first_c_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_konturu_domyslne.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_konturu_domyslne_btn = ctk.CTkButton(self.ramka_zk_domyslne, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda: self.change_color_konturu_domyslne_btn_func())
+        self.change_color_konturu_domyslne_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_zk_domyslne.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_zk_poklik = tk.LabelFrame(self.ramka_zmien_kolory, text='Opcje po kliknięciu',
+                                               font=('OpenSans.ttf', 13),
+                                               bg='#303030', fg='#c7c6c5')
+
+        tk.Label(self.ramka_zk_poklik, text='Kolor tła:', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 16)).grid(
+            row=1, column=1, sticky='nsew')
+        self.probka_koloru_tla_poklik = tk.Label(self.ramka_zk_poklik, text='       ',
+                                                   bg=self.rgb_to_hex(*configFile.second_bg_layer_color),
+                                                   fg=self.rgb_to_hex(*configFile.second_bg_layer_color),
+                                                   font=('OpenSans.ttf', 16))
+        self.probka_koloru_tla_poklik.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_tlo_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                           text_font=('OpenSans.ttf', 16),
+                                                           fg_color='#505050', hover_color='#404040',
+                                                           command=lambda: self.change_color_tlo_poklik_btn_func())
+        self.change_color_tlo_poklik_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
+        ###
+        tk.Label(self.ramka_zk_poklik, text='Kolor warstwy konturu:', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 16)).grid(
+            row=2, column=1, sticky='nsew')
+        self.probka_koloru_konturu_poklik = tk.Label(self.ramka_zk_poklik, text='       ',
+                                                       bg=self.rgb_to_hex(*configFile.second_c_layer_color),
+                                                       fg=self.rgb_to_hex(*configFile.second_c_layer_color),
+                                                       font=('OpenSans.ttf', 16))
+        self.probka_koloru_konturu_poklik.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+        self.change_color_konturu_poklik_btn = ctk.CTkButton(self.ramka_zk_poklik, text='Zmień kolor',
+                                                               text_font=('OpenSans.ttf', 16),
+                                                               fg_color='#505050', hover_color='#404040',
+                                                               command=lambda: self.change_color_konturu_poklik_btn_func())
+        self.change_color_konturu_poklik_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
+        ###
+
+
+        self.ramka_zk_poklik.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_zmien_kolory.grid(row=1, column=2, columnspan=2, rowspan=3, sticky='nsew', padx=10, pady=10)
+
+        ######### ZMIEN KOLORY ###################
+
+    def anuluj_btn_func(self):
+        self.destroy()
+    def change_color_konturu_poklik_btn_func(self):
+        color = askcolor(parent=self, title='Wybierz kolor')
+        self.probka_koloru_konturu_poklik.configure(fg=color[1], bg=color[1])
+    def change_color_konturu_domyslne_btn_func(self):
+        color = askcolor(parent=self, title='Wybierz kolor')
+        self.probka_koloru_konturu_domyslne.configure(fg=color[1], bg=color[1])
+    def change_color_tlo_poklik_btn_func(self):
+        color = askcolor(parent=self, title='Wybierz kolor')
+        self.probka_koloru_tla_poklik.configure(fg=color[1], bg=color[1])
+    def change_color_tlo_domyslne_btn_func(self):
+        color = askcolor(parent=self, title='Wybierz kolor')
+        self.probka_koloru_tla_domyslne.configure(fg=color[1], bg=color[1])
     def change_cursor_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_cursora.configure(fg=color[1], bg=color[1])
 
     def change_menu_skazy_tlo_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_tla_menu_skazy.configure(fg=color[1], bg=color[1])
 
     def change_menu_skazy_tlo_opcji_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_tla_opcji_menu_skazy.configure(fg=color[1], bg=color[1])
 
     def change_menu_skazy_font_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_czcionki_menu_skazy.configure(fg=color[1], bg=color[1])
 
     def change_menu_tlo_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_tla_menu.configure(fg=color[1], bg=color[1])
 
     def change_menu_tlo_opcji_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_tla_opcji_menu.configure(fg=color[1], bg=color[1])
 
     def change_menu_font_color(self):
-        color = askcolor(parent=self, title='Wybierz kolor kursora')
+        color = askcolor(parent=self, title='Wybierz kolor')
         self.probka_koloru_czcionki_menu.configure(fg=color[1], bg=color[1])
 
     def rgb_to_hex (self, r, g, b):

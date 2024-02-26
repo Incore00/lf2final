@@ -244,7 +244,7 @@ class LeatherWindow_preview(tk.Frame):
 		if self.assignation_flaw_mode_started == True:
 			self.assignation_flaw_points.append(pygame.mouse.get_pos())
 
-		self.after(1, self.pygame_loop)
+		self.after(int(1000/configFile.rendering_frequency), self.pygame_loop)
 
 	def save_leather_data(self):
 		c_layer_items_to_calc = self.displayed_c_layer_items

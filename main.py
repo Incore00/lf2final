@@ -97,8 +97,8 @@ class MainApplication(tk.Frame):
 
 if __name__ == '__main__':
     queue = Queue()
-    #leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
-    #leather_view.start()
+    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
+    leather_view.start()
     #hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
     #hand_follower.start()
     main_root = tk.Tk()
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     main_root.state("zoomed")
     MainApplication(main_root, queue, width=1920, height=1080).pack(side="top", fill="both", expand=True)
     main_root.mainloop()
-    #subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
+    subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
     #subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))
 
 

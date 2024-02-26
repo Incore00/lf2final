@@ -244,7 +244,7 @@ class LeatherWindow_main(tk.Frame):
 			self.assignation_flaw_points.append(pygame.mouse.get_pos())
 
 
-		self.after(1, self.pygame_loop)
+		self.after(int(1000/configFile.rendering_frequency), self.pygame_loop)
 
 	def change_colors_income(self, linetypes):
 		configFile.b_layer_linetype = linetypes[0]

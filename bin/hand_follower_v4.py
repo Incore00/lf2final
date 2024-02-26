@@ -8,6 +8,7 @@ import time
 import pyautogui
 from mediapipe.framework.formats import landmark_pb2
 from math import sqrt
+from bin import configFile
 
 class HandFollower():
 	def __init__(self, queue):
@@ -19,10 +20,10 @@ class HandFollower():
 		self.mp_drawing = mp.solutions.drawing_utils
 		self.mp_hands = mp.solutions.hands
 
-		self.cap = cv2.VideoCapture(0)
-		self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-		self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-		self.cap.set(cv2.CAP_PROP_FRAME_COUNT, 30)
+		self.cap = cv2.VideoCapture(configFile.camera_port_number)
+		self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, configFile.camera_res_width)
+		self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, configFile.camera_res_height)
+		self.cap.set(cv2.CAP_PROP_FRAME_COUNT, configFile.camera_frames)
 		self.prev_frame_time = 0
 
 		self.sec_x = None
@@ -31,7 +32,8 @@ class HandFollower():
 		self.run()
 
 	def run(self):
-		with self.mp_hands.Hands(min_detection_confidence=0.3, min_tracking_confidence=0.3, model_complexity=0) as hands:
+		with self.mp_hands.Hands(min_detection_confidence=configFile.detection_confidence, min_tracking_confidence=configFile.tracking_confidence, model_complexity=configFile.model_complex) as hands:
+			self.queue.put('camera_running')
 			while self.cap.isOpened():
 				self.new_frame_time = time.time()
 				ret, frame = self.cap.read()
