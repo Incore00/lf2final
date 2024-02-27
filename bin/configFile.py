@@ -2,7 +2,8 @@
 preview_redraw = False
 main_redraw = False
 
-rendering_frequency = 30
+rendering_frequency = 60
+leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
 
 leathers_to_edit_directory = None
 leathers_saving_directory = None
@@ -39,6 +40,10 @@ dropdown_menu_options = ['Rysuj skaze']
 dropdown_menu_options_amount = len(dropdown_menu_options)
 
 open_flaw_line_width = 3
+new_flaw_color = (255,255,255)
+c_layer_line_width = 1
+new_flaw_line_width = 1
+flaw_line_width = 1
 
 bg_layer_color = (0, 0, 0)
 c_layer_color = (255, 255, 255)
@@ -75,8 +80,6 @@ second_y_layer_color = (255, 255, 0)
 second_y_layer_linetype = "lines"
 second_r_layer_color = (255, 0, 0)
 second_r_layer_linetype = "lines"
-
-new_flaw_color = (255,255,255)
 
 h_layer_flag = True
 b_layer_flag = True

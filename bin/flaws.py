@@ -77,7 +77,7 @@ class FlawSprite(pygame.sprite.Sprite):
 		if self.linetype == 'polygon' and self.visable == True:
 			pygame.draw.polygon(self.image, self.color, self.new_item)
 		elif self.linetype == 'lines' and self.visable == True:
-			pygame.draw.lines(self.image, self.color, True, self.new_item)
+			pygame.draw.lines(self.image, self.color, True, self.new_item, configFile.flaw_line_width)
 		self.mask = pygame.mask.from_surface(self.image)
 
 	def change_color (self, color):

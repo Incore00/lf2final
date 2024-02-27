@@ -229,9 +229,9 @@ class LeatherWindow_preview(tk.Frame):
 		self.screen.fill(configFile.bg_layer_color)
 
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if str(self.drawing_flaw_points) != '[]' and self.drawing_flaw_points != None and len(self.drawing_flaw_points) >= 2:
-			pygame.draw.lines(self.screen, configFile.new_flaw_color, False, self.drawing_flaw_points)
+			pygame.draw.lines(self.screen, configFile.new_flaw_color, False, self.drawing_flaw_points, configFile.new_flaw_line_width)
 		if self.drawing_flaw_started == True and pygame.mouse.get_focused() == True:
 			self.drawing_flaw_points.append(pygame.mouse.get_pos())
 			drawing_flaw_points_to_send = []
@@ -1621,6 +1621,9 @@ class LeatherWindow_preview(tk.Frame):
 				self.dropdown_options_sprites.append(DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.flaw_dropdown_menu_font_color, configFile.flaw_dropdown_menu_option_color))
 			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 			self.dropdown_menu_flag = True
+		elif self.dropdown_menu_flag == True:
+			self.dropdown_menu_flag = False
+			self.flaw_dropdown_menu()
 
 	def dropdown_menu(self):
 		if self.dropdown_menu_flag == False:
@@ -1640,6 +1643,9 @@ class LeatherWindow_preview(tk.Frame):
 					DropdownMenuOption(self.option_x_size, self.option_y_size, position, option_name, configFile.dropdown_menu_font_color, configFile.dropdown_menu_option_color))
 			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 			self.dropdown_menu_flag = True
+		elif self.dropdown_menu_flag == True:
+			self.dropdown_menu_flag = False
+			self.dropdown_menu()
 
 	def clicked_flaw_editor(self, new_clicked_flaws):
 		print('prev clicked flaw editor')
@@ -2277,7 +2283,7 @@ class LeatherWindow_preview(tk.Frame):
 		self.flaw_sprites = []
 		self.screen.fill(configFile.bg_layer_color)
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if self.h_layer_items != None:
 			for item, item_center in zip(self.displayed_h_layer_items, self.h_layer_flaw_center_list):
 				self.displayed_h_layer_flaws.append(FlawSprite(item, configFile.h_layer_color, item_center, 'hole'))
@@ -2314,7 +2320,7 @@ class LeatherWindow_preview(tk.Frame):
 		self.calculate_flaws_center()
 
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if self.displayed_h_layer_flaws != None:
 			for flaw, flaw_points, flaw_center in zip(self.displayed_h_layer_flaws, self.displayed_h_layer_items, self.h_layer_flaw_center_list):
 				flaw.update_flaw(flaw_points, flaw_center)

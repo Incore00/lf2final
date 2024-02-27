@@ -207,7 +207,9 @@ class LeatherWindow_main(tk.Frame):
 			elif item[0] == 'main_flaw_assignation':
 				self.assignation_flaw_income(item[1])
 			elif item[0] == 'main_change_colors':
-				self.change_colors_income(item[1])
+				self.change_colors_income(item[1], item[2])
+			elif item[0] == 'main_change_layer_visibility':
+				self.change_layer_visibility(item[1])
 			else:
 				self.queue.put(item)
 		except:
@@ -245,12 +247,23 @@ class LeatherWindow_main(tk.Frame):
 
 
 		self.after(int(1000/configFile.rendering_frequency), self.pygame_loop)
-
-	def change_colors_income(self, linetypes):
+	def change_layer_visibility(self, layers_status):
+		configFile.b_layer_flag = layers_status[0]
+		configFile.g_layer_flag = layers_status[1]
+		configFile.y_layer_flag = layers_status[2]
+		configFile.r_layer_flag = layers_status[3]
+	def change_colors_income(self, linetypes, colors):
 		configFile.b_layer_linetype = linetypes[0]
 		configFile.g_layer_linetype = linetypes[1]
 		configFile.y_layer_linetype = linetypes[2]
 		configFile.r_layer_linetype = linetypes[3]
+		configFile.bg_layer_color = colors[0]
+		configFile.h_layer_color = colors[1]
+		configFile.c_layer_color = colors[2]
+		configFile.b_layer_color = colors[3]
+		configFile.g_layer_color = colors[4]
+		configFile.y_layer_color = colors[5]
+		configFile.r_layer_color = colors[6]
 	def drawing_flaw_btnup(self):
 		self.drawing_mode = False
 		self.drawing_flaw_started = False
@@ -1314,6 +1327,9 @@ class LeatherWindow_main(tk.Frame):
 									   configFile.flaw_dropdown_menu_option_color))
 			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 			self.dropdown_menu_flag = True
+		elif self.dropdown_menu_flag == True:
+			self.dropdown_menu_flag = False
+			self.flaw_dropdown_menu()
 
 	def dropdown_menu (self):
 		if self.dropdown_menu_flag == False:
@@ -1337,6 +1353,9 @@ class LeatherWindow_main(tk.Frame):
 									   configFile.dropdown_menu_font_color, configFile.dropdown_menu_option_color))
 			self.options_grouped_sprites = pygame.sprite.Group([*self.dropdown_options_sprites])
 			self.dropdown_menu_flag = True
+		elif self.dropdown_menu_flag == True:
+			self.dropdown_menu_flag = False
+			self.dropdown_menu()
 
 	def clicked_flaw_editor (self, flaw_id_list, flaw_type_list, flaw_position_list):
 		flaw_list = []

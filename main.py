@@ -68,6 +68,10 @@ class MainApplication(tk.Frame):
                       'rowheight': 23,
                       "font": ('OpenSans.ttf', '13'),
                       "foreground": "#c7c6c5"}},
+            "TCheckbutton":
+                {"configure":
+                     {"background": '#303030',
+                      "font": '20'}},
             "Vertical.TScrollbar":
                 {"configure":
                      {'background': "#202020",

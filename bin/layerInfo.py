@@ -207,6 +207,11 @@ class Layerinfo(tk.Frame):
             else:
                 configFile.r_layer_flag = True
                 self.red_layer_btn.configure(image=self.red_layer_icon_active)
+        layers_status = [configFile.b_layer_flag,
+                        configFile.g_layer_flag,
+                        configFile.y_layer_flag,
+                        configFile.r_layer_flag]
+        self.queue.put(['main_change_layer_visibility', layers_status])
     def load_data(self, hole_amount, blue_amount, green_amount, yellow_amount, red_amount):
         self.hole_layer_items_amount.configure(text=hole_amount)
         self.blue_layer_items_amount.configure(text=blue_amount)
