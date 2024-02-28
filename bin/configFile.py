@@ -4,10 +4,8 @@ main_redraw = False
 
 rendering_frequency = 60
 leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
-
-leathers_to_edit_directory = None
-leathers_saving_directory = None
-leathers_backup_directory = None
+domyslne_leather_path = 0
+leather_backup_path = ''
 
 #hand follower options
 camera_res_width = 1920

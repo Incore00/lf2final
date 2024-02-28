@@ -357,31 +357,12 @@ class Settings(tk.Toplevel):
                                     text_font=('OpenSans.ttf', 20), command = lambda:self.anuluj_btn_func())
         self.anuluj_btn.grid(row=2, column=3, sticky='e', padx=10, pady=10)
         ######## OGOLNE TAB
+        ##### BACKUPY
+        self.create_backup_frame()
         ##### SCIEZKI
-        self.ramka_sciezki = tk.LabelFrame(self.ogolne_tab, text='Lokalizacje plików skór', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
-        self.sciezki_entry_list = []
-        self.sciezki_button_list = []
-        self.sciezki_checkbox_list = []
+        self.temp_path_list = configFile.leather_path_list.copy()
+        self.create_sciezki_frame()
 
-        tk.Label(self.ramka_sciezki, text='Ścieżki do folderów zawierających skany skór:', bg='#303030', fg='#c7c6c5',
-                 font=('OpenSans.ttf', 14)).grid(row=1, column=1, columnspan=3, sticky='nsew', padx=10, pady=10)
-        tk.Label(self.ramka_sciezki, text='Domyślne dla opcji\n"wybierz plik', bg='#303030', fg='#c7c6c5',
-                 font=('OpenSans.ttf', 14)).grid(row=1, column=4, sticky='nsew', padx=10, pady=10)
-        self.check_var = tk.IntVar(self)
-        for index, path in enumerate(configFile.leather_path_list):
-            row_index = index + 2
-            tk.Label(self.ramka_sciezki, text='Ścieżka %s:' %str(index+1), bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=index+1, column=1, sticky='nsew', padx=10, pady=10)
-            self.sciezki_entry_list.append(ctk.CTkEntry(self.ramka_sciezki, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13)))
-            self.sciezki_entry_list[index].grid(row=row_index, column=2, sticky='nsew', padx=10, pady=10)
-            self.sciezki_entry_list[index].insert(0, path)
-            self.sciezki_button_list.append(ctk.CTkButton(self.ramka_sciezki, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
-                                              fg_color='#505050', hover_color='#404040', command=lambda x = self.sciezki_entry_list[index]: self.change_path(x)))
-            self.sciezki_button_list[index].grid(row=row_index, column=3, sticky='nsew', padx=10, pady=10)
-            self.sciezki_checkbox_list.append(ctk.CTkCheckBox(self.ramka_sciezki, onvalue=0,variable=self.check_var))
-            self.sciezki_checkbox_list[index].grid(row=row_index, column=4, sticky='nsew', padx=10, pady=10)
-
-
-        self.ramka_sciezki.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
         ######## DISPLAY TAB
         self.ramka_cursor = tk.LabelFrame(self.display_tab, text='Opcje kursora', font=('OpenSans.ttf', 13), bg='#303030', fg='#c7c6c5')
         self.ramka_cursor.columnconfigure((1,2,3), weight=1)
@@ -989,10 +970,72 @@ class Settings(tk.Toplevel):
     def anuluj_btn_func(self):
         self.destroy()
 
+    def create_sciezki_frame(self):
+        self.ramka_sciezki = tk.LabelFrame(self.ogolne_tab, text='Lokalizacje plików skór', font=('OpenSans.ttf', 13),
+                                           bg='#303030', fg='#c7c6c5')
+        self.sciezki_entry_list = []
+        self.sciezki_button_list = []
+        self.sciezki_radio_list = []
+        self.radio_var = tk.IntVar()
+
+        tk.Label(self.ramka_sciezki, text='Ścieżki do folderów zawierających skany skór:\n(Używane do wyszukiwania skór przy skanowaniu kodów kreskowych)', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 14)).grid(row=1, column=1, columnspan=3, sticky='nsew', padx=5, pady=3)
+        tk.Label(self.ramka_sciezki, text='Domyślne dla opcji\n"wybierz plik', bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 14)).grid(row=1, column=4, sticky='nsew', padx=5, pady=3)
+        self.check_var = tk.IntVar(self)
+
+        for index, path in enumerate(self.temp_path_list):
+            row_index = index + 2
+            tk.Label(self.ramka_sciezki, text='Ścieżka %s:' % str(index + 1), bg='#303030', fg='#c7c6c5',
+                     font=('OpenSans.ttf', 14)).grid(row=row_index, column=1, sticky='nsew', padx=5, pady=3)
+            self.sciezki_entry_list.append(
+                ctk.CTkEntry(self.ramka_sciezki, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13)))
+            self.sciezki_entry_list[index].grid(row=row_index, column=2, sticky='nsew', padx=5, pady=3)
+            self.sciezki_entry_list[index].insert(0, path)
+            self.sciezki_button_list.append(
+                ctk.CTkButton(self.ramka_sciezki, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
+                              fg_color='#505050', hover_color='#404040',
+                              command=lambda x=self.sciezki_entry_list[index]: self.change_path(x)))
+            self.sciezki_button_list[index].grid(row=row_index, column=3, sticky='nsew', padx=5, pady=3)
+            self.sciezki_radio_list.append(ctk.CTkRadioButton(self.ramka_sciezki, value=index, variable=self.check_var,
+                                                              text='', fg_color='#707070', border_width_checked=15,
+                                                              width=30, height=30))
+            self.sciezki_radio_list[index].grid(row=row_index, column=4, sticky='n', padx=5, pady=3)
+        self.check_var.set(configFile.domyslne_leather_path)
+        self.add_path_btn = ctk.CTkButton(self.ramka_sciezki, text='Dodaj ścieżkę', text_font=('OpenSans.ttf', 14),
+                              fg_color='#505050', hover_color='#404040',
+                              command=lambda: self.add_path())
+        self.add_path_btn.grid(row=row_index+1, column=1, columnspan=2, sticky='nsew', padx=10, pady=10)
+        self.remove_path_btn = ctk.CTkButton(self.ramka_sciezki, text='Usuń ścieżkę', text_font=('OpenSans.ttf', 14),
+                              fg_color='#505050', hover_color='#404040',
+                              command=lambda: self.remove_path())
+        self.remove_path_btn.grid(row=row_index+1, column=3, columnspan=2, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_sciezki.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
+    def remove_path(self):
+        self.temp_path_list = self.temp_path_list[:-1]
+        self.create_sciezki_frame()
+    def add_path(self):
+        self.temp_path_list.append('')
+        self.create_sciezki_frame()
     def change_path(self, object):
         new_path = filedialog.askdirectory(parent=self)
         object.delete(0, 'end')
         object.insert(0, new_path)
+    def create_backup_frame(self):
+        self.ramka_backup = tk.LabelFrame(self.ogolne_tab, text='Lokalizacja backupu plików', font=('OpenSans.ttf', 13),
+                                           bg='#303030', fg='#c7c6c5')
+        tk.Label(self.ramka_backup,text='Ścieżka do folderu w którym mają się zapisywać\nkopie zapasowe plików skór',
+                 bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 14)).grid(row=1, column=1, columnspan=3, sticky='nsew', padx=5, pady=3)
+        bckp_path_entry = ctk.CTkEntry(self.ramka_backup, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13))
+        bckp_path_entry.grid(row=2, column=1, sticky='nsew', padx=5, pady=3)
+        bckp_path_entry.insert(0, configFile.leather_backup_path)
+        change_bckp_path_btn = ctk.CTkButton(self.ramka_backup, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
+                      fg_color='#505050', hover_color='#404040', command=lambda x=bckp_path_entry: self.change_path(x))
+        change_bckp_path_btn.grid(row=2, column=2, sticky='nsew', padx=5, pady=3)
+
+        self.ramka_backup.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
     def change_obj_color(self, object):
         color = askcolor(parent=self, title='Wybierz kolor')
         object.configure(fg=color[1], bg=color[1])
