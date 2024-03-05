@@ -2,7 +2,7 @@
 preview_redraw = False
 main_redraw = False
 
-rendering_frequency = 60
+rendering_frequency = 30
 leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
 domyslne_leather_path = 0
 leather_backup_path = ''
@@ -11,16 +11,32 @@ leather_backup_path = ''
 camera_res_width = 1920
 camera_res_height = 1080
 camera_frames = 30
-camera_port_number = 0
+camera_port_number = 1
 #kalman
-wariacja_x = 0.563819203
-wariacja_y = 0.733453408
+#wariacja_x = 0.563819203
+#wariacja_y = 0.733453408
+wariacja_x = 2
+wariacja_y = 2
 
-wspolczynnik = 0.0005
+Pc_x = 0
+G_x = 0
+P_x = 1
+Xp_x = 0
+Zp_x = 0
+Xe_x = 0
+
+Pc_y = 0
+G_y = 0
+P_y = 1
+Xp_y = 0
+Zp_y = 0
+Xe_y = 0
+
+wsp_kal = 0.1
 
 #AI
-tracking_confidence = 0.3
-detection_confidence = 0.3
+tracking_confidence = 0.8
+detection_confidence = 0.8
 model_complex = 0
 
 cursor_radius = 5

@@ -56,11 +56,31 @@ class HandFollower():
 							x = int(landmark.x * 1920)
 							y = int(landmark.y * 1080)
 							if id == 8:
-								pyautogui.moveTo(x, -1080 + y)
+								#pyautogui.moveTo(x, -1080 + y)
+								noisy_x = x
+								configFile.Pc_x = configFile.P_x + configFile.wsp_kal
+								configFile.G_x = configFile.Pc_x / (configFile.Pc_x + configFile.wariacja_x)
+								configFile.P_x = (1 - configFile.G_x) * configFile.Pc_x
+								configFile.Xp_x = configFile.Xe_x
+								configFile.Zp_x = configFile.Xp_x
+								configFile.Xe_x = configFile.G_x * (noisy_x - configFile.Zp_x) + configFile.Xp_x
+								x = configFile.Xe_x
+
+								noisy_y = y
+								configFile.Pc_y = configFile.P_y + configFile.wsp_kal
+								configFile.G_y = configFile.Pc_y / (configFile.Pc_y + configFile.wariacja_y)
+								configFile.P_y = (1 - configFile.G_y) * configFile.Pc_y
+								configFile.Xp_y = configFile.Xe_y
+								configFile.Zp_y = configFile.Xp_y
+								configFile.Xe_y = configFile.G_y * (noisy_y - configFile.Zp_y) + configFile.Xp_y
+								y = configFile.Xe_y
+
+								pyautogui.moveTo(int(x), -1080 + int(y))
 								#u andrzeja dolna geometria
 								# pyautogui.moveTo(-x + 3840, 1080 - y)
 				fps = 1 / (self.new_frame_time - self.prev_frame_time)
 				self.prev_frame_time = self.new_frame_time
-				print('FPS:', int(fps))
-				#cv2.imshow('Virtual Mouse', image)
-				#cv2.waitKey(1)
+				#print('FPS:', int(fps))
+				image = cv2.resize(image, (1600, 900))
+				cv2.imshow('Virtual Mouse', image)
+				cv2.waitKey(1)
