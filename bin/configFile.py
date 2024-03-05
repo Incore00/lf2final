@@ -12,6 +12,12 @@ camera_res_width = 1920
 camera_res_height = 1080
 camera_frames = 30
 camera_port_number = 0
+#kalman
+wariacja_x = 0.563819203
+wariacja_y = 0.733453408
+
+wspolczynnik = 0.0005
+
 #AI
 tracking_confidence = 0.3
 detection_confidence = 0.3
