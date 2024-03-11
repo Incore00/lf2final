@@ -1061,7 +1061,7 @@ class LeatherWindow_main(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.g_layer_flaw_center_list.append(flaw_center)
 							self.displayed_g_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'green'))
+								FlawSprite(self.temp_drawed_flaw, configFile.g_layer_color, flaw_center, 'green'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
@@ -1087,7 +1087,7 @@ class LeatherWindow_main(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.y_layer_flaw_center_list.append(flaw_center)
 							self.displayed_y_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'yellow'))
+								FlawSprite(self.temp_drawed_flaw, configFile.y_layer_color, flaw_center, 'yellow'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
@@ -1113,7 +1113,7 @@ class LeatherWindow_main(tk.Frame):
 										   self.lowest_y + ((self.highest_y - self.lowest_y) / 2)]
 							self.r_layer_flaw_center_list.append(flaw_center)
 							self.displayed_r_layer_flaws.append(
-								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'red'))
+								FlawSprite(self.temp_drawed_flaw, configFile.r_layer_color, flaw_center, 'red'))
 							self.flaw_sprites.append(self.displayed_h_layer_items)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)

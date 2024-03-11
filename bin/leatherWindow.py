@@ -72,33 +72,14 @@ class LeatherWindow_preview(tk.Frame):
 			item = self.queue.get(0)
 			if item[0] == 'preview_load_data':
 				self.load_data(item[1])
-			else:
-				self.queue.put(item)
-		except:
-			pass
-
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_in':
+			elif item[0] == 'preview_zoom_in':
 				self.zoom_in(item[1])
-			else:
-				self.queue.put(item)
-		except:
-			pass
-
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_zoom_out':
+			elif item[0] == 'preview_zoom_out':
 				self.zoom_out(item[1], True)
-			else:
-				self.queue.put(item)
-		except:
-			pass
-
-		try:
-			item = self.queue.get(0)
-			if item[0] == 'preview_dragging':
+			elif item[0] == 'preview_dragging':
 				self.dragging_income(item[1])
+			elif
+
 			else:
 				self.queue.put(item)
 		except:

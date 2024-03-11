@@ -103,8 +103,8 @@ if __name__ == '__main__':
     queue = Queue()
     leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
     leather_view.start()
-    hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
-    hand_follower.start()
+    #hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
+    #hand_follower.start()
     main_root = tk.Tk()
     main_root.iconbitmap("images/icon.ico")
     main_root.title("LeatherFlaws")
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     MainApplication(main_root, queue, width=1920, height=1080).pack(side="top", fill="both", expand=True)
     main_root.mainloop()
     subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
-    subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))
+    #subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))
 
 
 
