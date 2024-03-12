@@ -1,5 +1,5 @@
 import sys, math, pygame, random
-from pygame.locals import K_UP, K_DOWN, K_RIGHT, K_LEFT
+from pygame.locals import K_UP, K_DOWN, K_RIGHT, K_LEFT, K_k, K_l
 from operator import itemgetter
 class Point3D:
     def __init__(self, x=0, y=0, z=0):
@@ -162,43 +162,21 @@ class Simulation:
             self.angleY += 2
         elif (direction == "RIGHT"):
             self.angleY -= 2
+        elif (direction == "z+"):
+            self.angleZ += 2
+        elif (direction == "z-"):
+            self.angleZ -= 2
 
         # updates display surface to screen
         pygame.display.flip()
 
-    def colorFade(self, origColor, fadeInColor):
-        # check background color status
-        if (origColor[0] != fadeInColor[0]):
-            if (origColor[0] < fadeInColor[0]):
-                origColor[0] += 1
-            else:
-                origColor[0] -= 1
-
-        if (origColor[1] != fadeInColor[1]):
-            if (origColor[1] < fadeInColor[1]):
-                origColor[1] += 1
-            else:
-                origColor[1] -= 1
-
-        if (origColor[2] != fadeInColor[2]):
-            if (origColor[2] < fadeInColor[2]):
-                origColor[2] += 1
-            else:
-                origColor[2] -= 1
-
         # update background color
-        self.screen.fill(origColor)
+        self.screen.fill((0, 0, 0))
 
     def run(self):
 
-        # starting background color
-        origColor = [255, 0, 0]
-
-        # fade in color background
-        fadeInColor = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
-
         # fill background
-        self.screen.fill(origColor)
+        self.screen.fill((0,0,0))
 
         # initial display
         self.rotate("UP")
@@ -214,39 +192,25 @@ class Simulation:
             # delay
             self.clock.tick(50)
 
-            if (origColor == fadeInColor):
-                # fade in color background
-                fadeInColor = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
-
             # grabs the pressed keys
             keys = pygame.key.get_pressed()
             if (keys[K_UP]):
-                # Rotation
                 self.rotate("UP")
 
-                # Color Fading
-                self.colorFade(origColor, fadeInColor)
-
             if (keys[K_DOWN]):
-                # Rotation
                 self.rotate("DOWN")
 
-                # Color Fading
-                self.colorFade(origColor, fadeInColor)
-
             if (keys[K_LEFT]):
-                # Rotation
                 self.rotate("LEFT")
 
-                # Color Fading
-                self.colorFade(origColor, fadeInColor)
-
             if (keys[K_RIGHT]):
-                # Rotation
                 self.rotate("RIGHT")
 
-                # Color Fading
-                self.colorFade(origColor, fadeInColor)
+            if (keys[K_k]):
+                self.rotate("z+")
+
+            if (keys[K_l]):
+                self.rotate("z-")
 
 
 if __name__ == "__main__":
