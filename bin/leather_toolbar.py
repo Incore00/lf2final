@@ -19,5 +19,5 @@ class leather_tools(tk.Frame):
         self.configure(height=int(parent.winfo_reqheight() * 0.1), width=int(parent.winfo_reqwidth() * 0.767), bg='#303030')
 
         self.to_do_bar = ctk.CTkLabel(self, text='Załaduj plik', height=int(parent.winfo_reqheight() * 0.),
-                                      width=int(parent.winfo_reqwidth() * 0.767), text_font=('OpenSans.ttf', 30))
+                                      width=int(parent.winfo_reqwidth() * 0.767), text_font=('OpenSans.ttf', 30), text_color='#c7c6c5')
         self.to_do_bar.grid(column=1, row=1, sticky='nsew')
