@@ -2,7 +2,7 @@
 preview_redraw = False
 main_redraw = False
 
-rendering_frequency = 100
+rendering_frequency = 1000
 leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
 domyslne_leather_path = 0
 leather_backup_path = ''

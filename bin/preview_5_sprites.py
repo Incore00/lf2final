@@ -1038,10 +1038,10 @@ class LeatherWindow_preview(tk.Frame):
 					if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.clicked_flaws != None:
 						self.choosed_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws 1', self.clicked_flaws)
-						if self.choosed_menu_option != None and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
+						if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
 							self.queue.put(['main_delete'])
-						elif self.choosed_menu_option != None and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+						elif self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
@@ -1058,10 +1058,10 @@ class LeatherWindow_preview(tk.Frame):
 					if self.choosed_layer_menu_option != None and self.dropdown_layer_option_on_hoover != None and self.choosed_layer_menu_option in self.dropdown_layer_option_on_hoover.keys():
 						self.choosed_layer_menu_option.on_click(self.clicked_flaws)
 						print('clicked flaws 2', self.clicked_flaws)
-						if self.choosed_menu_option != None and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
+						if self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.choosed_menu_option.text == 'Usuń' and len(self.clicked_flaws) == 1:
 							self.delete_option_func()
 							self.queue.put(['main_delete'])
-						elif self.choosed_menu_option != None and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
+						elif self.choosed_menu_option != None and self.dropdown_option_on_hoover != None and self.choosed_menu_option in self.dropdown_option_on_hoover.keys() and self.choosed_menu_option.text == 'Przesuń' and len(self.clicked_flaws) == 1:
 							for flaw in self.clicked_flaws.keys():
 								self.editted_flaw = flaw
 							self.edit_mode = True
