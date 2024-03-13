@@ -2,10 +2,10 @@
 preview_redraw = False
 main_redraw = False
 
-rendering_frequency = 1000
+rendering_frequency = 250
 leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
 domyslne_leather_path = 0
-leather_backup_path = ''
+leather_backup_path = "C:\\Users\\s.szlachtowicz\\Desktop\\backup"
 
 #hand follower options
 camera_res_width = 1920
@@ -15,8 +15,8 @@ camera_port_number = 1
 #kalman
 #wariacja_x = 0.563819203
 #wariacja_y = 0.733453408
-wariacja_x = 2
-wariacja_y = 2
+wariacja_x = 1
+wariacja_y = 1
 
 Pc_x = 0
 G_x = 0
