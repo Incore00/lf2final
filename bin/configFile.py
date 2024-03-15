@@ -2,10 +2,10 @@
 preview_redraw = False
 main_redraw = False
 
-rendering_frequency = 250
-leather_path_list = ["l:\hdsk", "l:\hd", "l:\hd-arch"]
+rendering_frequency = 1000
+leather_path_list = ["G:\hdsk", "G:\hd", "G:\hd-arch"]
 domyslne_leather_path = 0
-leather_backup_path = "C:\\Users\\s.szlachtowicz\\Desktop\\backup"
+leather_backup_path = "G:\\Kontrola_skanerow_backup"
 
 #hand follower options
 camera_res_width = 1920

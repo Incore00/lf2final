@@ -41,7 +41,7 @@ class Toolbar(tk.Frame):
 
         self.settings_icon = icon_to_image("cog", fill='#c7c6c5', scale_to_width=60)
         self.settings_btn = ctk.CTkButton(self, image=self.settings_icon, fg_color='#505050', hover_color='#404040',
-                                          compound='top', corner_radius=10, text='Ustawienia',
+                                          compound='top', corner_radius=10, text='Ustawienia', command=lambda: self.show_settings(),
                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.settings_btn.grid(column=2, row=1, sticky='nsew')
 

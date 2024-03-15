@@ -19,11 +19,11 @@ class Layerinfo(tk.Frame):
 
         self.configure(background='#303030', width=int(parent.winfo_reqwidth()*0.235), height=int(parent.winfo_reqheight()*0.865))
 
-        tk.Label(self, text='Wybrane skazy:', fg='#c7c6c5', font=('OpenSans.ttf', 15), text_color='#c7c6c5', bg='#303030').grid(column=1, columnspan=4, row=1)
+        tk.Label(self, text='Wybrane skazy:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=1)
         self.clicked_flaws_frame = tk.Frame(self, background='#303030', height = 215)
         self.clicked_flaws_frame.grid_propagate(0)
         self.clicked_flaws_frame.grid(column=1, columnspan=4, row=2, sticky='nsew')
-        tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), text_color='#c7c6c5', bg='#303030').grid(column=1, columnspan=4, row=3)
+        tk.Label(self, text='Widoczność warstw:', fg='#c7c6c5', font=('OpenSans.ttf', 15), bg='#303030').grid(column=1, columnspan=4, row=3)
 
         self.blue_layer_icon_active = icon_to_image("layer-group", fill='#0000FF', scale_to_width=40)
         self.blue_layer_icon_inactive = icon_to_image("layer-group", fill='#c7c6c5', scale_to_width=40)

@@ -34,14 +34,14 @@ class Settings(tk.Toplevel):
         self.settings_notebook = ttk.Notebook(self)
         self.ogolne_tab = ctk.CTkFrame(self.settings_notebook, bg_color='#303030')
         self.display_tab = ctk.CTkFrame(self.settings_notebook)
-        self.calibration_tab = ctk.CTkFrame(self.settings_notebook)
+        #self.calibration_tab = ctk.CTkFrame(self.settings_notebook)
 
         self.display_tab.columnconfigure((1,2,3), weight =1)
         self.display_tab.rowconfigure((1, 2, 3), weight=1)
 
         self.settings_notebook.add(self.ogolne_tab, text='       Ogólne       ')
         self.settings_notebook.add(self.display_tab, text='      Wyświetlanie      ')
-        self.settings_notebook.add(self.calibration_tab, text='      Kalibracja      ')
+        #self.settings_notebook.add(self.calibration_tab, text='      Kalibracja      ')
         self.settings_notebook.grid(row=1, column=1, columnspan=3, sticky='nsew')
 
         self.save_btn = ctk.CTkButton(self, text = 'Zapisz', fg_color='#505050', hover_color='#606060', text_font=('OpenSans.ttf', 20))
