@@ -1,3 +1,4 @@
+#! /usr/bin/python3.10
 import tkinter as tk
 from tkinter import ttk
 import subprocess
@@ -9,7 +10,8 @@ from bin.preview_5_sprites import Leatherpreview
 from bin.layerInfo import Layerinfo
 from bin.projector1 import Leathermain
 from bin.leather_toolbar import leather_tools
-from bin.hand_follower_v4 import HandFollower
+import json
+from bin import configFile
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, queue, *args, **kwargs):
@@ -99,9 +101,13 @@ class MainApplication(tk.Frame):
                                        'sticky': 'ns'})], 'sticky': 'ns'})])
 
 
+
 if __name__ == '__main__':
+    with open('config.json', 'r') as file:
+        configuration = json.load(file)
+    settings_values = list(configuration.values())
     queue = Queue()
-    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue,))
+    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue, settings_values, ))
     leather_view.start()
     #hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
     #hand_follower.start()

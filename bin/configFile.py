@@ -4,8 +4,11 @@ main_redraw = False
 
 rendering_frequency = 1000
 leather_path_list = ["G:\hdsk", "G:\hd", "G:\hd-arch"]
-domyslne_leather_path = 0
+domyslne_leather_path = 1
 leather_backup_path = "G:\\Kontrola_skanerow_backup"
+
+#barcode scanner
+barcode_com_port = "COM3"
 
 #hand follower options
 camera_res_width = 1920
@@ -68,6 +71,7 @@ flaw_line_width = 1
 bg_layer_color = (0, 0, 0)
 c_layer_color = (255, 255, 255)
 h_layer_color = (127, 127, 127)
+h_layer_linetype = 'polygon'
 b_layer_color = (0, 0, 255)
 b_layer_linetype = 'polygon'
 g_layer_color = (0, 255, 0)
@@ -80,6 +84,7 @@ r_layer_linetype = 'polygon'
 first_bg_layer_color = (0, 0, 0)
 first_c_layer_color = (255, 255, 255)
 first_h_layer_color = (127, 127, 127)
+first_h_layer_linetype = 'polygon'
 first_b_layer_color = (0, 0, 255)
 first_b_layer_linetype = 'polygon'
 first_g_layer_color = (0, 255, 0)
@@ -92,6 +97,7 @@ first_r_layer_linetype = 'polygon'
 second_bg_layer_color = (0, 0, 0)
 second_c_layer_color = (255, 255, 255)
 second_h_layer_color = (127, 127, 127)
+second_h_layer_linetype = "lines"
 second_b_layer_color = (0, 0, 255)
 second_b_layer_linetype = "lines"
 second_g_layer_color = (0, 255, 0)

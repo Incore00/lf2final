@@ -74,6 +74,9 @@ class FlawSprite(pygame.sprite.Sprite):
 		elif self.flaw_type == 'yellow':
 			self.linetype = configFile.y_layer_linetype
 			self.visable = configFile.y_layer_flag
+		elif self.flaw_type == 'hole':
+			self.linetype = configFile.h_layer_linetype
+			self.visable = configFile.h_layer_flag
 		if self.linetype == 'polygon' and self.visable == True:
 			pygame.draw.polygon(self.image, self.color, self.new_item)
 		elif self.linetype == 'lines' and self.visable == True:

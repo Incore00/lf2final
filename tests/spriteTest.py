@@ -97,9 +97,6 @@ class Simulation:
         # set caption
         pygame.display.set_caption("Simulation of 3D Cube Rotation")
 
-        # system clock time
-        self.clock = pygame.time.Clock()
-
         # create box vertices
         self.vertices = [
             Point3D(-1, 1, -1),
@@ -186,11 +183,10 @@ class Simulation:
 
         while 1:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+                if event.type == pygame.MOUSEWHEEL:
+                    print(event)
 
             # delay
-            self.clock.tick(50)
 
             # grabs the pressed keys
             keys = pygame.key.get_pressed()

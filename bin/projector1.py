@@ -8,11 +8,12 @@ from playsound import playsound
 from bin.flaws import FlawSprite
 from bin.dropdown import DropdownMenuOption
 from bin.cursor import CursorSprite
+import json
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
 class Leathermain():
-	def __init__(self, queue):
+	def __init__(self, queue, settings):
 		root = tk.Tk()
 		root.iconbitmap("images/icon.ico")
 		root.title("LeatherView")
@@ -21,12 +22,12 @@ class Leathermain():
 		#dla andrzeja ta dolna geometria
 		#root.geometry('%dx%d%+d+%d' % (sw, sh, sw, 0))
 		root.overrideredirect(True)
-		LeatherWindow_main(root, queue, height=sh, width=sw).pack(side="top", fill="both", expand=True)
+		LeatherWindow_main(root, queue, settings, height=sh, width=sw).pack(side="top", fill="both", expand=True)
 
 		root.mainloop()
 
 class LeatherWindow_main(tk.Frame):
-	def __init__ (self, parent, queue, *args, **kwargs):
+	def __init__ (self, parent, queue, settings, *args, **kwargs):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
 		self.parent = parent
 		self.queue = queue
@@ -128,6 +129,11 @@ class LeatherWindow_main(tk.Frame):
 		self.leather_center = None
 		self.zoom_tick = 0.99
 
+		self.zoom_out_flag = False
+		self.zoom_in_flag = False
+
+		self.apply_settings(settings)
+
 		self.pygame_loop()
 
 	def pygame_loop (self):
@@ -170,6 +176,7 @@ class LeatherWindow_main(tk.Frame):
 
 		try:
 			item = self.queue.get(0)
+			print(item[0])
 			if item[0] == 'main_flaw_clicked':
 				self.clicked_flaw_income(*item[1])
 			elif item[0] == 'main_clicked_flaw_updater':
@@ -210,6 +217,10 @@ class LeatherWindow_main(tk.Frame):
 				self.change_colors_income(item[1], item[2])
 			elif item[0] == 'main_change_layer_visibility':
 				self.change_layer_visibility(item[1])
+			elif item[0] == 'main_settings':
+				self.apply_settings(item[1])
+			elif item[0] == 'main_get_leather_data':
+				self.save_leather_data()
 			else:
 				self.queue.put(item)
 		except:
@@ -229,7 +240,7 @@ class LeatherWindow_main(tk.Frame):
 		self.screen.fill(configFile.bg_layer_color)
 
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if str(self.drawing_flaw_points) != '[]' and self.drawing_flaw_points != None and len(
 				self.drawing_flaw_points) >= 2:
 			pygame.draw.lines(self.screen, configFile.new_flaw_color, False, self.drawing_flaw_points)
@@ -247,6 +258,61 @@ class LeatherWindow_main(tk.Frame):
 
 
 		self.after(int(1000/configFile.rendering_frequency), self.pygame_loop)
+
+	def apply_settings(self, settings):
+		configFile.cursor_radius = settings[0]
+		configFile.cursor_color = settings[1]
+		configFile.flaw_dropdown_menu_x_size = settings[2]
+		configFile.flaw_dropdown_menu_y_size = settings[3]
+		configFile.flaw_dropdown_menu_color = settings[4]
+		configFile.flaw_dropdown_menu_option_color = settings[5]
+		configFile.flaw_dropdown_menu_font_color = settings[6]
+		configFile.dropdown_menu_x_size = settings[7]
+		configFile.dropdown_menu_y_size = settings[8]
+		configFile.dropdown_menu_color = settings[9]
+		configFile.dropdown_menu_option_color = settings[10]
+		configFile.dropdown_menu_font_color = settings[11]
+		configFile.first_bg_layer_color = settings[12]
+		configFile.first_c_layer_color = settings[13]
+		configFile.first_h_layer_color = settings[14]
+		configFile.first_b_layer_color = settings[15]
+		configFile.first_g_layer_color = settings[16]
+		configFile.first_y_layer_color = settings[17]
+		configFile.first_r_layer_color = settings[18]
+		configFile.first_b_layer_linetype = settings[19]
+		configFile.first_g_layer_linetype = settings[20]
+		configFile.first_y_layer_linetype = settings[21]
+		configFile.first_r_layer_linetype = settings[22]
+		configFile.bg_layer_color = settings[12]
+		configFile.c_layer_color = settings[13]
+		configFile.h_layer_color = settings[14]
+		configFile.b_layer_color = settings[15]
+		configFile.g_layer_color = settings[16]
+		configFile.y_layer_color = settings[17]
+		configFile.r_layer_color = settings[18]
+		configFile.b_layer_linetype = settings[19]
+		configFile.g_layer_linetype = settings[20]
+		configFile.y_layer_linetype = settings[21]
+		configFile.r_layer_linetype = settings[22]
+		configFile.second_bg_layer_color = settings[23]
+		configFile.second_c_layer_color = settings[24]
+		configFile.second_h_layer_color = settings[25]
+		configFile.second_b_layer_color = settings[26]
+		configFile.second_g_layer_color = settings[27]
+		configFile.second_y_layer_color = settings[28]
+		configFile.second_r_layer_color = settings[29]
+		configFile.second_b_layer_linetype = settings[30]
+		configFile.second_g_layer_linetype = settings[31]
+		configFile.second_y_layer_linetype = settings[32]
+		configFile.second_r_layer_linetype = settings[33]
+		configFile.c_layer_line_width = settings[34]
+		configFile.flaw_line_width = settings[35]
+		configFile.new_flaw_line_width = settings[36]
+		configFile.new_flaw_color = settings[37]
+		configFile.open_flaw_line_width = settings[38]
+		configFile.leather_backup_path = settings[39]
+		configFile.leather_path_list = settings[40]
+		configFile.domyslne_leather_path = settings[41]
 	def change_layer_visibility(self, layers_status):
 		configFile.b_layer_flag = layers_status[0]
 		configFile.g_layer_flag = layers_status[1]
@@ -264,6 +330,18 @@ class LeatherWindow_main(tk.Frame):
 		configFile.g_layer_color = colors[4]
 		configFile.y_layer_color = colors[5]
 		configFile.r_layer_color = colors[6]
+	def save_leather_data(self):
+		print('main save leather data')
+		leather_data = [
+			self.displayed_c_layer_items,
+			self.displayed_h_layer_items,
+			self.displayed_b_layer_items,
+			self.displayed_g_layer_items,
+			self.displayed_y_layer_items,
+			self.displayed_r_layer_items,
+			self.text_layer_items
+		]
+		self.queue.put(['main_leather_data_to_save', leather_data])
 	def drawing_flaw_btnup(self):
 		self.drawing_mode = False
 		self.drawing_flaw_started = False
@@ -307,28 +385,43 @@ class LeatherWindow_main(tk.Frame):
 				new_item.append([(point[0] - (diff[0] * sw)), (point[1] - (diff[1] * sh))])
 			self.displayed_r_layer_items[dragged_flaw_index] = new_item
 		self.updating_shapes = True
-	def change_flaw_color (self, collide_list):
+
+	def change_flaw_color(self, collide_list):
 		for flaw in collide_list.keys():
-			if flaw.flaw_type == 'hole':
-				pass
+			if self.max_color_flag != True:
+				self.color = min(255, self.color + (3 / len(collide_list.keys())))
 			else:
-				if self.max_color_flag != True:
-					self.color = min(255, self.color + (3 / len(collide_list.keys())))
-				else:
-					self.color = max(0, self.color - (3 / len(collide_list.keys())))
-				if self.color >= 255:
-					self.max_color_flag = True
-				elif self.color <= 0:
-					self.max_color_flag = False
-				self.reset_flaws_colors(collide_list.keys())
-				if flaw.flaw_type == 'blue':
-					flaw.change_color((self.color, self.color, 255))
-				elif flaw.flaw_type == 'green':
-					flaw.change_color((self.color, 255, self.color))
-				elif flaw.flaw_type == 'yellow':
-					flaw.change_color((255, 255, self.color))
-				elif flaw.flaw_type == 'red':
-					flaw.change_color((255, self.color, self.color))
+				self.color = max(0, self.color - (3 / len(collide_list.keys())))
+			if self.color >= 255:
+				self.max_color_flag = True
+			elif self.color <= 0:
+				self.max_color_flag = False
+			self.reset_flaws_colors(collide_list.keys())
+			if flaw.flaw_type == 'blue':
+				r = ((configFile.b_layer_color[0] / 255 + self.color / 255) / 2) * 255
+				g = ((configFile.b_layer_color[1] / 255 + self.color / 255) / 2) * 255
+				b = ((configFile.b_layer_color[2] / 255 + self.color / 255) / 2) * 255
+				flaw.change_color((r, g, b))
+			elif flaw.flaw_type == 'hole':
+				r = ((configFile.h_layer_color[0] / 255 + self.color / 255) / 2) * 255
+				g = ((configFile.h_layer_color[1] / 255 + self.color / 255) / 2) * 255
+				b = ((configFile.h_layer_color[2] / 255 + self.color / 255) / 2) * 255
+				flaw.change_color((r, g, b))
+			elif flaw.flaw_type == 'green':
+				r = ((configFile.g_layer_color[0] / 255 + self.color / 255) / 2) * 255
+				g = ((configFile.g_layer_color[1] / 255 + self.color / 255) / 2) * 255
+				b = ((configFile.g_layer_color[2] / 255 + self.color / 255) / 2) * 255
+				flaw.change_color((r, g, b))
+			elif flaw.flaw_type == 'yellow':
+				r = ((configFile.y_layer_color[0] / 255 + self.color / 255) / 2) * 255
+				g = ((configFile.y_layer_color[1] / 255 + self.color / 255) / 2) * 255
+				b = ((configFile.y_layer_color[2] / 255 + self.color / 255) / 2) * 255
+				flaw.change_color((r, g, b))
+			elif flaw.flaw_type == 'red':
+				r = ((configFile.r_layer_color[0] / 255 + self.color / 255) / 2) * 255
+				g = ((configFile.r_layer_color[1] / 255 + self.color / 255) / 2) * 255
+				b = ((configFile.r_layer_color[2] / 255 + self.color / 255) / 2) * 255
+				flaw.change_color((r, g, b))
 
 		if str(collide_list) == '{}' and self.clicked_flaws == None or str(self.clicked_flaws) == '{}' and str(
 				collide_list) != '{}':
@@ -429,7 +522,7 @@ class LeatherWindow_main(tk.Frame):
 			self.b_layer_flaw_center_list.append(flaw_center)
 			self.displayed_b_layer_flaws.append(
 				FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'blue'))
-			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_h_layer_flaws)
 			self.flaw_sprites.append(self.displayed_b_layer_flaws)
 			self.flaw_sprites.append(self.displayed_g_layer_flaws)
 			self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -456,7 +549,7 @@ class LeatherWindow_main(tk.Frame):
 			self.g_layer_flaw_center_list.append(flaw_center)
 			self.displayed_g_layer_flaws.append(
 				FlawSprite(self.temp_drawed_flaw, configFile.g_layer_color, flaw_center, 'green'))
-			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_h_layer_flaws)
 			self.flaw_sprites.append(self.displayed_b_layer_flaws)
 			self.flaw_sprites.append(self.displayed_g_layer_flaws)
 			self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -482,7 +575,7 @@ class LeatherWindow_main(tk.Frame):
 			self.y_layer_flaw_center_list.append(flaw_center)
 			self.displayed_y_layer_flaws.append(
 				FlawSprite(self.temp_drawed_flaw, configFile.y_layer_color, flaw_center, 'yellow'))
-			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_h_layer_flaws)
 			self.flaw_sprites.append(self.displayed_b_layer_flaws)
 			self.flaw_sprites.append(self.displayed_g_layer_flaws)
 			self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -508,7 +601,7 @@ class LeatherWindow_main(tk.Frame):
 			self.r_layer_flaw_center_list.append(flaw_center)
 			self.displayed_r_layer_flaws.append(
 				FlawSprite(self.temp_drawed_flaw, configFile.r_layer_color, flaw_center, 'red'))
-			self.flaw_sprites.append(self.displayed_h_layer_items)
+			self.flaw_sprites.append(self.displayed_h_layer_flaws)
 			self.flaw_sprites.append(self.displayed_b_layer_flaws)
 			self.flaw_sprites.append(self.displayed_g_layer_flaws)
 			self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -555,12 +648,10 @@ class LeatherWindow_main(tk.Frame):
 			self.assignation_flaw_mode = False
 			self.temp_drawed_flaw = None
 
-	def blue_assignation_func (self, income = False):
-		print('main_blue_assignation_func', self.clicked_flaws)
+	def blue_assignation_func(self, income=False):
 		for flaw in self.clicked_flaws.keys():
 			if income == True:
 				flaw.change_flaw_type('blue')
-			print('main blue assignation func here1', flaw.flaw_type)
 			self.editted_flaw = flaw
 			if self.editted_flaw.position in self.b_layer_flaw_center_list:
 				pass
@@ -579,9 +670,13 @@ class LeatherWindow_main(tk.Frame):
 				self.b_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
 				self.displayed_b_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_b_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
-			print('main blue assignation func here2', flaw.flaw_type)
+			elif self.editted_flaw.position in self.h_layer_flaw_center_list:
+				flaw_index = self.h_layer_flaw_center_list.index(self.editted_flaw.position)
+				self.b_layer_flaw_center_list.append(self.h_layer_flaw_center_list.pop(flaw_index))
+				self.displayed_b_layer_items.append(self.displayed_h_layer_items.pop(flaw_index))
+				self.displayed_b_layer_flaws.append(self.displayed_h_layer_flaws.pop(flaw_index))
 
-	def green_assignation_func (self, income = False):
+	def green_assignation_func(self, income=False):
 		for flaw in self.clicked_flaws.keys():
 			if income == True:
 				flaw.change_flaw_type('green')
@@ -603,8 +698,13 @@ class LeatherWindow_main(tk.Frame):
 				self.g_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
 				self.displayed_g_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_g_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
+			elif self.editted_flaw.position in self.h_layer_flaw_center_list:
+				flaw_index = self.h_layer_flaw_center_list.index(self.editted_flaw.position)
+				self.g_layer_flaw_center_list.append(self.h_layer_flaw_center_list.pop(flaw_index))
+				self.displayed_g_layer_items.append(self.displayed_h_layer_items.pop(flaw_index))
+				self.displayed_g_layer_flaws.append(self.displayed_h_layer_flaws.pop(flaw_index))
 
-	def yellow_assignation_func (self, income = False):
+	def yellow_assignation_func(self, income=False):
 		for flaw in self.clicked_flaws.keys():
 			if income == True:
 				flaw.change_flaw_type('yellow')
@@ -626,8 +726,13 @@ class LeatherWindow_main(tk.Frame):
 				self.y_layer_flaw_center_list.append(self.r_layer_flaw_center_list.pop(flaw_index))
 				self.displayed_y_layer_items.append(self.displayed_r_layer_items.pop(flaw_index))
 				self.displayed_y_layer_flaws.append(self.displayed_r_layer_flaws.pop(flaw_index))
+			elif self.editted_flaw.position in self.h_layer_flaw_center_list:
+				flaw_index = self.h_layer_flaw_center_list.index(self.editted_flaw.position)
+				self.y_layer_flaw_center_list.append(self.h_layer_flaw_center_list.pop(flaw_index))
+				self.displayed_y_layer_items.append(self.displayed_h_layer_items.pop(flaw_index))
+				self.displayed_y_layer_flaws.append(self.displayed_h_layer_flaws.pop(flaw_index))
 
-	def red_assignation_func (self, income = False):
+	def red_assignation_func(self, income=False):
 		for flaw in self.clicked_flaws.keys():
 			if income == True:
 				flaw.change_flaw_type('red')
@@ -649,6 +754,11 @@ class LeatherWindow_main(tk.Frame):
 				self.displayed_r_layer_flaws.append(self.displayed_y_layer_flaws.pop(flaw_index))
 			elif self.editted_flaw.position in self.r_layer_flaw_center_list:
 				pass
+			elif self.editted_flaw.position in self.h_layer_flaw_center_list:
+				flaw_index = self.h_layer_flaw_center_list.index(self.editted_flaw.position)
+				self.r_layer_flaw_center_list.append(self.h_layer_flaw_center_list.pop(flaw_index))
+				self.displayed_r_layer_items.append(self.displayed_h_layer_items.pop(flaw_index))
+				self.displayed_r_layer_flaws.append(self.displayed_h_layer_flaws.pop(flaw_index))
 
 	def event_checker (self):
 		if self.dropdown_layer_options_grouped_sprites != None:
@@ -1035,7 +1145,7 @@ class LeatherWindow_main(tk.Frame):
 							self.b_layer_flaw_center_list.append(flaw_center)
 							self.displayed_b_layer_flaws.append(
 								FlawSprite(self.temp_drawed_flaw, configFile.b_layer_color, flaw_center, 'blue'))
-							self.flaw_sprites.append(self.displayed_h_layer_items)
+							self.flaw_sprites.append(self.displayed_h_layer_flaws)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
 							self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -1062,7 +1172,7 @@ class LeatherWindow_main(tk.Frame):
 							self.g_layer_flaw_center_list.append(flaw_center)
 							self.displayed_g_layer_flaws.append(
 								FlawSprite(self.temp_drawed_flaw, configFile.g_layer_color, flaw_center, 'green'))
-							self.flaw_sprites.append(self.displayed_h_layer_items)
+							self.flaw_sprites.append(self.displayed_h_layer_flaws)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
 							self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -1088,7 +1198,7 @@ class LeatherWindow_main(tk.Frame):
 							self.y_layer_flaw_center_list.append(flaw_center)
 							self.displayed_y_layer_flaws.append(
 								FlawSprite(self.temp_drawed_flaw, configFile.y_layer_color, flaw_center, 'yellow'))
-							self.flaw_sprites.append(self.displayed_h_layer_items)
+							self.flaw_sprites.append(self.displayed_h_layer_flaws)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
 							self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -1114,7 +1224,7 @@ class LeatherWindow_main(tk.Frame):
 							self.r_layer_flaw_center_list.append(flaw_center)
 							self.displayed_r_layer_flaws.append(
 								FlawSprite(self.temp_drawed_flaw, configFile.r_layer_color, flaw_center, 'red'))
-							self.flaw_sprites.append(self.displayed_h_layer_items)
+							self.flaw_sprites.append(self.displayed_h_layer_flaws)
 							self.flaw_sprites.append(self.displayed_b_layer_flaws)
 							self.flaw_sprites.append(self.displayed_g_layer_flaws)
 							self.flaw_sprites.append(self.displayed_y_layer_flaws)
@@ -1391,8 +1501,12 @@ class LeatherWindow_main(tk.Frame):
 							flaw.change_color(configFile.y_layer_color)
 						elif flaw.flaw_type == 'red':
 							flaw.change_color(configFile.r_layer_color)
+						elif flaw.flaw_type == 'hole':
+							flaw.change_color(configFile.h_layer_color)
 
 	def load_data (self, leather):
+		self.zoom_in_flag = False
+		self.zoom_out_flag = False
 		self.c_layer_items = leather[0]
 		self.h_layer_items = leather[1]
 		self.b_layer_items = leather[2]
@@ -1633,12 +1747,24 @@ class LeatherWindow_main(tk.Frame):
 					self.highest_y = point[1]
 
 			if self.lowest_y >= 0 and self.highest_y <= self.winfo_reqheight() and self.lowest_x >= 0 and self.highest_x <= self.winfo_reqwidth():
-				pass
-			else:
+				self.zoom_out_flag = True
+			elif self.zoom_out_flag == False:
+				print('ly,hy, lx,hx zoom_out', self.lowest_y, self.highest_y, self.lowest_x, self.highest_x)
+				print('zoom_out')
 				self.zoom_out(True, False)
 				self.calculate_zoom()
 
-	def zoom_out (self, queue_flag, update_flag):
+			if self.lowest_y <= 0 and self.highest_y >= self.winfo_reqheight() and self.lowest_x <= 0 and self.highest_x >= self.winfo_reqwidth() and self.zoom_in_flag == False:
+				self.zoom_in_flag = True
+				self.zoom_out_flag = False
+				self.calculate_zoom()
+			elif self.zoom_in_flag == False:
+				print('ly,hy, lx,hx zoom_in', self.lowest_y, self.highest_y, self.lowest_x, self.highest_x)
+				print('zoom_in')
+				self.zoom_in(True, False)
+				self.calculate_zoom()
+
+	def zoom_out (self, queue_flag, update_flag=True):
 		if queue_flag == False:
 			self.queue.put(['preview_zoom_out', True, True])
 		center_point = [self.winfo_reqwidth() / 2, self.winfo_reqheight() / 2]
@@ -1745,7 +1871,7 @@ class LeatherWindow_main(tk.Frame):
 		if update_flag == True:
 			self.updating_shapes = True
 
-	def zoom_in (self, flag):
+	def zoom_in (self, flag, update_flag=True):
 		if flag == False:
 			self.queue.put(['preview_zoom_in', True])
 		center_point = [self.winfo_reqwidth() / 2, self.winfo_reqheight() / 2]
@@ -1855,8 +1981,8 @@ class LeatherWindow_main(tk.Frame):
 				if center_point[0] - point[0] == 0.01:
 					center_point[0] -= 0.01
 			self.displayed_text_layer_items = new_layer
-
-		self.updating_shapes = True
+		if update_flag == True:
+			self.updating_shapes = True
 
 	def calculate_flaws_center (self):
 		self.h_layer_flaw_center_list = []
@@ -1963,7 +2089,7 @@ class LeatherWindow_main(tk.Frame):
 		self.flaw_sprites = []
 		self.screen.fill(configFile.bg_layer_color)
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if self.h_layer_items != None:
 			for item, item_center in zip(self.displayed_h_layer_items, self.h_layer_flaw_center_list):
 				self.displayed_h_layer_flaws.append(FlawSprite(item, configFile.h_layer_color, item_center, 'hole'))
@@ -2000,7 +2126,7 @@ class LeatherWindow_main(tk.Frame):
 		self.calculate_flaws_center()
 
 		if self.c_layer_items != None:
-			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items)
+			pygame.draw.lines(self.screen, configFile.c_layer_color, True, self.displayed_c_layer_items, configFile.c_layer_line_width)
 		if self.displayed_h_layer_flaws != None:
 			for flaw, flaw_points, flaw_center in zip(self.displayed_h_layer_flaws, self.displayed_h_layer_items,
 													  self.h_layer_flaw_center_list):

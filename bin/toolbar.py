@@ -15,6 +15,7 @@ from tkinter.colorchooser import askcolor
 from bin.settings import Settings
 from bin.messHandler import messBox, infoBox
 import shutil
+import serial
 
 pyglet.font.add_file('fonts/OpenSans/OpenSans.ttf')
 
@@ -42,7 +43,7 @@ class Toolbar(tk.Frame):
         self.settings_icon = icon_to_image("cog", fill='#c7c6c5', scale_to_width=60)
         self.settings_btn = ctk.CTkButton(self, image=self.settings_icon, fg_color='#505050', hover_color='#404040',
                                           compound='top', corner_radius=10, text='Ustawienia', command=lambda: self.show_settings(),
-                                          text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
+                                          text_font=('OpenSans.ttf', 18))
         self.settings_btn.grid(column=2, row=1, sticky='nsew')
 
         self.change_colors_icon_inactive = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
@@ -50,7 +51,7 @@ class Toolbar(tk.Frame):
         self.change_colors_btn = ctk.CTkButton(self, image=self.change_colors_icon_inactive,
                                                fg_color='#505050', command=lambda: self.change_colors_func(),
                                                hover_color='#404040', compound='top', corner_radius=10,
-                                               text='Zmień kolory', text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
+                                               text='Zmień kolory', text_font=('OpenSans.ttf', 18))
         self.change_colors_btn.grid(column=3, row=1, sticky='nsew')
 
         self.clock = tk.StringVar()
@@ -62,20 +63,20 @@ class Toolbar(tk.Frame):
         self.load_file_btn = ctk.CTkButton(self, image=self.load_file_icon, fg_color='#505050',
                                            command=lambda: self.load_leather_data(),
                                            hover_color='#404040', compound='top', corner_radius=10, text='Wybierz plik',
-                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
+                                           text_font=('OpenSans.ttf', 18))
         self.load_file_btn.grid(column=5, row=1, sticky='nsew')
 
         self.save_file_icon = icon_to_image("save", fill='#c7c6c5', scale_to_width=60)
         self.save_file_btn = ctk.CTkButton(self, image=self.save_file_icon, fg_color='#505050',
                                            command=lambda: self.show_message(),
                                            hover_color='#404040', compound='top', corner_radius=10, text='Zapisz plik',
-                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
+                                           text_font=('OpenSans.ttf', 18))
         self.save_file_btn.grid(column=6, row=1, sticky='nsew')
 
         self.exit_icon = icon_to_image("times", fill='#c7c6c5', scale_to_width=50)
         self.exit_btn = ctk.CTkButton(self, image=self.exit_icon, fg_color='#505050', command=self.parent.parent.destroy,
                                            hover_color='#404040', compound='top', corner_radius=10, text='Zamknij program',
-                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
+                                           text_font=('OpenSans.ttf', 18))
         self.exit_btn.grid(column=7, row=1, sticky='nsew')
 
         for widget in self.winfo_children():
@@ -87,9 +88,37 @@ class Toolbar(tk.Frame):
         self.leather_name = ''
         self.code_flag = False
 
+        self.barcode_scanner = None
+
         self.parent.parent.bind('<Key>', self.get_key)
 
-    def get_key (self, event):
+        try:
+            self.set_scanner()
+            print('scanner connected')
+        except:
+            pass
+
+        if self.barcode_scanner != None:
+            Thread(target=self.check_barcode_bufer).start()
+
+    def check_barcode_bufer(self):
+        if self.barcode_scanner.in_waiting > 0:
+            if self.code_flag == False:
+                self.code += str(self.barcode_scanner.read().decode("utf-8"))
+            else:
+                self.code_flag = False
+                self.code = ''
+            if len(self.code) >= 24 and self.barcode_scanner.in_waiting == 0:
+                self.leather_name = self.code[-25:]
+                self.load_scanned_leather(self.leather_name)
+                self.code = ''
+                self.code_flag = True
+        self.after(1, self.check_barcode_bufer)
+
+    def set_scanner(self):
+        self.barcode_scanner = serial.Serial(configFile.barcode_com_port)
+
+    def get_key(self, event):
         if self.code_flag == False:
             self.code += str(event.char)
         else:
@@ -176,7 +205,9 @@ class Toolbar(tk.Frame):
         bckp_dist = configFile.leather_backup_path + "\\" + backup_name
         print('backup: ', self.filename, bckp_dist)
         shutil.copyfile(self.filename, bckp_dist)
-        leather_data = self.parent.leather_preview.lw_prev.save_leather_data()
+        self.parent.leather_preview.lw_prev.save_leather_data()
+    def save_leather_data2 (self, leather_data):
+        print('save_leather_data_2')
         c_layer_points = leather_data[0]
         h_layer_items = leather_data[1]
         b_layer_items = leather_data[2]
@@ -270,10 +301,25 @@ class Toolbar(tk.Frame):
                         c_layer.append(item)
         else:
             pass
+
         try:
-            for item in c_layer:
-                for point in item.points():
+            if len(c_layer) > 1:
+                self.c_layer_items_len = []
+                for item in c_layer:
+                    self.c_layer_items_len.append(len(item))
+                self.highest_len = len(c_layer[0])
+                for item_index, item_len in enumerate(self.c_layer_items_len):
+                    if item_len > self.highest_len:
+                        self.highest_len_index = item_index
+                    #elif item_len != self.highest_len:
+                    #    h_layer.append(c_layer[item_index])
+                c_layer_final = c_layer[self.highest_len_index]
+                for point in c_layer_final.points():
                     c_layer_points.append((point[0], point[1]))
+            else:
+                for item in c_layer:
+                    for point in item.points():
+                        c_layer_points.append((point[0], point[1]))
         except:
             raise Exception("Błąd podczas odczytu punktów warstwy konturu")
 
@@ -317,6 +363,7 @@ class Toolbar(tk.Frame):
                 h_layer_items.append(item_list)
         except:
             raise Exception("Błąd podczas odczytu punktów warstwy dziur")
+
 
         if str(c_layer_points) != '[]':
             leather_data = c_layer_points, h_layer_items, b_layer_items, g_layer_items, y_layer_items, r_layer_items, text_layer_items
