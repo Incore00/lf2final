@@ -43,7 +43,7 @@ class Toolbar(tk.Frame):
         self.settings_icon = icon_to_image("cog", fill='#c7c6c5', scale_to_width=60)
         self.settings_btn = ctk.CTkButton(self, image=self.settings_icon, fg_color='#505050', hover_color='#404040',
                                           compound='top', corner_radius=10, text='Ustawienia', command=lambda: self.show_settings(),
-                                          text_font=('OpenSans.ttf', 18))
+                                          text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.settings_btn.grid(column=2, row=1, sticky='nsew')
 
         self.change_colors_icon_inactive = icon_to_image("sync-alt", fill='#c7c6c5', scale_to_width=60)
@@ -51,7 +51,7 @@ class Toolbar(tk.Frame):
         self.change_colors_btn = ctk.CTkButton(self, image=self.change_colors_icon_inactive,
                                                fg_color='#505050', command=lambda: self.change_colors_func(),
                                                hover_color='#404040', compound='top', corner_radius=10,
-                                               text='Zmień kolory', text_font=('OpenSans.ttf', 18))
+                                               text='Zmień kolory', text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.change_colors_btn.grid(column=3, row=1, sticky='nsew')
 
         self.clock = tk.StringVar()
@@ -63,20 +63,20 @@ class Toolbar(tk.Frame):
         self.load_file_btn = ctk.CTkButton(self, image=self.load_file_icon, fg_color='#505050',
                                            command=lambda: self.load_leather_data(),
                                            hover_color='#404040', compound='top', corner_radius=10, text='Wybierz plik',
-                                           text_font=('OpenSans.ttf', 18))
+                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.load_file_btn.grid(column=5, row=1, sticky='nsew')
 
         self.save_file_icon = icon_to_image("save", fill='#c7c6c5', scale_to_width=60)
         self.save_file_btn = ctk.CTkButton(self, image=self.save_file_icon, fg_color='#505050',
                                            command=lambda: self.show_message(),
                                            hover_color='#404040', compound='top', corner_radius=10, text='Zapisz plik',
-                                           text_font=('OpenSans.ttf', 18))
+                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.save_file_btn.grid(column=6, row=1, sticky='nsew')
 
         self.exit_icon = icon_to_image("times", fill='#c7c6c5', scale_to_width=50)
         self.exit_btn = ctk.CTkButton(self, image=self.exit_icon, fg_color='#505050', command=self.parent.parent.destroy,
                                            hover_color='#404040', compound='top', corner_radius=10, text='Zamknij program',
-                                           text_font=('OpenSans.ttf', 18))
+                                           text_font=('OpenSans.ttf', 18), text_color='#c7c6c5')
         self.exit_btn.grid(column=7, row=1, sticky='nsew')
 
         for widget in self.winfo_children():

@@ -33,8 +33,8 @@ class Settings(tk.Toplevel):
         self.grid_propagate(0)
 
         self.settings_notebook = ttk.Notebook(self)
-        self.ogolne_tab = ctk.CTkFrame(self.settings_notebook, bg_color='#303030')
-        self.display_tab = ctk.CTkFrame(self.settings_notebook)
+        self.ogolne_tab = ctk.CTkFrame(self.settings_notebook, bg_color='#303030', fg_color='#303030')
+        self.display_tab = ctk.CTkFrame(self.settings_notebook, bg_color='#303030', fg_color='#303030')
         #self.calibration_tab = ctk.CTkFrame(self.settings_notebook)
 
         self.display_tab.columnconfigure((1,2,3), weight =1)
@@ -46,13 +46,13 @@ class Settings(tk.Toplevel):
         self.settings_notebook.grid(row=1, column=1, columnspan=3, sticky='nsew')
 
         self.save_btn = ctk.CTkButton(self, text = 'Zapisz', fg_color='#505050', hover_color='#606060',
-                                      text_font=('OpenSans.ttf', 20), command=lambda:self.save_btn_func())
+                                      text_font=('OpenSans.ttf', 20), command=lambda:self.save_btn_func(), text_color="#c7c6c5")
         self.save_btn.grid(row=2, column=1, sticky='e', padx=10, pady=10)
         self.ok_btn = ctk.CTkButton(self, text='   OK   ', fg_color='#505050', hover_color='#606060',
-                                      text_font=('OpenSans.ttf', 20), command = lambda:self.ok_btn_func())
+                                      text_font=('OpenSans.ttf', 20), command = lambda:self.ok_btn_func(), text_color="#c7c6c5")
         self.ok_btn.grid(row=2, column=2, sticky='e', padx=10, pady=10)
         self.anuluj_btn = ctk.CTkButton(self, text='Anuluj', fg_color='#505050', hover_color='#606060',
-                                    text_font=('OpenSans.ttf', 20), command = lambda:self.anuluj_btn_func())
+                                    text_font=('OpenSans.ttf', 20), command = lambda:self.anuluj_btn_func(), text_color="#c7c6c5")
         self.anuluj_btn.grid(row=2, column=3, sticky='e', padx=10, pady=10)
         ######## OGOLNE TAB
         self.temp_path_list = configFile.leather_path_list.copy()
@@ -399,7 +399,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.cursor_radius_entry = ctk.CTkEntry(self.ramka_cursor, width=50, justify=tk.CENTER,
-                                                text_font=('OpenSans.ttf', 14))
+                                                text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.cursor_radius_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
         self.cursor_radius_entry.insert(0, configFile.cursor_radius)
         tk.Label(self.ramka_cursor, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -417,7 +417,7 @@ class Settings(tk.Toplevel):
                                                      text_font=('OpenSans.ttf', 14),
                                                      fg_color='#505050', hover_color='#404040',
                                                      command=lambda x=self.probka_koloru_cursora: self.change_obj_color(
-                                                         x))
+                                                         x), text_color="#c7c6c5")
         self.change_color_cursor_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
         self.ramka_cursor.grid(row=3, column=1, sticky='nsew', padx=10, pady=10)
 
@@ -430,7 +430,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.szerokosc_menu_skazy_entry = ctk.CTkEntry(self.ramka_flaw_menu, width=70, justify=tk.CENTER,
-                                                       text_font=('OpenSans.ttf', 14))
+                                                       text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.szerokosc_menu_skazy_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
         self.szerokosc_menu_skazy_entry.insert(0, configFile.flaw_dropdown_menu_x_size)
         tk.Label(self.ramka_flaw_menu, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -443,7 +443,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=2, column=1, sticky='nsew')
         self.wysokosc_menu_skazy_entry = ctk.CTkEntry(self.ramka_flaw_menu, width=70, justify=tk.CENTER,
-                                                      text_font=('OpenSans.ttf', 14))
+                                                      text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.wysokosc_menu_skazy_entry.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
         self.wysokosc_menu_skazy_entry.insert(0, configFile.flaw_dropdown_menu_y_size)
         tk.Label(self.ramka_flaw_menu, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=2,
@@ -465,7 +465,7 @@ class Settings(tk.Toplevel):
                                                        fg_color='#505050', hover_color='#404040',
                                                        command=lambda
                                                            x=self.probka_koloru_tla_menu_skazy: self.change_obj_color(
-                                                           x))
+                                                           x), text_color="#c7c6c5")
         self.change_color_flaw_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_flaw_menu, text='Kolor tła\nopcji menu:', bg='#303030', fg='#c7c6c5',
@@ -482,7 +482,7 @@ class Settings(tk.Toplevel):
                                                              fg_color='#505050', hover_color='#404040',
                                                              command=lambda
                                                                  x=self.probka_koloru_tla_opcji_menu_skazy: self.change_obj_color(
-                                                                 x))
+                                                                 x), text_color="#c7c6c5")
         self.change_color_flaw_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_flaw_menu, text='Kolor czcionki\nopcji menu:', bg='#303030', fg='#c7c6c5',
@@ -499,7 +499,7 @@ class Settings(tk.Toplevel):
                                                         fg_color='#505050', hover_color='#404040',
                                                         command=lambda
                                                             x=self.probka_koloru_czcionki_menu_skazy: self.change_obj_color(
-                                                            x))
+                                                            x), text_color="#c7c6c5")
         self.change_color_flaw_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
 
         self.ramka_flaw_menu.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
@@ -512,7 +512,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.szerokosc_menu_entry = ctk.CTkEntry(self.ramka_menu, width=70, justify=tk.CENTER,
-                                                 text_font=('OpenSans.ttf', 14))
+                                                 text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.szerokosc_menu_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
         self.szerokosc_menu_entry.insert(0, configFile.dropdown_menu_x_size)
         tk.Label(self.ramka_menu, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -525,7 +525,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=2, column=1, sticky='nsew')
         self.wysokosc_menu_entry = ctk.CTkEntry(self.ramka_menu, width=70, justify=tk.CENTER,
-                                                text_font=('OpenSans.ttf', 14))
+                                                text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.wysokosc_menu_entry.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
         self.wysokosc_menu_entry.insert(0, configFile.dropdown_menu_y_size)
         tk.Label(self.ramka_menu, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=2,
@@ -546,7 +546,7 @@ class Settings(tk.Toplevel):
                                                   text_font=('OpenSans.ttf', 14),
                                                   fg_color='#505050', hover_color='#404040',
                                                   command=lambda x=self.probka_koloru_tla_menu: self.change_obj_color(
-                                                      x))
+                                                      x), text_color="#c7c6c5")
         self.change_color_tlo_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_menu, text='Kolor tła\nopcji menu:', bg='#303030', fg='#c7c6c5',
@@ -563,7 +563,7 @@ class Settings(tk.Toplevel):
                                                         fg_color='#505050', hover_color='#404040',
                                                         command=lambda
                                                             x=self.probka_koloru_tla_opcji_menu: self.change_obj_color(
-                                                            x))
+                                                            x), text_color="#c7c6c5")
         self.change_color_tlo_opcji_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         tk.Label(self.ramka_menu, text='Kolor czcionki\nopcji menu:', bg='#303030', fg='#c7c6c5',
@@ -579,7 +579,7 @@ class Settings(tk.Toplevel):
                                                    text_font=('OpenSans.ttf', 14),
                                                    fg_color='#505050', hover_color='#404040',
                                                    command=lambda
-                                                       x=self.probka_koloru_czcionki_menu: self.change_obj_color(x))
+                                                       x=self.probka_koloru_czcionki_menu: self.change_obj_color(x), text_color="#c7c6c5")
         self.change_color_font_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
         self.ramka_menu.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
 
@@ -616,7 +616,7 @@ class Settings(tk.Toplevel):
                                                            fg_color='#505050', hover_color='#404040',
                                                            command=lambda
                                                                x=self.probka_koloru_tla_domyslne: self.change_obj_color(
-                                                               x))
+                                                               x), text_color="#c7c6c5")
         self.change_color_tlo_domyslne_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
 
         ### 2 rzad
@@ -633,7 +633,7 @@ class Settings(tk.Toplevel):
                                                                fg_color='#505050', hover_color='#404040',
                                                                command=lambda
                                                                    x=self.probka_koloru_konturu_domyslne: self.change_obj_color(
-                                                                   x))
+                                                                   x), text_color="#c7c6c5")
         self.change_color_konturu_domyslne_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 3
@@ -651,7 +651,7 @@ class Settings(tk.Toplevel):
                                                              fg_color='#505050', hover_color='#404040',
                                                              command=lambda
                                                                  x=self.probka_koloru_dziur_domyslne: self.change_obj_color(
-                                                                 x))
+                                                                 x), text_color="#c7c6c5")
         self.change_color_dziur_domyslne_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 4
@@ -669,7 +669,7 @@ class Settings(tk.Toplevel):
                                                             fg_color='#505050', hover_color='#404040',
                                                             command=lambda
                                                                 x=self.probka_koloru_blue_domyslne: self.change_obj_color(
-                                                                x))
+                                                                x), text_color="#c7c6c5")
         self.change_color_blue_domyslne_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 5
@@ -687,7 +687,7 @@ class Settings(tk.Toplevel):
                                                              fg_color='#505050', hover_color='#404040',
                                                              command=lambda
                                                                  x=self.probka_koloru_green_domyslne: self.change_obj_color(
-                                                                 x))
+                                                                 x), text_color="#c7c6c5")
         self.change_color_green_domyslne_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 6
@@ -704,7 +704,7 @@ class Settings(tk.Toplevel):
                                                               fg_color='#505050', hover_color='#404040',
                                                               command=lambda
                                                                   x=self.probka_koloru_yellow_domyslne: self.change_obj_color(
-                                                                  x))
+                                                                  x), text_color="#c7c6c5")
         self.change_color_yellow_domyslne_btn.grid(row=6, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 7
@@ -722,7 +722,7 @@ class Settings(tk.Toplevel):
                                                            fg_color='#505050', hover_color='#404040',
                                                            command=lambda
                                                                x=self.probka_koloru_red_domyslne: self.change_obj_color(
-                                                               x))
+                                                               x), text_color="#c7c6c5")
         self.change_color_red_domyslne_btn.grid(row=7, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 8
@@ -730,8 +730,8 @@ class Settings(tk.Toplevel):
         ### RZAD 8
         tk.Label(self.ramka_zk_domyslne, text='Typ skazy niebieskiej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=8, column=1, sticky='nsew', padx=10, pady=10)
-        self.blue_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
-                                                                text_font=('OpenSans.ttf', 14))
+        self.blue_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values, text_font=('OpenSans.ttf', 14)
+                                                                ,dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.blue_first_layer_linetype_choose.grid(row=8, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.first_b_layer_linetype == 'polygon':
             self.blue_first_layer_linetype_choose.set('Obszar')
@@ -742,7 +742,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_domyslne, text='Typ skazy zielonej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=9, column=1, sticky='nsew', padx=10, pady=10)
         self.green_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
-                                                                 text_font=('OpenSans.ttf', 14))
+                                                                 text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.green_first_layer_linetype_choose.grid(row=9, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.first_g_layer_linetype == 'polygon':
             self.green_first_layer_linetype_choose.set('Obszar')
@@ -753,7 +753,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_domyslne, text='Typ skazy żółtej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=10, column=1, sticky='nsew', padx=10, pady=10)
         self.yellow_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
-                                                                  text_font=('OpenSans.ttf', 14))
+                                                                  text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.yellow_first_layer_linetype_choose.grid(row=10, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.first_y_layer_linetype == 'polygon':
             self.yellow_first_layer_linetype_choose.set('Obszar')
@@ -764,7 +764,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_domyslne, text='Typ skazy czerwonej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=11, column=1, sticky='nsew', padx=10, pady=10)
         self.red_first_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_domyslne, values=linetype_values,
-                                                               text_font=('OpenSans.ttf', 14))
+                                                               text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.red_first_layer_linetype_choose.grid(row=11, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.first_r_layer_linetype == 'polygon':
             self.red_first_layer_linetype_choose.set('Obszar')
@@ -786,7 +786,7 @@ class Settings(tk.Toplevel):
                                                          text_font=('OpenSans.ttf', 14),
                                                          fg_color='#505050', hover_color='#404040',
                                                          command=lambda
-                                                             x=self.probka_koloru_tla_poklik: self.change_obj_color(x))
+                                                             x=self.probka_koloru_tla_poklik: self.change_obj_color(x), text_color="#c7c6c5")
         self.change_color_tlo_poklik_btn.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
         ### RZAD 2
         tk.Label(self.ramka_zk_poklik, text='Kolor warstwy\nkonturu:', bg='#303030', fg='#c7c6c5',
@@ -802,7 +802,7 @@ class Settings(tk.Toplevel):
                                                              fg_color='#505050', hover_color='#404040',
                                                              command=lambda
                                                                  x=self.probka_koloru_konturu_poklik: self.change_obj_color(
-                                                                 x))
+                                                                 x), text_color="#c7c6c5")
         self.change_color_konturu_poklik_btn.grid(row=2, column=3, sticky='nsew', padx=10, pady=10)
         ### RZAD 3
 
@@ -819,7 +819,7 @@ class Settings(tk.Toplevel):
                                                            fg_color='#505050', hover_color='#404040',
                                                            command=lambda
                                                                x=self.probka_koloru_dziur_poklik: self.change_obj_color(
-                                                               x))
+                                                               x), text_color="#c7c6c5")
         self.change_color_dziur_poklik_btn.grid(row=3, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 4
@@ -837,7 +837,7 @@ class Settings(tk.Toplevel):
                                                           fg_color='#505050', hover_color='#404040',
                                                           command=lambda
                                                               x=self.probka_koloru_blue_poklik: self.change_obj_color(
-                                                              x))
+                                                              x), text_color="#c7c6c5")
         self.change_color_blue_poklik_btn.grid(row=4, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 5
@@ -855,7 +855,7 @@ class Settings(tk.Toplevel):
                                                            fg_color='#505050', hover_color='#404040',
                                                            command=lambda
                                                                x=self.probka_koloru_green_poklik: self.change_obj_color(
-                                                               x))
+                                                               x), text_color="#c7c6c5")
         self.change_color_green_poklik_btn.grid(row=5, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 6
@@ -872,7 +872,7 @@ class Settings(tk.Toplevel):
                                                             fg_color='#505050', hover_color='#404040',
                                                             command=lambda
                                                                 x=self.probka_koloru_yellow_poklik: self.change_obj_color(
-                                                                x))
+                                                                x), text_color="#c7c6c5")
         self.change_color_yellow_poklik_btn.grid(row=6, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 7
@@ -890,7 +890,7 @@ class Settings(tk.Toplevel):
                                                          fg_color='#505050', hover_color='#404040',
                                                          command=lambda
                                                              x=self.probka_koloru_red_poklik: self.change_obj_color(
-                                                             x))
+                                                             x), text_color="#c7c6c5")
         self.change_color_red_poklik_btn.grid(row=7, column=3, sticky='nsew', padx=10, pady=10)
 
         ### RZAD 8
@@ -899,7 +899,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_poklik, text='Typ skazy niebieskiej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=8, column=1, sticky='nsew', padx=10, pady=10)
         self.blue_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
-                                                                 text_font=('OpenSans.ttf', 14))
+                                                                 text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.blue_second_layer_linetype_choose.grid(row=8, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.second_b_layer_linetype == 'polygon':
             self.blue_second_layer_linetype_choose.set('Obszar')
@@ -910,7 +910,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_poklik, text='Typ skazy zielonej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=9, column=1, sticky='nsew', padx=10, pady=10)
         self.green_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
-                                                                  text_font=('OpenSans.ttf', 14))
+                                                                  text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.green_second_layer_linetype_choose.grid(row=9, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.second_g_layer_linetype == 'polygon':
             self.green_second_layer_linetype_choose.set('Obszar')
@@ -921,7 +921,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_poklik, text='Typ skazy żółtej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=10, column=1, sticky='nsew', padx=10, pady=10)
         self.yellow_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
-                                                                   text_font=('OpenSans.ttf', 14))
+                                                                   text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.yellow_second_layer_linetype_choose.grid(row=10, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.second_y_layer_linetype == 'polygon':
             self.yellow_second_layer_linetype_choose.set('Obszar')
@@ -932,7 +932,7 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_zk_poklik, text='Typ skazy czerwonej:', bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=11, column=1, sticky='nsew', padx=10, pady=10)
         self.red_second_layer_linetype_choose = ctk.CTkComboBox(self.ramka_zk_poklik, values=linetype_values,
-                                                                text_font=('OpenSans.ttf', 14))
+                                                                text_font=('OpenSans.ttf', 14),dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
         self.red_second_layer_linetype_choose.grid(row=11, column=2, sticky='nsew', padx=10, pady=5)
         if configFile.second_r_layer_linetype == 'polygon':
             self.red_second_layer_linetype_choose.set('Obszar')
@@ -952,7 +952,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=5)
         self.c_layer_line_width_entry = ctk.CTkEntry(self.ramka_pozostale, width=50, justify=tk.CENTER,
-                                                     text_font=('OpenSans.ttf', 14))
+                                                     text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.c_layer_line_width_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=5)
         self.c_layer_line_width_entry.insert(0, configFile.c_layer_line_width)
         tk.Label(self.ramka_pozostale, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -965,7 +965,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=2, column=1, sticky='nsew', padx=10, pady=5)
         self.flaw_line_width_entry = ctk.CTkEntry(self.ramka_pozostale, width=50, justify=tk.CENTER,
-                                                  text_font=('OpenSans.ttf', 14))
+                                                  text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.flaw_line_width_entry.grid(row=2, column=2, sticky='nsew', padx=10, pady=5)
         self.flaw_line_width_entry.insert(0, configFile.flaw_line_width)
         tk.Label(self.ramka_pozostale, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=2,
@@ -978,7 +978,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=4, sticky='nsew', padx=10, pady=5)
         self.new_flaw_line_width_entry = ctk.CTkEntry(self.ramka_pozostale, width=50, justify=tk.CENTER,
-                                                      text_font=('OpenSans.ttf', 14))
+                                                      text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.new_flaw_line_width_entry.grid(row=1, column=5, sticky='nsew', padx=10, pady=5)
         self.new_flaw_line_width_entry.insert(0, configFile.new_flaw_line_width)
         tk.Label(self.ramka_pozostale, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -999,7 +999,7 @@ class Settings(tk.Toplevel):
                                                        fg_color='#505050', hover_color='#404040',
                                                        command=lambda
                                                            x=self.probka_koloru_new_flaw: self.change_obj_color(
-                                                           x))
+                                                           x), text_color="#c7c6c5")
         self.change_color_new_flaw_btn.grid(row=2, column=6, sticky='nsew', padx=10, pady=5)
 
         self.ramka_pozostale.grid(row=3, column=2, columnspan=2, sticky='nsew', padx=10, pady=10)
@@ -1013,7 +1013,7 @@ class Settings(tk.Toplevel):
                  font=('OpenSans.ttf', 14)).grid(
             row=1, column=1, sticky='nsew', padx=10, pady=5)
         self.open_flaw_line_width_entry = ctk.CTkEntry(self.ramka_otw_skaza, width=50, justify=tk.CENTER,
-                                                       text_font=('OpenSans.ttf', 14))
+                                                       text_font=('OpenSans.ttf', 14), fg_color='#303030', text_color="#c7c6c5")
         self.open_flaw_line_width_entry.grid(row=1, column=2, sticky='nsew', padx=10, pady=5)
         self.open_flaw_line_width_entry.insert(0, configFile.open_flaw_line_width)
         tk.Label(self.ramka_otw_skaza, text='Px', bg='#303030', fg='#c7c6c5', font=('OpenSans.ttf', 14)).grid(row=1,
@@ -1031,12 +1031,12 @@ class Settings(tk.Toplevel):
         tk.Label(self.ramka_backup, text='Ścieżka do folderu w którym mają się zapisywać kopie zapasowe plików skór',
                  bg='#303030', fg='#c7c6c5',
                  font=('OpenSans.ttf', 14)).grid(row=1, column=1, columnspan=2, sticky='nsew', padx=5, pady=3)
-        self.bckp_path_entry = ctk.CTkEntry(self.ramka_backup, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13))
+        self.bckp_path_entry = ctk.CTkEntry(self.ramka_backup, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13), fg_color='#303030', text_color="#c7c6c5")
         self.bckp_path_entry.grid(row=2, column=1, sticky='nsew', padx=5, pady=3)
         self.bckp_path_entry.insert(0, configFile.leather_backup_path)
         change_bckp_path_btn = ctk.CTkButton(self.ramka_backup, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
-                                             fg_color='#505050', hover_color='#404040',
-                                             command=lambda x=self.bckp_path_entry: self.change_path(x))
+                                             fg_color='#505050', hover_color='#404040', text_color="#c7c6c5",
+                                             command=lambda x=self.bckp_path_entry: self.change_path(x), text_color="#c7c6c5")
         change_bckp_path_btn.grid(row=2, column=2, sticky='nsew', padx=5, pady=3)
 
         self.ramka_backup.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
@@ -1064,13 +1064,13 @@ class Settings(tk.Toplevel):
             tk.Label(self.ramka_sciezki, text='Ścieżka %s:' % str(index + 1), bg='#303030', fg='#c7c6c5',
                      font=('OpenSans.ttf', 14)).grid(row=row_index, column=1, sticky='nsew', padx=5, pady=3)
             self.sciezki_entry_list.append(
-                ctk.CTkEntry(self.ramka_sciezki, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13)))
+                ctk.CTkEntry(self.ramka_sciezki, width=400, justify=tk.LEFT, text_font=('OpenSans.ttf', 13), fg_color='#303030', text_color="#c7c6c5"))
             self.sciezki_entry_list[index].grid(row=row_index, column=2, sticky='nsew', padx=5, pady=3)
             self.sciezki_entry_list[index].insert(0, path)
             self.sciezki_button_list.append(
                 ctk.CTkButton(self.ramka_sciezki, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
                               fg_color='#505050', hover_color='#404040',
-                              command=lambda x=self.sciezki_entry_list[index]: self.change_path(x)))
+                              command=lambda x=self.sciezki_entry_list[index]: self.change_path(x), text_color="#c7c6c5"))
             self.sciezki_button_list[index].grid(row=row_index, column=3, sticky='nsew', padx=5, pady=3)
             self.sciezki_radio_list.append(ctk.CTkRadioButton(self.ramka_sciezki, value=index, variable=self.check_var,
                                                               text='', fg_color='#707070', border_width_checked=15,
@@ -1079,11 +1079,11 @@ class Settings(tk.Toplevel):
         self.check_var.set(configFile.domyslne_leather_path)
         self.add_path_btn = ctk.CTkButton(self.ramka_sciezki, text='Dodaj ścieżkę', text_font=('OpenSans.ttf', 14),
                                           fg_color='#505050', hover_color='#404040',
-                                          command=lambda: self.add_path())
+                                          command=lambda: self.add_path(), text_color="#c7c6c5")
         self.add_path_btn.grid(row=row_index + 1, column=1, columnspan=2, sticky='nsew', padx=10, pady=10)
         self.remove_path_btn = ctk.CTkButton(self.ramka_sciezki, text='Usuń ścieżkę', text_font=('OpenSans.ttf', 14),
                                              fg_color='#505050', hover_color='#404040',
-                                             command=lambda: self.remove_path())
+                                             command=lambda: self.remove_path(), text_color="#c7c6c5")
         self.remove_path_btn.grid(row=row_index + 1, column=3, columnspan=2, sticky='nsew', padx=10, pady=10)
 
         self.ramka_sciezki.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)

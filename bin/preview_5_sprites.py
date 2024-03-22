@@ -264,6 +264,7 @@ class LeatherWindow_preview(tk.Frame):
 		self.after(int(1000/configFile.rendering_frequency), self.pygame_loop)
 
 	def apply_settings(self, settings):
+		print('apply settings func preview')
 		configFile.cursor_radius = settings[0]
 		configFile.cursor_color = settings[1]
 		configFile.flaw_dropdown_menu_x_size = settings[2]
