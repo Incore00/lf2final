@@ -3,6 +3,9 @@ import tkinter as tk
 from tkinter import ttk
 import subprocess
 from multiprocessing import Process, Queue
+
+import pyglet.canvas
+
 from bin.toolbar import Toolbar
 from bin.infobar import Infobar
 from bin.preview_5_sprites import Leatherpreview
@@ -12,6 +15,7 @@ from bin.projector1 import Leathermain
 from bin.leather_toolbar import leather_tools
 import json
 from bin import configFile
+import screenutils
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, queue, *args, **kwargs):
@@ -100,15 +104,17 @@ class MainApplication(tk.Frame):
                                            [('Vertical.TScrollbar.grip', {'sticky': 'nswe'})],
                                        'sticky': 'ns'})], 'sticky': 'ns'})])
 
+def apply_settings_start(settings_vals):
+    print(settings_vals[-1])
+    configFile.barcode_com_port = settings_vals[42]
 
 
 if __name__ == '__main__':
     with open('config.json', 'r') as file:
         configuration = json.load(file)
     settings_values = list(configuration.values())
+    apply_settings_start(settings_values)
     queue = Queue()
-    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue, settings_values, ))
-    leather_view.start()
     #hand_follower = Process(name='HandFollower', target=HandFollower, args=(queue,))
     #hand_follower.start()
     main_root = tk.Tk()
@@ -117,6 +123,8 @@ if __name__ == '__main__':
     main_root.resizable(True, True)
     main_root.state("zoomed")
     MainApplication(main_root, queue, width=1920, height=1080).pack(side="top", fill="both", expand=True)
+    leather_view = Process(name='LeatherMain', target=Leathermain, args=(queue, settings_values,))
+    leather_view.start()
     main_root.mainloop()
     subprocess.call('taskkill /F /T /PID ' + str(leather_view.pid))
     #subprocess.call('taskkill /F /T /PID ' + str(hand_follower.pid))

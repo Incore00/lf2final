@@ -13,7 +13,7 @@ from bin import configFile
 from tkinter import ttk
 from tkinter.colorchooser import askcolor
 from bin.settings import Settings
-from bin.messHandler import messBox, infoBox
+from bin.messHandler import messBox, infoBox, Error
 import shutil
 import serial
 
@@ -94,12 +94,22 @@ class Toolbar(tk.Frame):
 
         try:
             self.set_scanner()
-            print('scanner connected')
         except:
-            pass
+            message1 = "Nie wykryto skanera na porcie szeregowym %s" % configFile.barcode_com_port
+            message2 = "Sprawdź, czy skaner jest podłączony oraz\nczy w ustawieniach został wybrany właściwy port."
+            self.current_topwindow.destroy()
+            self.current_topwindow = Error(self.parent, self.queue, message1, message2)
 
         if self.barcode_scanner != None:
             Thread(target=self.check_barcode_bufer).start()
+
+    def handle_of_error(self):
+        message1 = "Wystąpił błąd podczas próby otwarcia skazy\nmoże być to spowodowane błędem algorytmu programu."
+        message2 = "Narysuj skaze ponownie lub skontaktuj się z administratorem systemu."
+        self.current_topwindow.destroy()
+        self.current_topwindow = Error(self.parent, self.queue, message1, message2)
+
+
 
     def check_barcode_bufer(self):
         if self.barcode_scanner.in_waiting > 0:

@@ -54,7 +54,11 @@ class LeatherWindow_preview(tk.Frame):
 
 		self.all_sprites = pygame.sprite.Group([self.cursor_sprite])
 
+		self.reset_variables()
 
+		self.pygame_loop()
+
+	def reset_variables(self):
 		self.c_layer_items = None
 		self.h_layer_items = None
 		self.b_layer_items = None
@@ -138,9 +142,6 @@ class LeatherWindow_preview(tk.Frame):
 
 		self.zoom_in_flag = False
 		self.zoom_out_flag = False
-
-		self.pygame_loop()
-
 	def pygame_loop (self):
 		if pygame.mouse.get_focused() == False and self.cursor_single_sprite != None:
 			self.cursor_single_sprite.kill()
@@ -219,6 +220,8 @@ class LeatherWindow_preview(tk.Frame):
 				self.apply_settings(item[1])
 			elif item[0] == 'main_leather_data_to_save':
 				self.save_main_leather_data(item[1])
+			elif item[0] == 'main_error_open_flaw':
+				self.parent.parent.toolbar.handle_of_error()
 			else:
 				self.queue.put(item)
 		except:
@@ -243,12 +246,21 @@ class LeatherWindow_preview(tk.Frame):
 		if str(self.drawing_flaw_points) != '[]' and self.drawing_flaw_points != None and len(self.drawing_flaw_points) >= 2:
 			pygame.draw.lines(self.screen, configFile.new_flaw_color, False, self.drawing_flaw_points, configFile.new_flaw_line_width)
 		if self.drawing_flaw_started == True and pygame.mouse.get_focused() == True:
-			self.drawing_flaw_points.append(pygame.mouse.get_pos())
-			drawing_flaw_points_to_send = []
-			sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
-			for point in self.drawing_flaw_points:
-				drawing_flaw_points_to_send.append((point[0] / sw, point[1] / sh))
-			self.queue.put(['main_drawing_flaw_points_income', drawing_flaw_points_to_send])
+			draw_point = pygame.mouse.get_pos()
+			if len(self.drawing_flaw_points) == 0 :
+				self.drawing_flaw_points.append(pygame.mouse.get_pos())
+				drawing_flaw_points_to_send = []
+				sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+				for point in self.drawing_flaw_points:
+					drawing_flaw_points_to_send.append((point[0] / sw, point[1] / sh))
+				self.queue.put(['main_drawing_flaw_points_income', drawing_flaw_points_to_send])
+			elif draw_point != self.drawing_flaw_points[-1]:
+				self.drawing_flaw_points.append(pygame.mouse.get_pos())
+				drawing_flaw_points_to_send = []
+				sh, sw = self.winfo_reqheight(), self.winfo_reqwidth()
+				for point in self.drawing_flaw_points:
+					drawing_flaw_points_to_send.append((point[0] / sw, point[1] / sh))
+				self.queue.put(['main_drawing_flaw_points_income', drawing_flaw_points_to_send])
 		if self.temp_drawed_flaw != None:
 			pygame.draw.polygon(self.screen, configFile.new_flaw_color, self.temp_drawed_flaw)
 		if self.assignation_flaw_mode_started == True:
@@ -917,8 +929,14 @@ class LeatherWindow_preview(tk.Frame):
 				temp_flaw_x_list.append(item[0])
 				temp_flaw_y_list.append(item[1])
 
-			new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list, temp_flaw_y_list,
-																	 configFile.open_flaw_line_width, 1)
+			try:
+				new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list,
+																		 temp_flaw_y_list,
+																		 configFile.open_flaw_line_width,
+																		 1)
+			except:
+				self.parent.parent.toolbar.handle_of_error()
+				new_x_list_outer, new_y_list_outer = temp_flaw_x_list, temp_flaw_y_list
 
 			new_temp_drawed_flaw = []
 			for index in range(0, len(new_x_list_outer)):
@@ -1541,7 +1559,14 @@ class LeatherWindow_preview(tk.Frame):
 								temp_flaw_x_list.append(item[0])
 								temp_flaw_y_list.append(item[1])
 
-							new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list, temp_flaw_y_list, configFile.open_flaw_line_width, 1)
+							try:
+								new_x_list_outer, new_y_list_outer = self.makeOffsetPoly(temp_flaw_x_list,
+																						 temp_flaw_y_list,
+																						 configFile.open_flaw_line_width,
+																						 1)
+							except:
+								self.parent.parent.toolbar.handle_of_error()
+								new_x_list_outer, new_y_list_outer = temp_flaw_x_list, temp_flaw_y_list
 
 							new_temp_drawed_flaw = []
 							for index in range(0, len(new_x_list_outer)):
@@ -1803,6 +1828,7 @@ class LeatherWindow_preview(tk.Frame):
 							flaw.change_color(configFile.h_layer_color)
 
 	def load_data (self, leather):
+		self.reset_variables()
 		self.zoom_in_flag = False
 		self.zoom_out_flag = False
 		self.c_layer_items = leather[0]

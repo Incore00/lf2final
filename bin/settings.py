@@ -1,11 +1,12 @@
 import json
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog
 import customtkinter as ctk
 import pyglet
 from tkfontawesome import icon_to_image
-from PIL import ImageTk, ImageColor
+from PIL import ImageTk, ImageColor, Image
 from datetime import datetime
 from threading import Thread
 import ezdxf
@@ -13,6 +14,7 @@ from ezdxf.enums import TextEntityAlignment
 from bin import configFile
 from tkinter import ttk
 from tkinter.colorchooser import askcolor
+from bin.messHandler import Error
 
 class Settings(tk.Toplevel):
     def __init__(self, parent, queue, *args, **kwargs):
@@ -39,6 +41,8 @@ class Settings(tk.Toplevel):
 
         self.display_tab.columnconfigure((1,2,3), weight =1)
         self.display_tab.rowconfigure((1, 2, 3), weight=1)
+        self.ogolne_tab.columnconfigure((1,2,3), weight =1)
+        self.ogolne_tab.rowconfigure((2,3,4,5,6), weight=1)
 
         self.settings_notebook.add(self.ogolne_tab, text='       Ogólne       ')
         self.settings_notebook.add(self.display_tab, text='      Wyświetlanie      ')
@@ -130,6 +134,7 @@ class Settings(tk.Toplevel):
             dirs.append(str(sciezka.get()))
         configFile.leather_path_list = dirs
         configFile.domyslne_leather_path = int(self.check_var.get())
+        configFile.barcode_com_port = str(self.barcode_port_choose.get())
 
         sett = [
             configFile.cursor_radius,
@@ -174,6 +179,7 @@ class Settings(tk.Toplevel):
             configFile.leather_backup_path,
             configFile.leather_path_list,
             configFile.domyslne_leather_path,
+            configFile.barcode_com_port
         ]
         self.queue.put(['preview_settings', sett])
         self.queue.put(['main_settings', sett])
@@ -219,7 +225,8 @@ class Settings(tk.Toplevel):
             "open_flaw_line_width",
             "leather_backup_path",
             "leather_path_list",
-            "domyslne_leather_path"
+            "domyslne_leather_path",
+            "barcode_com_port"
         ]
         sett_values = [
             configFile.cursor_radius,
@@ -264,10 +271,17 @@ class Settings(tk.Toplevel):
             configFile.leather_backup_path,
             configFile.leather_path_list,
             configFile.domyslne_leather_path,
+            configFile.barcode_com_port,
         ]
         sett_dict = dict(zip(sett_keys, sett_values))
+        print(sett_dict)
         with open('config.json', 'w') as file:
             json.dump(sett_dict, file)
+        header = "Informacja"
+        mess1 = "Ustawienia zostały zapisane."
+        Error(self.parent, self.queue, mess1, None, header)
+
+
 
     def ok_btn_func(self):
         configFile.cursor_radius = int(self.cursor_radius_entry.get())
@@ -339,6 +353,7 @@ class Settings(tk.Toplevel):
             dirs.append(str(sciezka.get()))
         configFile.leather_path_list = dirs
         configFile.domyslne_leather_path = int(self.check_var.get())
+        configFile.barcode_com_port = str(self.barcode_port_choose.get())
 
         sett = [
         configFile.cursor_radius,
@@ -383,6 +398,7 @@ class Settings(tk.Toplevel):
         configFile.leather_backup_path,
         configFile.leather_path_list,
         configFile.domyslne_leather_path,
+        configFile.barcode_com_port
         ]
         self.queue.put(['preview_settings', sett])
         self.queue.put(['main_settings', sett])
@@ -1022,6 +1038,58 @@ class Settings(tk.Toplevel):
                                                                                                               padx=3,
                                                                                                               pady=10)
         self.ramka_otw_skaza.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        #ramka barcode
+        self.ramka_barcode = tk.LabelFrame(self.ogolne_tab, text='Opcje czytnika', font=('OpenSans.ttf', 13),
+                                           bg='#303030', fg='#c7c6c5')
+
+        tk.Label(self.ramka_barcode, text='Port czytnika:',
+                 bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 14)).grid(row=1, column=1, sticky='nsew', padx=5, pady=3)
+
+        com_values = ["COM%s" % str(i) for i in range(1,14)]
+        self.barcode_port_choose = ctk.CTkComboBox(self.ramka_barcode, values=com_values, text_font=('OpenSans.ttf', 14)
+                                                                ,dropdown_text_font=('OpenSans.ttf', 14), text_color='#c7c6c5',fg_color='#303030',dropdown_color='#303030', dropdown_hover_color="#606060", dropdown_text_color='#c7c6c5')
+        self.barcode_port_choose.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
+        self.barcode_port_choose.set(configFile.barcode_com_port)
+        self.ramka_barcode.grid(row=1, column=3, sticky='nsew', padx=10, pady=10)
+
+        #ramka displays
+
+        self.ramka_displays = tk.LabelFrame(self.ogolne_tab, text='Opcje ekranu', font=('OpenSans.ttf', 13),
+                                           bg='#303030', fg='#c7c6c5')
+
+        self.ramka_displays.rowconfigure((2,5), weight=1)
+        self.ramka_displays.columnconfigure((1,2), weight=1)
+        self.ramka_displays.grid_propagate(0)
+        tk.Label(self.ramka_displays, text='Wybierz pozycję drugiego ekranu\npierwszy musi być ustawiony jako główny.',
+                 bg='#303030', fg='#c7c6c5',
+                 font=('OpenSans.ttf', 14)).grid(row=1, column=1, columnspan=4, sticky='nsew', padx=10, pady=10)
+
+        size = 100,100
+
+
+
+        screen_up_img = ImageTk.PhotoImage(file='images/main_up.png')
+        screen_up_label = tk.Label(self.ramka_displays, image=screen_up_img, bg="#303030")
+        screen_up_label.photo = screen_up_img
+        screen_up_label.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
+
+        screen_right_img = ImageTk.PhotoImage(file='images/main_right.png')
+        screen_right_label = tk.Label(self.ramka_displays, image=screen_right_img, bg="#303030")
+        screen_right_label.photo = screen_right_img
+        screen_right_label.grid(row=5, column=1, sticky='nsew', padx=10, pady=10)
+
+        screen_left_img = ImageTk.PhotoImage(file='images/main_left.png')
+        screen_left_label = tk.Label(self.ramka_displays, image=screen_left_img, bg="#303030")
+        screen_left_label.photo = screen_left_img
+        screen_left_label.grid(row=5, column=2, sticky='nsew', padx=10, pady=10)
+
+        screen_down_img = ImageTk.PhotoImage(file='images/main_down.png')
+        screen_down_label = tk.Label(self.ramka_displays, image=screen_down_img, bg="#303030")
+        screen_down_label.photo = screen_down_img
+        screen_down_label.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
+
+        self.ramka_displays.grid(row=2, column=2, columnspan=2, rowspan=4, sticky='nsew', padx=10, pady=10)
 
         #ramka backup
         self.ramka_backup = tk.LabelFrame(self.ogolne_tab, text='Lokalizacja backupu plików', font=('OpenSans.ttf', 13),
@@ -1036,7 +1104,7 @@ class Settings(tk.Toplevel):
         self.bckp_path_entry.insert(0, configFile.leather_backup_path)
         change_bckp_path_btn = ctk.CTkButton(self.ramka_backup, text='Zmień ścieżkę', text_font=('OpenSans.ttf', 14),
                                              fg_color='#505050', hover_color='#404040', text_color="#c7c6c5",
-                                             command=lambda x=self.bckp_path_entry: self.change_path(x), text_color="#c7c6c5")
+                                             command=lambda x=self.bckp_path_entry: self.change_path(x))
         change_bckp_path_btn.grid(row=2, column=2, sticky='nsew', padx=5, pady=3)
 
         self.ramka_backup.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
@@ -1046,6 +1114,9 @@ class Settings(tk.Toplevel):
         self.ramka_sciezki = tk.LabelFrame(self.ogolne_tab, text='Lokalizacje plików skór',
                                                font=('OpenSans.ttf', 13),
                                                bg='#303030', fg='#c7c6c5')
+
+        row_list = [i+2 for i, j in enumerate(self.temp_path_list)]
+        self.ramka_sciezki.rowconfigure(row_list, weight=1)
         self.sciezki_entry_list = []
         self.sciezki_button_list = []
         self.sciezki_radio_list = []
@@ -1090,9 +1161,11 @@ class Settings(tk.Toplevel):
 
     def remove_path(self):
         self.temp_path_list = self.temp_path_list[:-1]
+        self.ramka_sciezki.destroy()
         self.create_sciezki_frame()
     def add_path(self):
         self.temp_path_list.append('')
+        self.ramka_sciezki.destroy()
         self.create_sciezki_frame()
     def change_path(self, object):
         new_path = filedialog.askdirectory(parent=self)
