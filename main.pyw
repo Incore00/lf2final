@@ -15,7 +15,6 @@ from bin.projector1 import Leathermain
 from bin.leather_toolbar import leather_tools
 import json
 from bin import configFile
-import screenutils
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, queue, *args, **kwargs):

@@ -119,7 +119,7 @@ class Toolbar(tk.Frame):
                 self.code_flag = False
                 self.code = ''
             if len(self.code) >= 24 and self.barcode_scanner.in_waiting == 0:
-                self.leather_name = self.code[-25:]
+                self.leather_name = self.code[:24]
                 self.load_scanned_leather(self.leather_name)
                 self.code = ''
                 self.code_flag = True
@@ -134,22 +134,24 @@ class Toolbar(tk.Frame):
         else:
             self.code_flag = False
             self.code = ''
-        if len(self.code) >= 24 and event.keysym == 'Return':
+        if len(self.code) >= 25 and event.keysym == 'Return':
             self.leather_name = self.code[-25:]
+            self.leather_name = self.leather_name[:-1]
             self.load_scanned_leather(self.leather_name)
             self.code = ''
             self.code_flag = True
 
     def load_scanned_leather (self, leather_name):
-        data = leather_name[:-1]
+        data = leather_name
         path_list = configFile.leather_path_list
         for path in path_list:
-            path = path + "\\" + data + ".DXF"
+            dirr = path + "\\" + data + ".DXF"
+            print('dirr', dirr)
             try:
-                self.load_leather_data(path)
-                print('Load file success', path)
+                self.load_leather_data(dirr)
+                print('Load file success', dirr)
             except:
-                print("Cant load file in: " + path)
+                print("Cant load file in: " + dirr)
                 pass
 
     def clockLoop (self):
