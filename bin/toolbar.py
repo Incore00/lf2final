@@ -212,11 +212,16 @@ class Toolbar(tk.Frame):
         self.current_topwindow.destroy()
         self.current_topwindow = messBox(self.parent, self.queue, self.filename)
     def save_leather_data (self):
-        backup_name = self.filename.split("/")
-        backup_name = backup_name[-1]
-        bckp_dist = configFile.leather_backup_path + "\\" + backup_name
-        print('backup: ', self.filename, bckp_dist)
-        shutil.copyfile(self.filename, bckp_dist)
+        try:
+            backup_name = self.filename.split("/")
+            backup_name = backup_name[-1]
+            bckp_dist = configFile.leather_backup_path + "\\" + backup_name
+            shutil.copyfile(self.filename, bckp_dist)
+        except:
+            backup_name = self.filename.split("\\")
+            backup_name = backup_name[-1]
+            bckp_dist = configFile.leather_backup_path + "\\" + backup_name
+            shutil.copyfile(self.filename, bckp_dist)
         self.parent.leather_preview.lw_prev.save_leather_data()
     def save_leather_data2 (self, leather_data):
         print('save_leather_data_2')
@@ -323,8 +328,8 @@ class Toolbar(tk.Frame):
                 for item_index, item_len in enumerate(self.c_layer_items_len):
                     if item_len > self.highest_len:
                         self.highest_len_index = item_index
-                    #elif item_len != self.highest_len:
-                    #    h_layer.append(c_layer[item_index])
+                    else:
+                        h_layer.append(c_layer[item_index])
                 c_layer_final = c_layer[self.highest_len_index]
                 for point in c_layer_final.points():
                     c_layer_points.append((point[0], point[1]))

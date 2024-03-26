@@ -18,9 +18,9 @@ class Leathermain():
 		root.iconbitmap("images/icon.ico")
 		root.title("LeatherView")
 		sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
-		#root.geometry('%dx%d%+d+%d' % (sw, sh, 0, -sh))
+		root.geometry('%dx%d%+d+%d' % (sw, sh, 0, -sh))
 		#dla andrzeja ta dolna geometria
-		root.geometry('%dx%d%+d+%d' % (sw, sh, sw, 0))
+		#root.geometry('%dx%d%+d+%d' % (sw, sh, sw, 0))
 		root.overrideredirect(True)
 		LeatherWindow_main(root, queue, settings, height=sh, width=sw).pack(side="top", fill="both", expand=True)
 
